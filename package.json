@@ -1,0 +1,18 @@
+{
+  "name": "s06-26-nc-equipo-85",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend monorepo for No Country S06-26 Equipo 85.",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,yml,yaml,css}\""
+  },
+  "devDependencies": {
+    "prettier": "3.8.3",
+    "turbo": "2.9.16"
+  },
+  "packageManager": "pnpm@11.5.2"
+}
