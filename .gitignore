@@ -16,6 +16,9 @@ build/
 # Turborepo
 .turbo/
 
+# Storybook
+storybook-static/
+
 # Testing
 coverage/
 

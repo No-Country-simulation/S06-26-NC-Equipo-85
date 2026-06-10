@@ -1,0 +1,15 @@
+# Docker Compose file for local development and testing to only frontend.
+
+name: appbit
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    image: appbit-web:local
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
