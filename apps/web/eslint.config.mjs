@@ -1,3 +1,3 @@
-import next from "@appbit/eslint-config/next";
+import eslintConfig from "@app/config/eslint";
 
 export default next;

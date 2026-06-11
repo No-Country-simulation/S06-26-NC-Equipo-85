@@ -1,0 +1,35 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      # "deps" stage already has all workspace dependencies installed,
+      # so the dev server starts immediately without a runtime install.
+      target: deps
+    container_name: appbit-dev
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source for hot-reload, but keep the image's installed
+      # node_modules (anonymous volumes shadow the host's).
+      - .:/app
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/packages/config/node_modules
+      - /app/packages/env/node_modules
+      - /app/packages/ui/node_modules
+      - /app/apps/web/.next
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - WATCHPACK_POLLING=true
+    # Run the web dev server directly (no root turbo needed), bound to 0.0.0.0
+    # so it is reachable from the host.
+    command: pnpm --filter web exec next dev -H 0.0.0.0 -p 3000
+    networks:
+      - appbit
+
+networks:
+  appbit:
+    driver: bridge

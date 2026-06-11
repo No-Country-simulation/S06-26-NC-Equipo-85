@@ -1,0 +1,36 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "courses": "Formaciones",
+    "jobs": "Empleabilidad",
+    "experiences": "Experiencias",
+    "mentorship": "Mentorías",
+    "wellness": "Salud Mental"
+  },
+  "buttons": {
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "delete": "Eliminar",
+    "edit": "Editar"
+  },
+  "errors": {
+    "required": "Este campo es obligatorio",
+    "invalid_email": "Correo electrónico inválido",
+    "password_mismatch": "Las contraseñas no coinciden",
+    "something_went_wrong": "Algo salió mal. Intenta de nuevo.",
+    "loading": "Cargando...",
+    "not_found": "No encontrado"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información"
+  }
+}

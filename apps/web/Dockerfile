@@ -6,10 +6,9 @@ FROM base AS deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/web/package.json apps/web/package.json
+COPY packages/config/package.json packages/config/package.json
+COPY packages/env/package.json packages/env/package.json
 COPY packages/ui/package.json packages/ui/package.json
-COPY packages/config/typescript/package.json packages/config/typescript/package.json
-COPY packages/config/eslint/package.json packages/config/eslint/package.json
-COPY packages/config/prettier/package.json packages/config/prettier/package.json
 RUN pnpm install --frozen-lockfile --filter web...
 
 # ---- Build ----
@@ -29,7 +28,7 @@ ENV HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/web/public ./public
+COPY --from=builder /app/apps/web/public ./apps/web/public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 

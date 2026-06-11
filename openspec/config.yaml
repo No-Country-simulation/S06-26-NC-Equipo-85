@@ -1,0 +1,71 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+context: |
+  Proyecto: App BiT — MVP de orientación personal para grupos sub-representados
+  en tecnología (hackathon No Country S06-26, Equipo 85). Alcance: frontend
+  únicamente. Idiomas de la app: portugués, inglés, español (next-intl).
+
+  Specs de referencia (leer antes de crear artefactos):
+  - specs/appbit-frontend-plan.md — plan de implementación en 6 fases (0 - 5)
+  - specs/appbit-design-system.md — design system "Amanecer" (paleta, tipografía, a11y)
+
+  Tech stack:
+  - Monorepo: Turborepo + pnpm workspaces (apps/web + packages/ui, config, env)
+  - Framework: Next.js 16 App Router, React 19, TypeScript
+  - Estilos: Tailwind CSS v4 (tokens via @theme en globals.css, sin tailwind.config.ts)
+    + shadcn/ui; toasts con sonner
+  - Estado: Zustand (solo estado de UI/local, con persist para onboarding);
+    TanStack Query v5 para todo dato del servidor — nunca duplicar estado servidor en Zustand
+  - Formularios: react-hook-form + Zod (@hookform/resolvers)
+  - Animaciones: Framer Motion · Iconos: Lucide React
+  - Componentes documentados en Storybook 8 (packages/ui, atomic design:
+    atoms/molecules/organisms) con addons a11y e interactions
+  - IA: Vercel AI SDK (`ai`) + configuración del modelo Groq para streaming del agente
+  - Mapas: react-leaflet + markercluster + heat · Calendario: FullCalendar
+  - PWA: next-pwa + Workbox · Push: web-push
+  - Testing: Vitest + React Testing Library, Playwright (e2e), MSW (mocks)
+  - Env vars validadas con @t3-oss/env-nextjs + Zod
+  - Docker: Dockerfile multi-stage (deps → builder → runner, output standalone)
+    + docker-compose con hot-reload para dev
+
+  Dominio — 5 módulos del dashboard:
+  Formaciones (cursos), Empleabilidad (vacantes + match score + gap),
+  Experiencias (videos testimoniales), Mentorías (agenda), Salud Mental
+  (check-in emocional diario + agente IA). Endpoints clave del backend:
+  POST /orientar (gap porcentual y trayectoria) y POST /salud (agente de bienestar).
+
+  Feature crítica: derivación CVV — si la nota semanal de salud mental es < 4,
+  modal de crisis no-dismissable por click fuera, cobertura de test 100%,
+  errores en este flujo alertan en Sentry.
+
+  Design system "Amanecer" (resumen operativo):
+  - Proporción 60·30·10: neutros cálidos (crema #FAF1E6, arena #EFDFC4, cacao
+    #2B1E16, topo #7A6557) · marca cálida (terracota #A8442A primario, coral
+    #CC4A2E acción, ámbar #D98E32 logro) · contrapunto frío y semánticos
+    (azul horizonte #2C4E9E, oliva #5F7E3F éxito, granate #9E2235 crítico)
+  - Granate reservado EXCLUSIVAMENTE al flujo CVV y errores críticos
+  - Azul horizonte solo para calma/confianza: salud mental, agente IA, mentorías
+  - Ámbar nunca lleva texto blanco (usar #4A2B10); arena/crema solo como fondos
+  - No introducir colores fríos adicionales (violetas, teales)
+  - Mapeo shadcn: primary→terracota, secondary→ámbar, destructive→granate,
+    muted→arena/topo
+  - Tipografía: Fraunces (display) + Inter (UI), via next/font/google con swap
+  - Accesibilidad objetivo WCAG 2.1 AA; contraste mínimo 4.5:1; @axe-core/react
+    activo en dev desde Fase 1
+
+  Convenciones:
+  - Conventional commits
+  - Todo componente reutilizable vive en packages/ui con su story de Storybook
+  - Mensajes de error accesibles (aria-describedby); foco visible siempre
+  - Nunca subir credenciales: .env.local en dev, env del servicio de deploy en prod
+
+# Per-artifact rules (optional)
+rules:
+  proposal:
+    - Indicar a qué fase del plan (0 - 5 de specs/appbit-frontend-plan.md) pertenece el cambio
+    - Incluir una sección "Non-goals" para acotar el alcance
+  tasks:
+    - Dividir tareas en bloques de máximo 2 horas
+    - Si una tarea toca UI, incluir su story de Storybook y verificación de contraste/a11y

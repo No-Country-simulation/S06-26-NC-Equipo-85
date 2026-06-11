@@ -1,7 +1,13 @@
 **/node_modules
 **/.next
 **/.turbo
-.git
-spec
-README.md
+**/dist
+**/build
+**/.git
+**/.gitignore
+**/Dockerfile
+**/.dockerignore
+**/npm-debug.log*
+**/.env*.local
+**/.DS_Store
 **/*.md
