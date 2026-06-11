@@ -17,6 +17,9 @@ build/
 # Turborepo
 .turbo/
 
+# Storybook
+storybook-static/
+
 # Testing
 coverage/
 
@@ -48,9 +51,6 @@ Thumbs.db
 
 # Agents
 *.kiro
-
-# Specs
-/specs
 
 # Env examples
 .env.local

@@ -1,0 +1,9 @@
+{
+  "extends": "@app/config/tsconfig",
+  "compilerOptions": {
+    "paths": {
+      "@app/ui/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

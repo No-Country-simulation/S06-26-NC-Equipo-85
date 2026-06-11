@@ -11,7 +11,8 @@ MVP de orientación personal para grupos sub-representados en tecnología
 │   └── web/                  # Next.js 16 App Router (la app)
 ├── packages/
 │   ├── config/               # ESLint + Prettier + tsconfig compartidos (@app/config)
-│   └── env/                  # Validación de env vars con @t3-oss/env-nextjs (@app/env)
+│   ├── env/                  # Validación de env vars con @t3-oss/env-nextjs (@app/env)
+│   └── ui/                   # Librería UI "Amanecer" + Storybook (@app/ui)
 ├── scripts/
 │   └── docker-run.mjs        # Corre la imagen de prod en un puerto libre
 ├── turbo.json                # Pipeline: dev / build / lint / type-check / format
@@ -33,7 +34,7 @@ Turborepo + pnpm workspaces. Cada paquete interno se referencia con `workspace:*
 | `pnpm format` | Prettier --write |
 | `pnpm docker:up` | Build + run de la imagen de prod (puerto libre automático) |
 | `docker compose up` | Dev en contenedor con hot-reload |
-| `pnpm --filter web storybook` | Storybook en :6006 |
+| `pnpm --filter @app/ui storybook` | Storybook en :6006 (vive en `packages/ui`) |
 
 > **Nota de entorno:** pnpm 11 requiere Node 22+. El Dockerfile usa `node:22-alpine`.
 > Si tu Node local es 20, usa `npx pnpm@9` o Docker.
@@ -84,11 +85,15 @@ Mantener paridad de keys entre `es` y `pt`.
 ## Convenciones
 
 - Conventional commits.
-- Componentes reutilizables → `packages/ui` con su story de Storybook (migración en Fase 1;
-  por ahora viven en `apps/web/src/components/ui`).
+- Componentes reutilizables viven en `packages/ui` (`@app/ui`), organizados en
+  `atoms/` y `molecules/`, cada uno con su story de Storybook. La app los importa
+  desde `@app/ui` (no recrear primitivos en `apps/web`). Reglas y flujo en
+  [packages/ui/README.md](packages/ui/README.md). Deben ser agnósticos de Next:
+  prohibido importar `next/*`/`next-intl` (lo refuerza ESLint).
 - Mensajes de error accesibles (`aria-describedby`); foco visible siempre.
 - Nunca subir credenciales: `.env.local` en dev, env del servicio de deploy en prod.
-- Estado: Zustand solo para UI/local; TanStack Query para todo dato de servidor.
+- Estado: Zustand solo para UI/local (`apps/web/src/store/`, patrón `skipHydration`);
+  TanStack Query para todo dato de servidor.
 
 ## Plan por fases
 
