@@ -1,6 +1,14 @@
 import { Sparkles } from "lucide-react";
+import { setRequestLocale } from "next-intl/server";
 
-export default function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   return (
     <main className="relative flex flex-1 flex-col items-center justify-center gap-8 bg-background px-6 text-center">
       <div className="animate-in fade-in slide-in-from-bottom-4 flex flex-col items-center gap-8 duration-700">

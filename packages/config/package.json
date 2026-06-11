@@ -1,0 +1,21 @@
+{
+  "name": "@app/config",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./eslint": "./eslint.config.mjs",
+    "./prettier": "./prettier.config.mjs",
+    "./tsconfig": "./tsconfig.base.json"
+  },
+  "peerDependencies": {
+    "eslint": "^9",
+    "prettier": "^3",
+    "typescript": "^5"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.2.7",
+    "prettier": "^3.8.3",
+    "typescript": "^5"
+  }
+}

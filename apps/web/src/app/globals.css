@@ -39,6 +39,23 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* BiT Colors as Tailwind Extensions */
+  --color-terracota: var(--bit-terracota);
+  --color-terracota-soft: var(--bit-terracota-soft);
+  --color-coral: var(--bit-coral);
+  --color-coral-soft: var(--bit-coral-soft);
+  --color-ambar: var(--bit-ambar);
+  --color-ambar-soft: var(--bit-ambar-soft);
+  --color-azul-horizonte: var(--bit-azul-horizonte);
+  --color-azul-horizonte-soft: var(--bit-azul-horizonte-soft);
+  --color-oliva: var(--bit-oliva);
+  --color-oliva-soft: var(--bit-oliva-soft);
+  --color-granate: var(--bit-granate);
+  --color-granate-soft: var(--bit-granate-soft);
+  --color-crema: var(--bit-crema);
+  --color-arena: var(--bit-arena);
+  --color-cacao: var(--bit-cacao);
+  --color-topo: var(--bit-topo);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -49,38 +66,59 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  /* BiT Design System "Amanecer" - Primary Palette */
+  --bit-terracota: #A8442A;
+  --bit-terracota-soft: #F4DCCB;
+  --bit-coral: #CC4A2E;
+  --bit-coral-soft: #F5DEDB;
+  --bit-ambar: #D98E32;
+  --bit-ambar-soft: #F7E8DC;
+  --bit-azul-horizonte: #2C4E9E;
+  --bit-azul-horizonte-soft: #E8F0F7;
+  --bit-oliva: #5F7E3F;
+  --bit-oliva-soft: #EEF4E5;
+  --bit-granate: #9E2235;
+  --bit-granate-soft: #F7E8EB;
+
+  /* BiT Design System - Neutral Warm */
+  --bit-crema: #FAF1E6;
+  --bit-arena: #EFDFC4;
+  --bit-cacao: #2B1E16;
+  --bit-topo: #7A6557;
+
+  /* Shadcn Mapping to BiT */
+  --background: var(--bit-crema);
+  --foreground: var(--bit-cacao);
+  --card: #fff;
+  --card-foreground: var(--bit-cacao);
+  --popover: #fff;
+  --popover-foreground: var(--bit-cacao);
+  --primary: var(--bit-terracota);
+  --primary-foreground: #fff;
+  --secondary: var(--bit-ambar);
+  --secondary-foreground: var(--bit-cacao);
+  --muted: var(--bit-arena);
+  --muted-foreground: var(--bit-topo);
+  --accent: var(--bit-coral);
+  --accent-foreground: #fff;
+  --destructive: var(--bit-granate);
+  --border: var(--bit-arena);
+  --input: var(--bit-arena);
+  --ring: var(--bit-azul-horizonte);
+  --chart-1: var(--bit-terracota);
+  --chart-2: var(--bit-ambar);
+  --chart-3: var(--bit-coral);
+  --chart-4: var(--bit-oliva);
+  --chart-5: var(--bit-azul-horizonte);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: var(--bit-crema);
+  --sidebar-foreground: var(--bit-cacao);
+  --sidebar-primary: var(--bit-terracota);
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: var(--bit-ambar);
+  --sidebar-accent-foreground: var(--bit-cacao);
+  --sidebar-border: var(--bit-arena);
+  --sidebar-ring: var(--bit-azul-horizonte);
 }
 
 .dark {

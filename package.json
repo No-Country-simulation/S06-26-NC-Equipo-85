@@ -9,7 +9,7 @@
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,yml,yaml,css}\"",
-    "docker:build": "docker build -f apps/web/Dockerfile -t equipo85-web .",
+    "docker:build": "docker build -f apps/web/Dockerfile -t appbit:latest .",
     "docker:run": "node scripts/docker-run.mjs",
     "docker:up": "pnpm docker:build && pnpm docker:run"
   },
