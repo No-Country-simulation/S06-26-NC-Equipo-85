@@ -59,7 +59,7 @@
 - [x] 7.1 Verify `pnpm dev` works at root and all packages with dev scripts start (next start served all routes 200)
 - [x] 7.2 Verify `pnpm build` produces `.next` output for web app (9 static pages generated)
 - [x] 7.3 Create/update `CLAUDE.md` documenting monorepo structure, design tokens, locale routing
-- [ ] 7.4 Commit all changes with message: "feat: phase 0 foundation — monorepo, docker, design tokens, i18n"
+- [x] 7.4 Commit all changes with message: "feat: phase 0 foundation — monorepo, docker, design tokens, i18n"
 - [x] 7.5 Ensure `pnpm lint` and `pnpm type-check` pass without errors
 
 ---
