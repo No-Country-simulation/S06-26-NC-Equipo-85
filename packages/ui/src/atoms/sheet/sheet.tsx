@@ -3,9 +3,15 @@
 import * as React from "react";
 import { Dialog as SheetPrimitive } from "radix-ui";
 
+<<<<<<<< HEAD:packages/ui/src/atoms/sheet/sheet.tsx
 import { cn } from "../../lib/utils";
 import { Button } from "../button";
 import { XIcon } from "lucide-react";
+========
+import { cn } from "@appbit/ui/lib/utils"
+import { Button } from "@appbit/ui/components/button"
+import { XIcon } from "lucide-react"
+>>>>>>>> 51bb92f35893b8eb5db168637904bcafd59ee8fa:packages/ui/src/components/ui/sheet.tsx
 
 function Sheet({
   ...props

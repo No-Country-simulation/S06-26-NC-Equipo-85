@@ -1,6 +1,10 @@
 import * as React from "react";
 
+<<<<<<<< HEAD:packages/ui/src/atoms/textarea/textarea.tsx
 import { cn } from "../../lib/utils";
+========
+import { cn } from "@appbit/ui/lib/utils"
+>>>>>>>> 51bb92f35893b8eb5db168637904bcafd59ee8fa:packages/ui/src/components/ui/textarea.tsx
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
