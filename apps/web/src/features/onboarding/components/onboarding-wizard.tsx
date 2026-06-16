@@ -14,7 +14,9 @@ import {
 } from "@app/ui";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
+import { useOrientar } from "@/hooks/use-orientar";
 import { useUserStore } from "@/store/user-store";
+import type { OrientationRequest } from "@/services/orientation/orientation.types";
 import {
   ONBOARDING_DEFAULT_VALUES,
   onboardingFormSchema,
@@ -34,7 +36,6 @@ import { ProfessionalProfileStep } from "./professional-profile-step";
 type PersistApi = {
   hasHydrated: () => boolean;
   onFinishHydration: (callback: () => void) => () => void;
-  rehydrate: () => Promise<void> | void;
 };
 
 const FIRST_STEP = 0 satisfies OnboardingStep;
@@ -66,6 +67,31 @@ function createLocalProfileId() {
   }
 
   return `local-${Date.now()}`;
+}
+
+/**
+ * Convierte los valores validados del formulario al contrato de `/orientar`.
+ */
+function buildOrientationRequest(
+  values: OnboardingFormValues,
+): OrientationRequest {
+  return {
+    personal: {
+      fullName: values.fullName,
+      email: values.email,
+      birthDate: values.birthDate,
+      gender: values.gender,
+      country: values.country,
+      city: values.city,
+      whatsapp: values.whatsapp,
+    },
+    professional: {
+      techLevel: values.techLevel,
+      techArea: values.techArea,
+      objective: values.objective,
+      experienceSummary: values.experienceSummary?.trim() || undefined,
+    },
+  };
 }
 
 /**
@@ -117,21 +143,37 @@ function getStepByField(field: FieldPath<OnboardingFormValues>): OnboardingStep 
 }
 
 /**
+ * Devuelve un mensaje seguro para mostrar en toast.
+ */
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "Ocurrió un error inesperado al generar la orientación.";
+}
+
+/**
  * Wizard principal de onboarding.
  *
- * Encapsula formularios, validación progresiva, navegación de pasos e
- * hidratación manual del draft persistido en Zustand.
+ * Encapsula formularios, validación progresiva, navegación de pasos,
+ * persistencia local y mutation de orientación inicial.
  */
 export function OnboardingWizard() {
   const router = useRouter();
   const hasLoadedInitialDraft = useRef(false);
+  const orientationMutation = useOrientar();
 
   const draftStep = useUserStore((state) => state.onboardingDraft.step);
   const setDraftStep = useUserStore((state) => state.setDraftStep);
   const updateDraftData = useUserStore((state) => state.updateDraftData);
   const completeOnboarding = useUserStore((state) => state.completeOnboarding);
+  const setOrientationResult = useUserStore(
+    (state) => state.setOrientationResult,
+  );
 
   const currentStep = normalizeStep(draftStep);
+  const isSubmitting = orientationMutation.isPending;
 
   const {
     clearErrors,
@@ -171,6 +213,7 @@ export function OnboardingWizard() {
 
     if (!persistApi) {
       loadDraftFromStore();
+
       return () => {
         isMounted = false;
       };
@@ -185,8 +228,6 @@ export function OnboardingWizard() {
     }
 
     const unsubscribe = persistApi.onFinishHydration(loadDraftFromStore);
-
-    void persistApi.rehydrate();
 
     return () => {
       isMounted = false;
@@ -242,7 +283,7 @@ export function OnboardingWizard() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function submitOnboarding() {
+  async function submitOnboarding() {
     clearErrors();
 
     const result = onboardingFormSchema.safeParse(getValues());
@@ -264,18 +305,33 @@ export function OnboardingWizard() {
       return;
     }
 
-    completeOnboarding({
-      id: createLocalProfileId(),
-      name: result.data.fullName,
-      email: result.data.email,
-      area: result.data.techArea,
-    });
+    try {
+      const orientationResult = await orientationMutation.mutateAsync(
+        buildOrientationRequest(result.data),
+      );
 
-    toast.success("Perfil inicial guardado", {
-      description: "En el próximo bloque conectamos este flujo con /orientar.",
-    });
+      completeOnboarding({
+        id: createLocalProfileId(),
+        name: result.data.fullName,
+        email: result.data.email,
+        area: result.data.techArea,
+      });
 
-    router.push("/dashboard");
+      setOrientationResult(orientationResult);
+
+      toast.success("Orientación inicial generada", {
+        description:
+          orientationResult.source === "mock"
+            ? "Se usó una respuesta mock porque la API todavía no está configurada."
+            : "El perfil fue enviado correctamente a /orientar.",
+      });
+
+      router.push("/dashboard");
+    } catch (error) {
+      toast.error("No se pudo generar la orientación", {
+        description: getErrorMessage(error),
+      });
+    }
   }
 
   return (
@@ -300,7 +356,7 @@ export function OnboardingWizard() {
           noValidate
           onSubmit={(event) => {
             event.preventDefault();
-            submitOnboarding();
+            void submitOnboarding();
           }}
         >
           {currentStep === 0 ? (
@@ -315,7 +371,7 @@ export function OnboardingWizard() {
 
           <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
             <Button
-              disabled={currentStep === FIRST_STEP}
+              disabled={currentStep === FIRST_STEP || isSubmitting}
               onClick={goToPreviousStep}
               type="button"
               variant="outline"
@@ -324,11 +380,17 @@ export function OnboardingWizard() {
             </Button>
 
             {currentStep < LAST_STEP ? (
-              <Button onClick={goToNextStep} type="button">
+              <Button
+                disabled={isSubmitting}
+                onClick={goToNextStep}
+                type="button"
+              >
                 Continuar
               </Button>
             ) : (
-              <Button type="submit">Confirmar perfil</Button>
+              <Button disabled={isSubmitting} type="submit">
+                {isSubmitting ? "Generando orientación..." : "Confirmar perfil"}
+              </Button>
             )}
           </div>
         </form>

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import type { OrientationResult } from "@/services/orientation/orientation.types";
 
 export type OnboardingDraft = {
   step: number;
@@ -17,11 +18,13 @@ type UserState = {
   token: string | null;
   onboardingDraft: OnboardingDraft;
   isOnboardingCompleted: boolean;
+  orientationResult: OrientationResult | null;
   profile: UserProfile | null;
   setToken: (token: string | null) => void;
   setDraftStep: (step: number) => void;
   updateDraftData: (data: Record<string, unknown>) => void;
   setProfile: (profile: UserProfile | null) => void;
+  setOrientationResult: (result: OrientationResult | null) => void;
   completeOnboarding: (profile: UserProfile) => void;
   resetOnboardingDraft: () => void;
   /** Limpia el estado y la entrada persistida. Usar en logout o reinicio total. */
@@ -40,8 +43,8 @@ function createInitialDraft(): OnboardingDraft {
 /**
  * Store global del usuario.
  *
- * Mantiene estado local de sesión, perfil y draft del onboarding.
- * La hidratación se hace manualmente para evitar hydration mismatch en App Router.
+ * Mantiene estado local de sesión, perfil, draft del onboarding y resultado
+ * inicial de orientación.
  */
 export const useUserStore = create<UserState>()(
   persist(
@@ -49,6 +52,7 @@ export const useUserStore = create<UserState>()(
       token: null,
       onboardingDraft: createInitialDraft(),
       isOnboardingCompleted: false,
+      orientationResult: null,
       profile: null,
 
       setToken: (token) => set({ token }),
@@ -74,6 +78,8 @@ export const useUserStore = create<UserState>()(
 
       setProfile: (profile) => set({ profile }),
 
+      setOrientationResult: (result) => set({ orientationResult: result }),
+
       completeOnboarding: (profile) =>
         set({
           profile,
@@ -91,6 +97,7 @@ export const useUserStore = create<UserState>()(
           token: null,
           onboardingDraft: createInitialDraft(),
           isOnboardingCompleted: false,
+          orientationResult: null,
           profile: null,
         });
 
@@ -104,6 +111,7 @@ export const useUserStore = create<UserState>()(
         token: state.token,
         onboardingDraft: state.onboardingDraft,
         isOnboardingCompleted: state.isOnboardingCompleted,
+        orientationResult: state.orientationResult,
         profile: state.profile,
       }),
       skipHydration: true,
