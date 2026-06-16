@@ -8,7 +8,7 @@ import {
 } from "../utils/onboarding-options";
 
 type ConfirmationStepProps = {
-  values: OnboardingFormValues;
+  values: Partial<OnboardingFormValues>;
 };
 
 /**
@@ -16,7 +16,7 @@ type ConfirmationStepProps = {
  */
 function getOptionLabel(
   options: readonly { value: string; label: string }[],
-  value: string,
+  value: string | undefined,
 ) {
   return options.find((option) => option.value === value)?.label ?? "Sin definir";
 }
