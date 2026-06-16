@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { routing, type Locale } from "@/i18n/routing";
 import { StoreHydration } from "@/components/store-hydration";
 import { AxeCore } from "@/components/axe-core";
+import { Providers } from "./providers";
 import "../globals.css";
 
 const fraunces = Fraunces({
@@ -57,12 +58,10 @@ export default async function LocaleLayout({
 }>) {
   const { locale } = await params;
 
-  // Reject unsupported locales
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
 
-  // Enable static rendering for this locale
   setRequestLocale(locale);
 
   return (
@@ -74,7 +73,11 @@ export default async function LocaleLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <StoreHydration />
         {process.env.NODE_ENV === "development" && <AxeCore />}
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+
+        <NextIntlClientProvider>
+          <Providers>{children}</Providers>
+        </NextIntlClientProvider>
+
         <Toaster
           position="top-right"
           toastOptions={{
