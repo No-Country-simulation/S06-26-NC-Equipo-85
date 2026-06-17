@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { FieldPath, UseFormSetError } from "react-hook-form";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import type { ZodIssue } from "zod";
 import {
   Button,
@@ -177,18 +177,22 @@ export function OnboardingWizard() {
 
   const {
     clearErrors,
+    control,
     formState: { errors },
     getValues,
     register,
     reset,
     setError,
-    watch,
+    subscribe,
   } = useForm<OnboardingFormValues>({
     defaultValues: ONBOARDING_DEFAULT_VALUES,
     mode: "onBlur",
   });
 
-  const values = watch();
+  const values = useWatch({
+    control,
+    defaultValue: ONBOARDING_DEFAULT_VALUES,
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -236,16 +240,19 @@ export function OnboardingWizard() {
   }, [reset]);
 
   useEffect(() => {
-    const subscription = watch((value) => {
-      if (!hasLoadedInitialDraft.current) {
-        return;
-      }
+    const unsubscribe = subscribe({
+      formState: { values: true },
+      callback: ({ values }) => {
+        if (!hasLoadedInitialDraft.current) {
+          return;
+        }
 
-      updateDraftData(value);
+        updateDraftData(values);
+      },
     });
 
-    return () => subscription.unsubscribe();
-  }, [updateDraftData, watch]);
+    return () => unsubscribe();
+  }, [subscribe, updateDraftData]);
 
   function validateCurrentStep() {
     clearErrors();
