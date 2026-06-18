@@ -122,9 +122,12 @@ appbit/
 > `INTERMADIATE` → `INTERMEDIATE`. El front ya usa la grafía corregida; ambos
 > lados deben quedar alineados antes de integrar.
 >
-> **⚠️ Tipos sospechosos en el diagrama:** `Experience.speaker_name` figura como
-> `Integer` (debería ser string) y `Experience.content_url` como `Boolean`
-> (debería ser string/URL). `Profile.id` es `Integer` mientras el resto es `UUID`.
+> **✅ Tipos corregidos:** `Experience.speaker_name` pasa de `Integer` a `String`
+> y `Experience.content_url` de `Boolean` a `String`/URL. El front asume estos
+> tipos; el backend debe alinear el diagrama.
+>
+> **⚠️ Tipo sospechoso pendiente:** `Profile.id` figura como `Integer` mientras
+> el resto del modelo usa `UUID`. Confirmar con backend.
 
 ### Pendientes de definición con backend
 

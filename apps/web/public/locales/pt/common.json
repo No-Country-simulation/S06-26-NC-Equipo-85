@@ -32,5 +32,63 @@
     "success": "Sucesso",
     "warning": "Aviso",
     "info": "Informação"
+  },
+  "landing": {
+    "header": {
+      "login": "Entrar",
+      "register": "Criar conta"
+    },
+    "hero": {
+      "badge": "Seu novo começo, todos os dias",
+      "title": "Cada check-in é uma oportunidade de avançar.",
+      "subtitle": "Orientação com IA, formação gratuita e vagas de acordo com seu perfil real. Tudo em um só lugar, pensado para você.",
+      "ctaPrimary": "Criar conta gratuita →",
+      "ctaSecondary": "Entrar"
+    },
+    "services": {
+      "title": "Cinco serviços, um mesmo caminho",
+      "subtitle": "Desde o primeiro dia até seu primeiro emprego, BiT te acompanha em cada etapa.",
+      "formaciones": {
+        "title": "Formações",
+        "description": "Cursos gratuitos do Google e da Oracle para fechar suas lacunas de skills."
+      },
+      "empleabilidad": {
+        "title": "Empregabilidade",
+        "description": "Vagas ordenadas pela sua compatibilidade real, com o caminho para fechá-las."
+      },
+      "experiencias": {
+        "title": "Experiências",
+        "description": "Histórias em vídeo de quem já percorreu o caminho que você está prestes a começar."
+      },
+      "mentorias": {
+        "title": "Mentorias",
+        "description": "Agende práticas com mentores reais e ganhe confiança antes de se candidatar."
+      },
+      "salud": {
+        "title": "Saúde mental",
+        "description": "Um espaço seguro para seu check-in diário, com acompanhamento empático."
+      }
+    },
+    "stats": {
+      "users": "jovens acompanhados",
+      "courses": "cursos gratuitos",
+      "matchImprovement": "melhora seu match",
+      "services": "serviços integrados",
+      "testimonial": {
+        "quote": "Graças à BiT passei de não saber por onde começar a conseguir meu primeiro emprego como desenvolvedora.",
+        "name": "Camila R.",
+        "meta": "22 anos · Córdoba"
+      }
+    },
+    "cta": {
+      "title": "Seu próximo começo é hoje",
+      "button": "Criar minha conta gratuita →"
+    },
+    "footer": {
+      "copyright": "© 2026 · Verdadeiramente humano",
+      "privacy": "Privacidade",
+      "terms": "Termos",
+      "contact": "Contato"
+    }
   }
 }
