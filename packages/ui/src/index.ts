@@ -5,6 +5,7 @@ export * from "./atoms/avatar";
 export * from "./atoms/badge";
 export * from "./atoms/button";
 export * from "./atoms/card";
+export * from "./atoms/checkbox";
 export * from "./atoms/dialog";
 export * from "./atoms/dropdown-menu";
 export * from "./atoms/emoji-check-in";

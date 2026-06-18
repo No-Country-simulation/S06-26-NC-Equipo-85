@@ -90,5 +90,56 @@
       "terms": "Términos",
       "contact": "Contacto"
     }
+  },
+  "auth": {
+    "register": {
+      "brand": {
+        "title": "Cada check-in es un nuevo comienzo.",
+        "bullet1": "Orientación personalizada con IA",
+        "bullet2": "Formación gratuita de Google y Oracle",
+        "bullet3": "Vacantes según tu perfil real"
+      },
+      "title": "Creá tu cuenta",
+      "subtitle": "Empezá tu camino en menos de 2 minutos.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "confirmLabel": "Confirmar contraseña",
+      "confirmPlaceholder": "Repetí la contraseña",
+      "strength": {
+        "weak": "Débil",
+        "medium": "Media",
+        "strong": "Fuerte"
+      },
+      "terms": "Acepto los <terms>Términos y Condiciones</terms> y la Política de Privacidad de BiT.",
+      "submit": "Crear cuenta",
+      "haveAccount": "¿Ya tenés cuenta?",
+      "loginLink": "Ingresar",
+      "successTitle": "Cuenta creada",
+      "successApi": "Tu cuenta fue creada. Completá tu perfil para empezar.",
+      "successMock": "Cuenta simulada (la API todavía no está configurada).",
+      "errorTitle": "No se pudo crear la cuenta"
+    },
+    "login": {
+      "brand": {
+        "title": "Tu progreso te está esperando.",
+        "subtitle": "Seguí cerrando tu brecha y descubrí nuevas vacantes compatibles con tu perfil."
+      },
+      "title": "Hola de nuevo",
+      "subtitle": "Ingresá para seguir tu progreso.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Tu contraseña",
+      "forgot": "¿La olvidaste?",
+      "submit": "Ingresar",
+      "noAccount": "¿No tenés cuenta?",
+      "registerLink": "Crear cuenta",
+      "successTitle": "Ingreso exitoso",
+      "successApi": "¡Bienvenida de nuevo!",
+      "successMock": "Ingreso simulado (la API todavía no está configurada).",
+      "errorTitle": "No se pudo iniciar sesión"
+    }
   }
 }
