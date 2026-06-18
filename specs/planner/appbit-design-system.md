@@ -103,6 +103,228 @@ El granate `#9E2235` está **reservado exclusivamente** para el modal de crisis 
 
 ---
 
+## Especificación de vistas y componentes
+
+> Inventario completo de pantallas del MVP, derivado del [plan de frontend](appbit-frontend-plan.md)
+> y el [plan de backend](appbit-backend-plan.md). Cada vista indica su ruta, los
+> endpoints que consume, sus **cards y filtros**, y la **aplicación cromática**
+> según la tabla _Aplicación por módulo (los 5 servicios)_.
+>
+> **Regla de flujo (backend):** la cuenta (`User`) se crea con `POST /auth/register`
+> **antes** del onboarding; el wizard solo completa el `Profile` vía `PUT /perfil`
+> (requiere JWT). El orden es **Registro → Onboarding**, nunca al revés.
+
+### Índice de vistas (13)
+
+| # | Vista | Ruta (`/[locale]/…`) | Grupo | Fase | Endpoints | Paleta dominante |
+|---|---|---|---|---|---|---|
+| 1 | Landing pública | `/` | `(public)` | 0 | — | crema · terracota · ámbar |
+| 2 | Registro | `/register` | `(auth)` | 2 | `POST /auth/register` → `POST /auth/login` | crema · terracota |
+| 3 | Login | `/login` | `(auth)` | 2 | `POST /auth/login` · `POST /auth/refresh` | crema · terracota |
+| 4 | Onboarding (wizard 3 pasos) | `/onboarding` | `(onboarding)` | 2 | `GET/PUT /perfil` · `POST /orientar` | crema · terracota · ámbar |
+| 5 | Dashboard / Home | `/dashboard` | `(dashboard)` | 3 | `GET /perfil` · `POST /orientar` · `GET /salud/historial` | crema base · coral · ámbar · azul |
+| 6 | Formaciones | `/dashboard/formaciones` | `(dashboard)` | 3 | `GET /cursos` | ámbar · oliva |
+| 7 | Empleabilidad (listado) | `/dashboard/empleabilidad` | `(dashboard)` | 3 | `GET /vacantes` | terracota · coral · ámbar |
+| 8 | Detalle de vacante | `/dashboard/empleabilidad/[id]` | `(dashboard)` | 3 | `GET /vacantes/{id}` · `GET /cursos` | terracota · coral · ámbar · oliva |
+| 9 | Experiencias | `/dashboard/experiencias` | `(dashboard)` | 3 | `GET /experiencias` | terracota · arena |
+| 10 | Mentorías | `/dashboard/mentorias` | `(dashboard)` | 3 | `GET /mentores` · `POST /mentores/{id}/agendar` | azul horizonte · terracota |
+| 11 | Salud Mental | `/dashboard/salud` | `(dashboard)` | 3 | `POST /salud` · `GET /salud/historial` · `POST /salud/stream` | azul horizonte · crema |
+| 12 | Mapa de eventos | `/dashboard/eventos` | `(dashboard)` | 4 | `GET /eventos` · `POST /push/suscribir` | terracota · arena · semáforo cobertura |
+| 13 | Perfil / Configuración | `/dashboard/perfil` | `(dashboard)` | 3 | `GET/PUT /perfil` | crema · terracota · oliva |
+
+### Flujo de navegación
+
+```
+Landing ──► Registro ──(auto-login)──► Onboarding (3 pasos) ──► /orientar
+   │            │                            │                      │
+   └──► Login ──┴── perfil completo ─────────┴──────────────────► Dashboard
+                                                                     │
+            ┌──────────┬──────────┬──────────┬──────────┬───────────┤
+        Formaciones Empleabilidad Experiencias Mentorías  Salud   Eventos / Perfil
+                         │
+                    Detalle vacante
+```
+
+---
+
+### Componentes transversales (cross-cutting)
+
+| Componente | Capa | Descripción | Paleta |
+|---|---|---|---|
+| `AppShell` | organism | Layout del dashboard: **sidebar** en desktop, **bottom-nav** (5 íconos) en mobile, área de contenido | crema base · terracota (item activo) |
+| `Topbar` | molecule | Logo, selector de idioma (ES/PT), avatar con menú, indicador de check-in pendiente | crema · cacao · ámbar (badge pendiente) |
+| `CvvModal` | organism | Modal de crisis **no dismissable** (sin cerrar por click-fuera ni Escape). Se dispara con `derive_cvv === true`. Botón directo a línea CVV | **granate exclusivo** + blanco + crema |
+| `CheckinModal` | organism | Check-in diario al entrar a la app; envuelve `EmojiCheckIn` (5 estados `mood_emoji`) + nota 1-5 | azul horizonte · crema |
+| `MoodBanner` | molecule | Banner del estado emocional del día, con `accion_sugerida` del agente | azul-soft · crema |
+| `GapRing` / `GapProgressBar` | organism | Anillo/barra animada del gap porcentual (`recharts` + Framer Motion) | track arena · progreso coral · meta ámbar |
+| `NotificationToast` | molecule | Wrapper de `sonner`; variantes success (oliva), info (azul), warning (ámbar), error (granate **solo** crítico) | semánticos |
+| `Spinner` / `Skeleton` | atom | Estados de carga; skeletons con tono arena | arena · topo |
+| `EmptyState` | molecule | Vacío ilustrado + CTA (sin resultados, sin datos aún) | crema · topo · terracota (CTA) |
+
+> El `granate` aparece **únicamente** en `CvvModal` y en el toast de error crítico.
+> Ningún otro componente transversal puede usarlo (ver _Regla especial — flujo CVV_).
+
+---
+
+### Catálogo de cards
+
+Anatomía de cada card reutilizable (viven en `packages/ui/src/molecules`):
+
+| Card | Usada en | Anatomía | Acento / color |
+|---|---|---|---|
+| `ServiceCard` | Dashboard | Ícono + título + descripción corta + flecha; una por módulo | borde/acento del color del módulo destino |
+| `StatCard` | Dashboard, Perfil | Métrica grande + label + delta opcional | crema · cacao · delta en oliva/coral |
+| `JobCard` | Empleabilidad, Dashboard (top 3) | Título, empresa, `MatchBadge`, `AreaBadge`, nº de skills faltantes, CTA "Ver detalle" | terracota (título) · ámbar (match) · coral (CTA) |
+| `CourseCard` | Formaciones, Detalle vacante (sugeridos) | Thumbnail/preview, `ProviderBadge` (GEAR/ONE), `LevelBadge`, `AreaBadge`, estado (completado), CTA "Ver curso" | ámbar (nivel) · oliva (completado) |
+| `MentorCard` | Mentorías | Avatar, nombre, área, bio corta, `StatusBadge` de disponibilidad, CTA "Agendar práctica" | azul horizonte (confianza) · terracota (CTA) |
+| `ExperienceCard` | Experiencias | Thumbnail de video, `speaker_name`, `speaker_role`, `TypeBadge` (`experience_type`), área | terracota · arena (fondo) |
+| `EventCard` | Mapa de eventos | Título, fecha (`date-fns`), distancia, `CoverageBadge`, CTA "Ver en mapa" | arena (fondo) · semáforo cobertura |
+| `CheckinHistoryCard` | Salud, Dashboard | Sparkline semanal de `rating` (`recharts`) + emoji del día | azul-soft · crema |
+
+---
+
+### Catálogo de badges y chips
+
+Todos derivan del átomo `Badge`. Los que mapean a un ENUM del backend usan su valor como fuente de verdad:
+
+| Badge | Fuente (enum/campo) | Valores → estilo |
+|---|---|---|
+| `MatchBadge` | `matchScore` (0-100) | Fondo **ámbar** + texto cacao `#4A2B10` (ámbar nunca con texto blanco). ≥70% resaltado |
+| `LevelBadge` | `level_type` | `BEGINNER` arena · `INTERMEDIATE` terracota-soft · `ADVANCED` terracota |
+| `AreaBadge` | `skill_category` | Chip terracota-soft con texto cacao; ícono por área (`BACKEND`, `FRONTEND`, `MOBILE`, `DATA_SCIENCE`, `DESIGN_UX_UI`, `SOFT_SKILLS`) |
+| `StatusBadge` | `session_status` | `PENDING` ámbar-soft · `SCHEDULED` azul-soft · `COMPLETED` oliva-soft · `CANCELED` arena/topo |
+| `TypeBadge` | `experience_type` | `WORKSHOP` · `BOOTCAMP` · `WEBINAR` · `JOB_EXPERIENCE` → chips terracota-soft con ícono |
+| `ProviderBadge` | `Course.provider` | GEAR (Google Cloud) / ONE (Oracle & Alura) con logo + tono neutro arena |
+| `CoverageBadge` | nivel de cobertura | **alta** oliva · **media** ámbar · **baja** coral (nunca granate — reservado a CVV) |
+| `SkillChip` | `Skill` | Chip seleccionable; adquirido = oliva-soft, faltante = arena |
+
+---
+
+### Patrón de filtros (`FilterBar`)
+
+Componente `FilterBar` reutilizable para las vistas de listado (Formaciones, Empleabilidad, Experiencias, Mentorías, Eventos):
+
+- **Persistencia en URL con `nuqs`** — cada filtro es un query param (`?area=FRONTEND&nivel=BEGINNER`), compartible y restaurable al volver.
+- **Layout:** fila de `Select`/chips en desktop; `Sheet` (drawer) "Filtros" en mobile con contador de filtros activos.
+- **Chips de filtros activos** removibles individualmente + "Limpiar todo".
+- **Estilo:** controles sobre crema, chip activo en terracota-soft, foco visible siempre.
+
+| Vista | Filtros | Orden / extra |
+|---|---|---|
+| Formaciones | `proveedor` (GEAR/ONE) · `nivel` (`level_type`) · `área` (`skill_category`) · estado (completado) | sort por nivel; búsqueda por nombre |
+| Empleabilidad | `área` (`skill_category`) · match mínimo (slider) · objetivo | **sort por match score desc** (default) |
+| Experiencias | `área` (`skill_category`) · `tipo` (`experience_type`) | feed/grid; sort por `date_time` |
+| Mentorías | `área` · disponibilidad (hoy/semana) | toggle lista ↔ calendario |
+| Eventos | tipo de conectividad (`CoverageBadge`) · radio (km) · tipo de evento | radio como slider; geo del usuario |
+
+---
+
+### Vistas — detalle
+
+#### 1 · Landing pública — `/`
+- **Objetivo:** presentar BiT y derivar a Registro/Login.
+- **Estructura:** hero (claim + CTA "Crear cuenta" / "Ingresar"), bloque de los 5 servicios (`ServiceCard` informativas), prueba social, footer con selector de idioma.
+- **Estados:** estática (SSG). Sin estados de datos.
+- **Paleta:** crema base, hero en terracota, hitos/CTA secundario en ámbar. Proporción 60-30-10 estricta.
+
+#### 2 · Registro — `/register` · `(auth)`
+- **Objetivo:** crear la cuenta (`User`: email + password) antes del onboarding.
+- **Componentes:** `Input` (email, password, confirmar password) con `aria-describedby`; medidor de fuerza de contraseña; checkbox de términos; `Button` primario "Crear cuenta"; link a `/login`.
+- **Lógica:** `POST /auth/register` → en éxito, `POST /auth/login` automático → guarda JWT (token en `userStore`) → redirige a `/onboarding`.
+- **Estados:** loading (spinner en botón), error inline (email ya existe → granate **solo** en el mensaje de error de campo, no decorativo), éxito (redirección).
+- **Nota de alcance:** `User.rol` por defecto `MENTEE`; el alta de `MENTOR` es flujo aparte (a confirmar con backend).
+- **Paleta:** crema + terracota (acogida). Sin ámbar de celebración aún.
+
+#### 3 · Login — `/login` · `(auth)`
+- **Objetivo:** autenticar usuarios existentes.
+- **Componentes:** `Input` (email, password), "¿Olvidaste tu contraseña?", `Button` "Ingresar", link a `/register`.
+- **Lógica:** `POST /auth/login` → JWT → si el `Profile` está incompleto va a `/onboarding`, si no a `/dashboard`. `POST /auth/refresh` para renovar token.
+- **Estados:** loading, error de credenciales (mensaje accesible), rate-limit (back aplica Bucket4j → mostrar "demasiados intentos").
+- **Paleta:** crema + terracota.
+
+#### 4 · Onboarding — `/onboarding` · `(onboarding)`
+- **Objetivo:** completar el `Profile` (personal + profesional) y disparar la primera orientación.
+- **Organism:** `OnboardingWizard` (3 pasos, una sola ruta, estado en `userStore` con `persist`).
+  - **Paso 1 · Datos personales:** nombre, fecha de nacimiento, `género` (`gender_type`, 5 labels → 3 valores), `nivel educativo` (`education_level_type`), país, ciudad, WhatsApp. *(El email ya viene del Registro — no se vuelve a pedir.)*
+  - **Paso 2 · Perfil profesional:** `nivel` (`level_type`), `área` (`skill_category`), `objetivo`, resumen opcional.
+  - **Paso 3 · Confirmación:** resumen accesible + bienvenida personalizada.
+- **Componentes:** `OnboardingProgress` (barra animada, ámbar), `Select`/`Input` con validación Zod progresiva, `AnimatePresence` (slide horizontal), micro-interacciones (shake en error, check oliva en válido).
+- **Lógica:** `PUT /perfil` (autenticado) al avanzar/confirmar → `POST /orientar` al finalizar → muestra gap % y redirige al dashboard.
+- **Estados:** validación por paso, guardado optimista, error de red (toast), retomar progreso desde `persist`.
+- **Paleta:** crema (acogida) + terracota (acción) + **ámbar para celebrar el avance** del wizard.
+
+#### 5 · Dashboard / Home — `/dashboard`
+- **Objetivo:** foto del progreso y acceso a los 5 servicios.
+- **Estructura / cards:**
+  - `GapRing` — gap porcentual animado (dona/anillo, coral sobre track arena).
+  - `JobCard` ×3 — top vacantes compatibles (resumen).
+  - **Trayectoria sugerida** — timeline visual (Framer Motion) con hitos en ámbar.
+  - `CheckinHistoryCard` — sparkline emocional de la semana (azul-soft).
+  - Grilla de `ServiceCard` ×5 (Formaciones, Empleabilidad, Experiencias, Mentorías, Salud).
+- **Lógica:** `GET /perfil`, resultado de `/orientar` (cacheado por TanStack Query), `GET /salud/historial`. Si hay check-in pendiente → abre `CheckinModal`.
+- **Estados:** skeletons por card, empty ("Completá tu primer check-in"), error por sección sin tumbar la página.
+- **Paleta:** crema base; gap en coral/ámbar; bloque de bienestar en azul. Mezcla equilibrada 60-30-10.
+
+#### 6 · Formaciones — `/dashboard/formaciones`
+- **Objetivo:** explorar cursos gratuitos (GEAR/ONE) para cerrar skills.
+- **Cards / componentes:** grid de `CourseCard`; `FilterBar` (proveedor, nivel, área, completado); `@tanstack/react-table` para vista tabla densa con sorting/paginación; `react-player` en modal de preview.
+- **Lógica:** `GET /cursos` con filtros; `nuqs` sincroniza filtros en URL.
+- **Estados:** loading (skeleton de cards), empty ("Sin cursos para estos filtros" + limpiar), error.
+- **Paleta:** ámbar (aprendizaje) + **verde oliva** para lo completado (florece en verde).
+
+#### 7 · Empleabilidad (listado) — `/dashboard/empleabilidad`
+- **Objetivo:** vacantes ordenadas por compatibilidad con gap breakdown.
+- **Cards / componentes:** lista/tabla de `JobCard` con `MatchBadge`; `@tanstack/react-table` (filtrable, sortable); `FilterBar` (área, match mínimo, objetivo); sort por match desc por defecto.
+- **Lógica:** `GET /vacantes` (match = `Profile_skills` ∩ `Job_skills`, lo calcula el backend).
+- **Estados:** loading, empty ("Aún no hay vacantes compatibles — subí tu match con estos cursos" → link a Formaciones), error.
+- **Paleta:** terracota + coral + ámbar — **el módulo de mayor acción**.
+
+#### 8 · Detalle de vacante — `/dashboard/empleabilidad/[id]`
+- **Objetivo:** ver requisitos y el camino concreto para cerrarlos.
+- **Estructura:** header (título, empresa, `MatchBadge`, `AreaBadge`), **checklist de requisitos** (`SkillChip`: cumplido oliva / faltante arena), `CourseCard` sugeridos por cada skill faltante, CTA "Falta esto → ver curso".
+- **Lógica:** `GET /vacantes/{id}` + cruce de skills faltantes con `GET /cursos` (`Course_skills`).
+- **Estados:** loading, 404 (vacante inexistente), error.
+- **Paleta:** terracota + coral + ámbar; requisitos cumplidos en oliva.
+
+#### 9 · Experiencias Estructurantes — `/dashboard/experiencias`
+- **Objetivo:** feed de testimonios en video que inspiran trayectorias.
+- **Cards / componentes:** grid de `ExperienceCard`; `react-player` (YouTube/Vimeo/MP4) en modal o inline; `FilterBar` (área, `experience_type`).
+- **Lógica:** `GET /experiencias` con filtros.
+- **Estados:** loading (skeleton thumbnails), empty, error de carga de video (fallback a link).
+- **Paleta:** terracota + arena — historias en tono cálido, sin estridencia.
+
+#### 10 · Mentorías — `/dashboard/mentorias`
+- **Objetivo:** encontrar mentores y agendar prácticas.
+- **Estructura:** grid de `MentorCard` (mentores = `user_role MENTOR`) + vista calendario `@fullcalendar/react` (semana, drag-and-drop) para slots; `StatusBadge` por `session_status`.
+- **Lógica:** `GET /mentores` (disponibilidad); `POST /mentores/{id}/agendar` → confirma con `NotificationToast`. El usuario agenda como `MENTEE`. Flag `is_practice_invitation` para sesiones de práctica.
+- **Estados:** loading, sin mentores en el área (empty), slot ya tomado (control de concurrencia → toast "ese horario se ocupó"), confirmación.
+- **Paleta:** **azul horizonte** (confianza primero) + terracota (conexión humana, CTA).
+
+#### 11 · Salud Mental — `/dashboard/salud`
+- **Objetivo:** check-in emocional, respuesta empática del agente y derivación CVV segura.
+- **Estructura:** `EmojiCheckIn` (`mood_emoji`: HAPPY, DEPRESSED, FURIOUS, ANXIOUS, NEUTRAL) + nota `rating` 1-5; `MoodBanner` con `accion_sugerida`; chat/stream del agente IA; `CheckinHistoryCard` (línea semanal de `rating`).
+- **Lógica:** `POST /salud` → `{ mensaje, accion_sugerida, derivar_cvv, nota_actual, alerta }`; `POST /salud/stream` (SSE, Vercel AI SDK) para la respuesta en streaming; `GET /salud/historial`.
+- **🚨 Derivación CVV:** si `derivar_cvv === true` → `CvvModal` (granate, no dismissable). La decisión es del backend; el front solo reacciona al flag. **100% de cobertura de test.**
+- **Estados:** streaming (tokens en vivo), loading historial, error del agente (igual se respeta la derivación CVV si vino), empty (primer check-in).
+- **Paleta:** **azul horizonte dominante** + crema — el único módulo donde el frío domina (acá se viene a calmarse). Granate **solo** en el modal CVV.
+
+#### 12 · Mapa de eventos — `/dashboard/eventos` · (Fase 4)
+- **Objetivo:** eventos cercanos según ubicación y cobertura de red (Vísent CDRView).
+- **Estructura:** `react-leaflet` (tiles OSM) con `leaflet.markercluster` (clustering) y `leaflet.heat` (heatmap de cobertura); panel lateral con `EventCard`; `FilterBar` (conectividad, radio, tipo).
+- **Heatmap — decisión cromática:** la cobertura usa un **semáforo cálido** que respeta la regla de "no segundo color frío": **alta = oliva**, **media = ámbar**, **baja = coral** (nunca granate). Coherente con `CoverageBadge`.
+- **Lógica:** `GET /eventos?lat&lng&radio` → eventos + nivel de cobertura; si cobertura baja → `sugerir_offline` (CTA de descarga offline). `POST /push/suscribir` para alertas.
+- **Estados:** permiso de geolocalización (solicitud/denegado → fallback a ciudad del perfil), loading del dataset, empty (sin eventos en el radio), offline.
+- **Paleta:** terracota + arena + semáforo de cobertura (oliva/ámbar/coral).
+
+#### 13 · Perfil / Configuración — `/dashboard/perfil`
+- **Objetivo:** ver y editar el `Profile`, gestionar skills, idioma, notificaciones y descargas offline.
+- **Estructura:** `StatCard` de progreso, secciones editables (datos personales, profesionales), `SkillChip` (adquiridos en oliva), toggles de idioma (ES/PT) y notificaciones push, lista de recursos descargados offline, cerrar sesión.
+- **Lógica:** `GET /perfil` / `PUT /perfil`; suscripción push (`POST /push/suscribir`).
+- **Estados:** loading, guardado optimista + toast, error de validación.
+- **Paleta:** crema + terracota; skills adquiridos en oliva.
+
+---
+
 ## Tokens — integración con Fase 0 del plan de frontend
 
 Estos tokens reemplazan la tarea "Paleta BiT en CSS variables" de la Fase 0.

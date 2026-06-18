@@ -4,6 +4,7 @@ export type OrientationRequest = {
     email: string;
     birthDate: string;
     gender: string;
+    educationLevel: string;
     country: string;
     city: string;
     whatsapp: string;

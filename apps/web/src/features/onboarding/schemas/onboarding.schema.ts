@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { SelectOption } from "../types/onboarding.types";
 import {
+  EDUCATION_LEVEL_OPTIONS,
   GENDER_OPTIONS,
   OBJECTIVE_OPTIONS,
   TECH_AREA_OPTIONS,
@@ -49,6 +50,13 @@ export const personalDataSchema = z.object({
     .refine(
       (value) => isAllowedOption(GENDER_OPTIONS, value),
       "Seleccioná una opción válida.",
+    ),
+  educationLevel: z
+    .string()
+    .min(1, "Seleccioná tu nivel educativo.")
+    .refine(
+      (value) => isAllowedOption(EDUCATION_LEVEL_OPTIONS, value),
+      "Seleccioná un nivel educativo válido.",
     ),
   country: z
     .string()
@@ -104,6 +112,7 @@ export const ONBOARDING_DEFAULT_VALUES = {
   email: "",
   birthDate: "",
   gender: "",
+  educationLevel: "",
   country: "",
   city: "",
   whatsapp: "",

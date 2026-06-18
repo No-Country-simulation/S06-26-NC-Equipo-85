@@ -97,6 +97,7 @@ Mantener paridad de keys entre `es` y `pt`.
 
 ## Plan por fases
 
-Ver [specs/appbit-frontend-plan.md](specs/appbit-frontend-plan.md) (6 fases, 20 semanas)
-y [specs/appbit-design-system.md](specs/appbit-design-system.md).
+Ver [specs/planner/appbit-frontend-plan.md](specs/planner/appbit-frontend-plan.md) (6 fases, 20 semanas),
+[specs/planner/appbit-backend-plan.md](specs/planner/appbit-backend-plan.md)
+y [specs/planner/appbit-design-system.md](specs/planner/appbit-design-system.md).
 Cambios gestionados con OpenSpec en [openspec/changes/](openspec/changes/).
