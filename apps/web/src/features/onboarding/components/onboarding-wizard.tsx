@@ -27,7 +27,11 @@ import type {
   OnboardingFormValues,
   OnboardingStep,
 } from "../types/onboarding.types";
-import { ONBOARDING_STEPS } from "../utils/onboarding-options";
+import {
+  GENDER_OPTIONS,
+  ONBOARDING_STEPS,
+  resolveApiValue,
+} from "../utils/onboarding-options";
 import { ConfirmationStep } from "./confirmation-step";
 import { OnboardingProgress } from "./onboarding-progress";
 import { PersonalDataStep } from "./personal-data-step";
@@ -80,7 +84,8 @@ function buildOrientationRequest(
       fullName: values.fullName,
       email: values.email,
       birthDate: values.birthDate,
-      gender: values.gender,
+      gender: resolveApiValue(GENDER_OPTIONS, values.gender),
+      educationLevel: values.educationLevel,
       country: values.country,
       city: values.city,
       whatsapp: values.whatsapp,
@@ -130,6 +135,7 @@ function getStepByField(field: FieldPath<OnboardingFormValues>): OnboardingStep 
     "email",
     "birthDate",
     "gender",
+    "educationLevel",
     "country",
     "city",
     "whatsapp",

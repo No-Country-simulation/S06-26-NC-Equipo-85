@@ -4,7 +4,10 @@ import type {
 } from "react-hook-form";
 import { Input, Label } from "@app/ui";
 import type { OnboardingFormValues } from "../types/onboarding.types";
-import { GENDER_OPTIONS } from "../utils/onboarding-options";
+import {
+  EDUCATION_LEVEL_OPTIONS,
+  GENDER_OPTIONS,
+} from "../utils/onboarding-options";
 
 type PersonalDataStepProps = {
   errors: FieldErrors<OnboardingFormValues>;
@@ -73,6 +76,29 @@ export function PersonalDataStep({ errors, register }: PersonalDataStepProps) {
 
           {errors.gender?.message ? (
             <p className="text-xs text-destructive">{errors.gender.message}</p>
+          ) : null}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="educationLevel">Nivel educativo</Label>
+          <select
+            aria-invalid={Boolean(errors.educationLevel)}
+            className={selectClassName}
+            id="educationLevel"
+            {...register("educationLevel")}
+          >
+            <option value="">Seleccionar</option>
+            {EDUCATION_LEVEL_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+
+          {errors.educationLevel?.message ? (
+            <p className="text-xs text-destructive">
+              {errors.educationLevel.message}
+            </p>
           ) : null}
         </div>
 

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@app/ui";
 import type { OnboardingFormValues } from "../types/onboarding.types";
 import {
+  EDUCATION_LEVEL_OPTIONS,
   GENDER_OPTIONS,
   OBJECTIVE_OPTIONS,
   TECH_AREA_OPTIONS,
@@ -32,6 +33,10 @@ export function ConfirmationStep({ values }: ConfirmationStepProps) {
     {
       label: "Género",
       value: getOptionLabel(GENDER_OPTIONS, values.gender),
+    },
+    {
+      label: "Nivel educativo",
+      value: getOptionLabel(EDUCATION_LEVEL_OPTIONS, values.educationLevel),
     },
     { label: "País", value: values.country },
     { label: "Ciudad", value: values.city },

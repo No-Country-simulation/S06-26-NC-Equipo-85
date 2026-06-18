@@ -8,7 +8,7 @@ import type {
 const MOCK_DELAY_MS = 500;
 
 const JOBS_BY_AREA: Record<string, CompatibleJob[]> = {
-  frontend: [
+  FRONTEND: [
     {
       id: "frontend-trainee",
       title: "Frontend Trainee",
@@ -24,7 +24,7 @@ const JOBS_BY_AREA: Record<string, CompatibleJob[]> = {
       missingRequirements: ["Accesibilidad", "Consumo de APIs"],
     },
   ],
-  backend: [
+  BACKEND: [
     {
       id: "backend-trainee",
       title: "Backend Trainee",
@@ -33,31 +33,40 @@ const JOBS_BY_AREA: Record<string, CompatibleJob[]> = {
       missingRequirements: ["Bases de datos", "APIs REST"],
     },
   ],
-  fullstack: [
+  MOBILE: [
     {
-      id: "fullstack-trainee",
-      title: "Full Stack Trainee",
+      id: "mobile-trainee",
+      title: "Mobile Trainee",
       company: "Impact Tech",
       matchScore: 73,
-      missingRequirements: ["Arquitectura frontend", "APIs REST"],
+      missingRequirements: ["React Native", "Publicación en stores"],
     },
   ],
-  qa: [
-    {
-      id: "qa-trainee",
-      title: "QA Manual Trainee",
-      company: "BiT Partner",
-      matchScore: 79,
-      missingRequirements: ["Casos de prueba", "Reporte de bugs"],
-    },
-  ],
-  data: [
+  DATA_SCIENCE: [
     {
       id: "data-trainee",
       title: "Data Analyst Trainee",
       company: "Impact Tech",
       matchScore: 66,
       missingRequirements: ["SQL", "Visualización de datos"],
+    },
+  ],
+  DESIGN_UX_UI: [
+    {
+      id: "ux-trainee",
+      title: "UX/UI Junior",
+      company: "BiT Partner",
+      matchScore: 74,
+      missingRequirements: ["Design system", "Investigación de usuarios"],
+    },
+  ],
+  SOFT_SKILLS: [
+    {
+      id: "soft-skills-path",
+      title: "Programa de empleabilidad",
+      company: "BiT Partner",
+      matchScore: 70,
+      missingRequirements: ["Comunicación efectiva", "Trabajo en equipo"],
     },
   ],
 };
@@ -74,10 +83,9 @@ function wait(ms: number) {
  */
 function getMockGapPercentage(techLevel: string) {
   const gapByLevel: Record<string, number> = {
-    "sin-experiencia": 78,
-    inicial: 58,
-    intermedio: 34,
-    avanzado: 18,
+    BEGINNER: 78,
+    INTERMEDIATE: 34,
+    ADVANCED: 18,
   };
 
   return gapByLevel[techLevel] ?? 62;
