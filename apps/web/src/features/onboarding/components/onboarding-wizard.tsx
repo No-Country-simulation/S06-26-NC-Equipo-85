@@ -30,6 +30,8 @@ import { OnboardingSuccess } from "./onboarding-success";
 import { PersonalDataStep } from "./personal-data-step";
 import { ProfessionalProfileStep } from "./professional-profile-step";
 
+// Mensaje de testing para deploy.
+
 type PersistApi = {
   hasHydrated: () => boolean;
   onFinishHydration: (callback: () => void) => () => void;
