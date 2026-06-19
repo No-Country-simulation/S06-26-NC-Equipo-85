@@ -36,6 +36,21 @@ export const GENDER_OPTIONS = [
 ] as const satisfies readonly SelectOption[];
 
 /**
+ * País — campo `country` (string libre en el backend). Lista acotada a los
+ * mercados objetivo del MVP; el valor enviado es la etiqueta tal cual.
+ */
+export const COUNTRY_OPTIONS = [
+  { value: "Argentina", label: "Argentina" },
+  { value: "Brasil", label: "Brasil" },
+  { value: "Chile", label: "Chile" },
+  { value: "Colombia", label: "Colombia" },
+  { value: "México", label: "México" },
+  { value: "Perú", label: "Perú" },
+  { value: "Uruguay", label: "Uruguay" },
+  { value: "Otro", label: "Otro" },
+] as const satisfies readonly SelectOption[];
+
+/**
  * Nivel educativo — enum `education_level_type`.
  * (`SCHOOL` corrige el typo `HIGH_SCOOL` del diagrama original.)
  */
@@ -50,9 +65,10 @@ export const EDUCATION_LEVEL_OPTIONS = [
 /**
  * Nivel profesional — enum `level_type` (BEGINNER, INTERMEDIATE, ADVANCED).
  * (`INTERMEDIATE` corrige el typo `INTERMADIATE` del diagrama original.)
+ * Labels cortas: se muestran como chips seleccionables (no como select).
  */
 export const TECH_LEVEL_OPTIONS = [
-  { value: "BEGINNER", label: "Principiante / desde cero" },
+  { value: "BEGINNER", label: "Principiante" },
   { value: "INTERMEDIATE", label: "Intermedio" },
   { value: "ADVANCED", label: "Avanzado" },
 ] as const satisfies readonly SelectOption[];
@@ -60,26 +76,38 @@ export const TECH_LEVEL_OPTIONS = [
 /**
  * Área de interés — enum `skill_category`. Alineado al grafo de skills del
  * backend para que el match score y los filtros de vacantes/cursos compartan
- * el mismo catálogo.
+ * el mismo catálogo. Se muestran como chips seleccionables.
  */
 export const TECH_AREA_OPTIONS = [
   { value: "FRONTEND", label: "Frontend" },
   { value: "BACKEND", label: "Backend" },
-  { value: "MOBILE", label: "Mobile / Apps" },
+  { value: "MOBILE", label: "Mobile" },
   { value: "DATA_SCIENCE", label: "Data Science" },
   { value: "DESIGN_UX_UI", label: "Diseño UX/UI" },
   { value: "SOFT_SKILLS", label: "Habilidades blandas" },
 ] as const satisfies readonly SelectOption[];
 
 /**
- * Objetivo — campo `objective` (string libre en el backend). Se mantienen
- * opciones acotadas en la UI; el valor se envía tal cual como string.
+ * Objetivo — campo `objective` (string libre en el backend). Se muestran como
+ * tarjetas de selección (radio cards) con descripción de apoyo; el valor se
+ * envía tal cual como string.
  */
 export const OBJECTIVE_OPTIONS = [
-  { value: "estudiar", label: "Quiero estudiar tecnología" },
-  { value: "definir-camino", label: "Quiero definir mi camino" },
-  { value: "buscar-empleo", label: "Quiero conseguir mi primer empleo" },
-  { value: "cambiar-empleo", label: "Quiero cambiar o mejorar mi empleo actual" },
+  {
+    value: "primer-empleo",
+    label: "Conseguir mi primer empleo",
+    description: "Estoy empezando en tech",
+  },
+  {
+    value: "reconversion",
+    label: "Reconvertir mi carrera",
+    description: "Vengo de otra área",
+  },
+  {
+    value: "mejorar",
+    label: "Mejorar mis skills",
+    description: "Ya trabajo y quiero crecer",
+  },
 ] as const satisfies readonly SelectOption[];
 
 /**

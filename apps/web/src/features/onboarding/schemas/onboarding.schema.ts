@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { SelectOption } from "../types/onboarding.types";
 import {
+  COUNTRY_OPTIONS,
   EDUCATION_LEVEL_OPTIONS,
   GENDER_OPTIONS,
   OBJECTIVE_OPTIONS,
@@ -25,16 +26,13 @@ function isAllowedOption(
 }
 
 export const personalDataSchema = z.object({
+  // El email NO se pide acá: llega del Registro (POST /auth/register) y se
+  // inyecta al construir el request de /orientar. Ver onboarding-wizard.
   fullName: z
     .string()
     .trim()
     .min(2, "Ingresá tu nombre completo.")
     .max(80, "El nombre no puede superar los 80 caracteres."),
-  email: z
-    .string()
-    .trim()
-    .email("Ingresá un e-mail válido.")
-    .max(120, "El e-mail no puede superar los 120 caracteres."),
   birthDate: z
     .string()
     .min(1, "Ingresá tu fecha de nacimiento.")
@@ -60,18 +58,23 @@ export const personalDataSchema = z.object({
     ),
   country: z
     .string()
-    .trim()
-    .min(2, "Ingresá tu país.")
-    .max(60, "El país no puede superar los 60 caracteres."),
+    .min(1, "Seleccioná tu país.")
+    .refine(
+      (value) => isAllowedOption(COUNTRY_OPTIONS, value),
+      "Seleccioná un país válido.",
+    ),
   city: z
     .string()
     .trim()
     .min(2, "Ingresá tu ciudad.")
     .max(80, "La ciudad no puede superar los 80 caracteres."),
+  // WhatsApp es opcional (mockup lo marca "opcional"); si se completa, valida formato.
   whatsapp: z
     .string()
     .trim()
-    .regex(phoneRegex, "Ingresá un WhatsApp válido."),
+    .regex(phoneRegex, "Ingresá un WhatsApp válido.")
+    .or(z.literal(""))
+    .optional(),
 });
 
 export const professionalProfileSchema = z.object({
@@ -109,7 +112,6 @@ export const onboardingFormSchema = personalDataSchema.merge(
 
 export const ONBOARDING_DEFAULT_VALUES = {
   fullName: "",
-  email: "",
   birthDate: "",
   gender: "",
   educationLevel: "",

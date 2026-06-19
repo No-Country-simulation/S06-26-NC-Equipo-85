@@ -10,7 +10,8 @@ type OnboardingProgressProps = {
 };
 
 /**
- * Muestra el avance accesible del wizard de onboarding.
+ * Avance del wizard: barra ámbar (celebra el progreso, design system) + labels
+ * de los 3 pasos que se tiñen en terracota a medida que se alcanzan.
  */
 export function OnboardingProgress({
   currentStep,
@@ -19,71 +20,39 @@ export function OnboardingProgress({
   const progressValue = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <section aria-labelledby="onboarding-progress-title" className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2
-            id="onboarding-progress-title"
-            className="text-sm font-semibold text-foreground"
-          >
-            Progreso del perfil
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Paso {currentStep + 1} de {steps.length}
-          </p>
-        </div>
-
-        <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-          {Math.round(progressValue)}%
-        </span>
-      </div>
+    <section aria-labelledby="onboarding-progress-title">
+      <h2 id="onboarding-progress-title" className="sr-only">
+        Progreso del onboarding
+      </h2>
 
       <div
         aria-label="Progreso del onboarding"
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={Math.round(progressValue)}
-        className="h-2 overflow-hidden rounded-full bg-muted"
+        className="h-1.5 overflow-hidden rounded-full bg-arena"
         role="progressbar"
       >
         <div
-          className="h-full rounded-full bg-primary transition-all duration-300"
+          className="h-full rounded-full bg-ambar transition-all duration-300"
           style={{ width: `${progressValue}%` }}
         />
       </div>
 
-      <ol className="grid gap-3 md:grid-cols-3">
+      <ol className="mt-2 flex gap-3.5 text-xs font-semibold">
         {steps.map((step) => {
-          const isActive = step.id === currentStep;
-          const isCompleted = step.id < currentStep;
+          const isReached = step.id <= currentStep;
 
           return (
             <li
-              aria-current={isActive ? "step" : undefined}
-              className={cn(
-                "rounded-xl border bg-card p-3 transition-colors",
-                isActive && "border-primary bg-primary/5",
-                isCompleted && "border-primary/40",
-              )}
               key={step.id}
+              aria-current={step.id === currentStep ? "step" : undefined}
+              className={cn(
+                "transition-colors",
+                isReached ? "text-terracota" : "text-muted-foreground/60",
+              )}
             >
-              <span
-                className={cn(
-                  "mb-2 flex size-7 items-center justify-center rounded-full border text-xs font-semibold",
-                  isActive && "border-primary bg-primary text-primary-foreground",
-                  isCompleted && "border-primary bg-primary/10 text-primary",
-                )}
-              >
-                {step.id + 1}
-              </span>
-
-              <h3 className="text-sm font-semibold text-foreground">
-                {step.title}
-              </h3>
-
-              <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                {step.description}
-              </p>
+              {step.title}
             </li>
           );
         })}
