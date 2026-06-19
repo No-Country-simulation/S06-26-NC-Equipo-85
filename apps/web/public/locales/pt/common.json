@@ -90,5 +90,56 @@
       "terms": "Termos",
       "contact": "Contato"
     }
+  },
+  "auth": {
+    "register": {
+      "brand": {
+        "title": "Cada check-in é um novo começo.",
+        "bullet1": "Orientação personalizada com IA",
+        "bullet2": "Formação gratuita do Google e da Oracle",
+        "bullet3": "Vagas de acordo com seu perfil real"
+      },
+      "title": "Crie sua conta",
+      "subtitle": "Comece seu caminho em menos de 2 minutos.",
+      "emailLabel": "Correio eletrônico",
+      "emailPlaceholder": "seu@email.com",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "confirmLabel": "Confirmar senha",
+      "confirmPlaceholder": "Repita a senha",
+      "strength": {
+        "weak": "Fraca",
+        "medium": "Média",
+        "strong": "Forte"
+      },
+      "terms": "Aceito os <terms>Termos e Condições</terms> e a Política de Privacidade da BiT.",
+      "submit": "Criar conta",
+      "haveAccount": "Já tem uma conta?",
+      "loginLink": "Entrar",
+      "successTitle": "Conta criada",
+      "successApi": "Sua conta foi criada. Complete seu perfil para começar.",
+      "successMock": "Conta simulada (a API ainda não está configurada).",
+      "errorTitle": "Não foi possível criar a conta"
+    },
+    "login": {
+      "brand": {
+        "title": "Seu progresso está te esperando.",
+        "subtitle": "Continue fechando sua lacuna e descubra novas vagas compatíveis com seu perfil."
+      },
+      "title": "Olá de novo",
+      "subtitle": "Entre para acompanhar seu progresso.",
+      "emailLabel": "Correio eletrônico",
+      "emailPlaceholder": "seu@email.com",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Sua senha",
+      "forgot": "Esqueceu?",
+      "submit": "Entrar",
+      "noAccount": "Não tem uma conta?",
+      "registerLink": "Criar conta",
+      "successTitle": "Login bem-sucedido",
+      "successApi": "Bem-vinda de volta!",
+      "successMock": "Login simulado (a API ainda não está configurada).",
+      "errorTitle": "Não foi possível entrar"
+    }
   }
 }
