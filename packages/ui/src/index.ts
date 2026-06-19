@@ -19,5 +19,6 @@ export * from "./molecules/course-card";
 export * from "./molecules/mentor-card";
 export * from "./molecules/mood-banner";
 export * from "./molecules/notification-toast";
+export * from "./molecules/service-card";
 
 export { cn } from "./lib/utils";

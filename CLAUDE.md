@@ -75,11 +75,15 @@ Rutas con prefijo de locale: `/es/*` (default) y `/pt/*`.
   [request.ts](apps/web/src/i18n/request.ts),
   [navigation.ts](apps/web/src/i18n/navigation.ts)
 - Middleware: [apps/web/src/middleware.ts](apps/web/src/middleware.ts)
-- Traducciones: `apps/web/public/locales/{es,pt}/common.json` (namespace `common`)
+- Traducciones: `apps/web/public/locales/{es,pt}/common.json`. El archivo
+  completo se monta bajo el namespace raíz `common` (ver
+  [request.ts](apps/web/src/i18n/request.ts): `messages: { common }`). Por eso
+  un sub-bloque como `landing` se consume con `useTranslations('common.landing')`
+  (o `'common.landing.hero'`, …), **no** `useTranslations('landing')`.
 - Toda la app vive bajo `apps/web/src/app/[locale]/` con route groups
-  `(auth)` y `(dashboard)`.
+  `(public)` (landing), `(auth)`, `(onboarding)` y `(dashboard)`.
 
-**Regla:** nunca hardcodear strings visibles; usar `useTranslations('common')`.
+**Regla:** nunca hardcodear strings visibles; usar `useTranslations('common.…')`.
 Mantener paridad de keys entre `es` y `pt`.
 
 ## Convenciones
@@ -94,6 +98,37 @@ Mantener paridad de keys entre `es` y `pt`.
 - Nunca subir credenciales: `.env.local` en dev, env del servicio de deploy en prod.
 - Estado: Zustand solo para UI/local (`apps/web/src/store/`, patrón `skipHydration`);
   TanStack Query para todo dato de servidor.
+
+## Arquitectura por features (`apps/web/src/features/`)
+
+Cada vista/dominio de la app se organiza como una **feature** con separación de
+capas y responsabilidad única. Referencia canónica:
+[features/onboarding/](apps/web/src/features/onboarding/) y
+[features/landing/](apps/web/src/features/landing/).
+
+```
+apps/web/src/features/<feature>/
+├── components/   # componentes React de la feature; "use client" SOLO donde haya interactividad
+├── schemas/      # validación Zod (solo si la feature tiene formularios/inputs)
+├── types/        # tipos TS de la feature (enums backend, props, z.infer de los schemas)
+└── utils/        # data estática (opciones de selects, contenido) + helpers puros (sin JSX)
+```
+
+**Reglas:**
+- **Páginas server-first.** `app/[locale]/.../page.tsx` solo resuelve
+  `params`/`setRequestLocale`, exporta `metadata` y renderiza **un** componente
+  raíz de la feature (p. ej. `OnboardingWizard`, `LandingView`). La composición
+  y la interactividad viven en la feature, no en la página.
+- **Sin barrels en `features/`.** Importar por ruta profunda:
+  `@/features/<feature>/components/<comp>`.
+- **Separar data de presentación.** Listas/opciones/contenido estático van a
+  `utils/` (archivos `.ts` sin JSX; los íconos se guardan como *referencia* de
+  componente, p. ej. `icon: LucideIcon`, y se renderizan en el componente). Los
+  tipos van a `types/`. Los componentes solo orquestan y renderizan.
+- **Solo se crean las capas que aplican.** Una feature sin formularios no lleva
+  `schemas/` (el landing no tiene; el onboarding sí).
+- Los primitivos reutilizables (`Button`, `Card`, `ServiceCard`, …) siguen
+  viviendo en `@app/ui`; las features los **consumen**, no los recrean.
 
 ## Plan por fases
 
