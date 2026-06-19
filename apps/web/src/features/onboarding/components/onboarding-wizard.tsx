@@ -1,19 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FieldPath, UseFormSetError } from "react-hook-form";
 import { useForm, useWatch } from "react-hook-form";
 import type { ZodIssue } from "zod";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@app/ui";
+import { Button, Card, CardContent, Spinner } from "@app/ui";
 import { toast } from "sonner";
-import { useRouter } from "@/i18n/navigation";
 import { useOrientar } from "@/hooks/use-orientar";
 import { useUserStore } from "@/store/user-store";
 import type { OrientationRequest } from "@/services/orientation/orientation.types";
@@ -34,12 +26,18 @@ import {
 } from "../utils/onboarding-options";
 import { ConfirmationStep } from "./confirmation-step";
 import { OnboardingProgress } from "./onboarding-progress";
+import { OnboardingSuccess } from "./onboarding-success";
 import { PersonalDataStep } from "./personal-data-step";
 import { ProfessionalProfileStep } from "./professional-profile-step";
 
 type PersistApi = {
   hasHydrated: () => boolean;
   onFinishHydration: (callback: () => void) => () => void;
+};
+
+type CompletedState = {
+  name: string;
+  matchPercentage: number;
 };
 
 const FIRST_STEP = 0 satisfies OnboardingStep;
@@ -74,21 +72,42 @@ function createLocalProfileId() {
 }
 
 /**
+ * Lee el email de la sesión desde el draft persistido. Lo escribe el Registro
+ * (POST /auth/register) porque el onboarding ya no lo vuelve a pedir.
+ */
+function getSessionEmail() {
+  const data = useUserStore.getState().onboardingDraft.data as {
+    email?: string;
+  };
+
+  return data.email ?? "";
+}
+
+/**
+ * Convierte el match a partir del gap de `/orientar` (match = 100 − gap).
+ */
+function getMatchPercentage(gapPercentage: number) {
+  return Math.max(0, Math.min(100, Math.round(100 - gapPercentage)));
+}
+
+/**
  * Convierte los valores validados del formulario al contrato de `/orientar`.
+ * El `email` llega de la sesión (Registro), no del formulario.
  */
 function buildOrientationRequest(
   values: OnboardingFormValues,
+  email: string,
 ): OrientationRequest {
   return {
     personal: {
       fullName: values.fullName,
-      email: values.email,
+      email,
       birthDate: values.birthDate,
       gender: resolveApiValue(GENDER_OPTIONS, values.gender),
       educationLevel: values.educationLevel,
       country: values.country,
       city: values.city,
-      whatsapp: values.whatsapp,
+      whatsapp: values.whatsapp ?? "",
     },
     professional: {
       techLevel: values.techLevel,
@@ -132,7 +151,6 @@ function applyValidationErrors(
 function getStepByField(field: FieldPath<OnboardingFormValues>): OnboardingStep {
   const personalFields: readonly FieldPath<OnboardingFormValues>[] = [
     "fullName",
-    "email",
     "birthDate",
     "gender",
     "educationLevel",
@@ -163,12 +181,13 @@ function getErrorMessage(error: unknown) {
  * Wizard principal de onboarding.
  *
  * Encapsula formularios, validación progresiva, navegación de pasos,
- * persistencia local y mutation de orientación inicial.
+ * persistencia local, mutation de orientación inicial y pantalla de éxito.
  */
 export function OnboardingWizard() {
-  const router = useRouter();
   const hasLoadedInitialDraft = useRef(false);
   const orientationMutation = useOrientar();
+  const [showHint, setShowHint] = useState(false);
+  const [completed, setCompleted] = useState<CompletedState | null>(null);
 
   const draftStep = useUserStore((state) => state.onboardingDraft.step);
   const setDraftStep = useUserStore((state) => state.setDraftStep);
@@ -282,16 +301,17 @@ export function OnboardingWizard() {
   }
 
   function goToPreviousStep() {
+    setShowHint(false);
     setDraftStep(normalizeStep(currentStep - 1));
   }
 
   function goToNextStep() {
-    const isValid = validateCurrentStep();
-
-    if (!isValid) {
+    if (!validateCurrentStep()) {
+      setShowHint(true);
       return;
     }
 
+    setShowHint(false);
     setDraftStep(normalizeStep(currentStep + 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -319,14 +339,15 @@ export function OnboardingWizard() {
     }
 
     try {
+      const email = getSessionEmail();
       const orientationResult = await orientationMutation.mutateAsync(
-        buildOrientationRequest(result.data),
+        buildOrientationRequest(result.data, email),
       );
 
       completeOnboarding({
         id: createLocalProfileId(),
         name: result.data.fullName,
-        email: result.data.email,
+        email,
         area: result.data.techArea,
       });
 
@@ -339,7 +360,11 @@ export function OnboardingWizard() {
             : "El perfil fue enviado correctamente a /orientar.",
       });
 
-      router.push("/dashboard");
+      // Pantalla de éxito con el anillo de match antes de ir al dashboard.
+      setCompleted({
+        name: result.data.fullName.split(" ")[0] || result.data.fullName,
+        matchPercentage: getMatchPercentage(orientationResult.gapPercentage),
+      });
     } catch (error) {
       toast.error("No se pudo generar la orientación", {
         description: getErrorMessage(error),
@@ -347,67 +372,99 @@ export function OnboardingWizard() {
     }
   }
 
+  if (completed) {
+    return (
+      <OnboardingSuccess
+        name={completed.name}
+        matchPercentage={completed.matchPercentage}
+      />
+    );
+  }
+
   return (
-    <Card className="w-full">
-      <CardHeader className="space-y-4">
-        <div>
-          <CardTitle className="text-2xl">Onboarding App BiT</CardTitle>
-          <CardDescription>
-            Completá tu perfil para recibir una orientación inicial.
-          </CardDescription>
+    <div className="w-full">
+      <header className="mb-6 flex items-center gap-2.5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-terracota font-heading text-base font-bold text-white">
+          B
         </div>
+        <span className="font-heading text-base font-semibold text-cacao">
+          BiT
+        </span>
+        <div className="flex-1" />
+        <span className="text-sm font-semibold text-muted-foreground">
+          Paso {currentStep + 1} de {ONBOARDING_STEPS.length}
+        </span>
+      </header>
 
-        <OnboardingProgress
-          currentStep={currentStep}
-          steps={ONBOARDING_STEPS}
-        />
-      </CardHeader>
+      <OnboardingProgress currentStep={currentStep} steps={ONBOARDING_STEPS} />
 
-      <CardContent>
-        <form
-          className="space-y-8"
-          noValidate
-          onSubmit={(event) => {
-            event.preventDefault();
-            void submitOnboarding();
-          }}
-        >
-          {currentStep === 0 ? (
-            <PersonalDataStep errors={errors} register={register} />
-          ) : null}
+      <form
+        className="mt-7"
+        noValidate
+        onSubmit={(event) => {
+          event.preventDefault();
+          void submitOnboarding();
+        }}
+      >
+        <Card className="p-6">
+          <CardContent className="px-0">
+            {currentStep === 0 ? (
+              <PersonalDataStep errors={errors} register={register} />
+            ) : null}
 
-          {currentStep === 1 ? (
-            <ProfessionalProfileStep errors={errors} register={register} />
-          ) : null}
+            {currentStep === 1 ? (
+              <ProfessionalProfileStep
+                control={control}
+                errors={errors}
+                register={register}
+              />
+            ) : null}
 
-          {currentStep === 2 ? <ConfirmationStep values={values} /> : null}
+            {currentStep === 2 ? <ConfirmationStep values={values} /> : null}
+          </CardContent>
+        </Card>
 
-          <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
+        {showHint ? (
+          <p className="mt-3.5 text-sm font-semibold text-coral">
+            Completá los campos obligatorios (*) para continuar.
+          </p>
+        ) : null}
+
+        <div className="mt-6 flex items-center gap-3">
+          {currentStep > FIRST_STEP ? (
             <Button
-              disabled={currentStep === FIRST_STEP || isSubmitting}
+              disabled={isSubmitting}
               onClick={goToPreviousStep}
               type="button"
               variant="outline"
+              className="h-11"
             >
-              Volver
+              ← Atrás
             </Button>
+          ) : null}
 
-            {currentStep < LAST_STEP ? (
-              <Button
-                disabled={isSubmitting}
-                onClick={goToNextStep}
-                type="button"
-              >
-                Continuar
-              </Button>
-            ) : (
-              <Button disabled={isSubmitting} type="submit">
-                {isSubmitting ? "Generando orientación..." : "Confirmar perfil"}
-              </Button>
-            )}
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+          <div className="flex-1" />
+
+          {currentStep < LAST_STEP ? (
+            <Button
+              onClick={goToNextStep}
+              type="button"
+              className="h-11 bg-coral px-7 hover:bg-coral/90"
+            >
+              Continuar
+            </Button>
+          ) : (
+            <Button
+              disabled={isSubmitting}
+              type="submit"
+              className="h-11 bg-coral px-7 hover:bg-coral/90"
+            >
+              {isSubmitting ? <Spinner size="sm" /> : null}
+              {isSubmitting ? "Generando…" : "Confirmar perfil"}
+            </Button>
+          )}
+        </div>
+      </form>
+    </div>
   );
 }

@@ -22,7 +22,7 @@ type AuthCardProps = {
 export function AuthCard({ brand, children }: AuthCardProps) {
   return (
     <section className="grid overflow-hidden rounded-3xl bg-card shadow-xl ring-1 ring-foreground/5 md:grid-cols-2">
-      <aside
+      <div
         className="hidden flex-col justify-between p-10 text-white md:flex"
         style={{
           background:
@@ -58,7 +58,7 @@ export function AuthCard({ brand, children }: AuthCardProps) {
             </ul>
           ) : null}
         </div>
-      </aside>
+      </div>
 
       <div className="p-8 sm:p-10">{children}</div>
     </section>

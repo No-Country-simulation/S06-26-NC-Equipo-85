@@ -33,6 +33,7 @@ export function RegisterForm() {
   const t = useTranslations("common.auth.register");
   const router = useRouter();
   const setToken = useUserStore((state) => state.setToken);
+  const updateDraftData = useUserStore((state) => state.updateDraftData);
   const registerMutation = useRegister();
 
   const {
@@ -57,6 +58,10 @@ export function RegisterForm() {
       });
 
       setToken(result.token);
+
+      // El email no se vuelve a pedir en el onboarding: se guarda en el draft
+      // para que el wizard lo inyecte al construir el request de /orientar.
+      updateDraftData({ email: values.email });
 
       // Registro → siempre onboarding: el Profile recién creado está incompleto.
       // TODO: cuando el backend devuelva refreshToken, persistirlo además del

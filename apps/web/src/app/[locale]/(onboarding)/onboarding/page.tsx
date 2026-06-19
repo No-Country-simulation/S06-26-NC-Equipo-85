@@ -25,23 +25,8 @@ export default async function OnboardingPage({ params }: OnboardingPageProps) {
   setRequestLocale(locale);
 
   return (
-    <main className="min-h-dvh bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-6xl">
-        <section className="mb-8 max-w-3xl space-y-3">
-          <p className="text-sm font-medium uppercase tracking-wide text-primary">
-            Fase 2 · Perfil inicial
-          </p>
-
-          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
-            Construí tu orientación personalizada
-          </h1>
-
-          <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-            Este flujo guarda un borrador local del perfil para que puedas
-            retomarlo si cerrás el navegador antes de terminar.
-          </p>
-        </section>
-
+    <main className="min-h-dvh bg-background px-4 py-10 text-foreground sm:px-6 lg:py-14">
+      <div className="mx-auto w-full max-w-2xl">
         <OnboardingWizard />
       </div>
     </main>

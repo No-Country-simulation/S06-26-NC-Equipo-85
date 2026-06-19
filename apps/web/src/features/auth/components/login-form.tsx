@@ -29,6 +29,7 @@ export function LoginForm() {
   const t = useTranslations("common.auth.login");
   const router = useRouter();
   const setToken = useUserStore((state) => state.setToken);
+  const updateDraftData = useUserStore((state) => state.updateDraftData);
   const loginMutation = useLogin();
 
   const {
@@ -48,6 +49,10 @@ export function LoginForm() {
       const result = await loginMutation.mutateAsync(values);
 
       setToken(result.token);
+
+      // Disponible para el onboarding si el perfil está incompleto (el email
+      // no se vuelve a pedir). Ver onboarding-wizard → getSessionEmail.
+      updateDraftData({ email: values.email });
 
       toast.success(t("successTitle"), {
         description:

@@ -38,6 +38,8 @@ export type SelectOption = {
   value: string;
   label: string;
   apiValue?: string;
+  /** Texto de apoyo para opciones que se muestran como tarjetas (radio cards). */
+  description?: string;
 };
 
 export type OnboardingStepDefinition = {
