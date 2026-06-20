@@ -2,14 +2,7 @@ import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@app/ui";
 import { DashboardOverview } from "@/features/dashboard/components/dashboard-overview";
-
-const MODULES = [
-  "courses",
-  "jobs",
-  "experiences",
-  "mentorship",
-  "wellness",
-] as const;
+import { Link } from "@/i18n/navigation";
 
 function DashboardGrid() {
   const t = useTranslations("common");
@@ -36,13 +29,39 @@ function DashboardGrid() {
         </h3>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {MODULES.map((mod) => (
+          <Link href="/formaciones" className="block">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Formaciones</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Cursos recomendados para cerrar tu brecha de habilidades.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/empleabilidad" className="block">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Empleabilidad</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Vacantes compatibles con tu perfil y requisitos.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {(["experiences", "mentorship", "wellness"] as const).map((mod) => (
             <Card key={mod}>
               <CardHeader>
                 <CardTitle className="text-lg">{t(`nav.${mod}`)}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">Placeholder</p>
+                <p className="text-sm text-muted-foreground">Próximamente</p>
               </CardContent>
             </Card>
           ))}
