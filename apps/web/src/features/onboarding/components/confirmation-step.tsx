@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@app/ui";
+import { Lock } from "lucide-react";
 import type { OnboardingFormValues } from "../types/onboarding.types";
 import {
-  GENDER_OPTIONS,
+  EDUCATION_LEVEL_OPTIONS,
   OBJECTIVE_OPTIONS,
   TECH_AREA_OPTIONS,
   TECH_LEVEL_OPTIONS,
@@ -11,6 +11,8 @@ type ConfirmationStepProps = {
   values: Partial<OnboardingFormValues>;
 };
 
+const PLACEHOLDER = "—";
+
 /**
  * Devuelve el label visible de una opción guardada por value.
  */
@@ -18,26 +20,25 @@ function getOptionLabel(
   options: readonly { value: string; label: string }[],
   value: string | undefined,
 ) {
-  return options.find((option) => option.value === value)?.label ?? "Sin definir";
+  return options.find((option) => option.value === value)?.label ?? PLACEHOLDER;
 }
 
 /**
- * Último paso del onboarding: resumen accesible antes de confirmar.
+ * Paso 3 — "Revisá y confirmá": resumen accesible del perfil + aviso de privacidad.
  */
 export function ConfirmationStep({ values }: ConfirmationStepProps) {
+  const location =
+    [values.city, values.country].filter(Boolean).join(", ") || PLACEHOLDER;
+
   const items = [
-    { label: "Nombre", value: values.fullName },
-    { label: "E-mail", value: values.email },
-    { label: "Fecha de nacimiento", value: values.birthDate },
+    { label: "Nombre", value: values.fullName || PLACEHOLDER },
+    { label: "Ubicación", value: location },
     {
-      label: "Género",
-      value: getOptionLabel(GENDER_OPTIONS, values.gender),
+      label: "Nivel educativo",
+      value: getOptionLabel(EDUCATION_LEVEL_OPTIONS, values.educationLevel),
     },
-    { label: "País", value: values.country },
-    { label: "Ciudad", value: values.city },
-    { label: "WhatsApp", value: values.whatsapp },
     {
-      label: "Nivel técnico",
+      label: "Nivel profesional",
       value: getOptionLabel(TECH_LEVEL_OPTIONS, values.techLevel),
     },
     {
@@ -51,48 +52,40 @@ export function ConfirmationStep({ values }: ConfirmationStepProps) {
   ];
 
   return (
-    <section className="space-y-6" aria-labelledby="confirmation-title">
+    <section className="space-y-4" aria-labelledby="confirmation-title">
       <div>
-        <h3 id="confirmation-title" className="text-lg font-semibold">
-          Revisá tu información
+        <h3
+          id="confirmation-title"
+          className="font-heading text-xl font-semibold text-cacao"
+        >
+          Revisá y confirmá
         </h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Si todo está correcto, confirmá para guardar el perfil inicial.
+          Verificá que todo esté correcto antes de empezar.
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Resumen del perfil</CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <dl className="grid gap-4 md:grid-cols-2">
-            {items.map((item) => (
-              <div
-                className="rounded-lg border bg-background p-3"
-                key={item.label}
-              >
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {item.label}
-                </dt>
-                <dd className="mt-1 text-sm font-medium text-foreground">
-                  {item.value || "Sin definir"}
-                </dd>
-              </div>
-            ))}
-          </dl>
-
-          <div className="mt-4 rounded-lg border bg-background p-3">
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Contexto adicional
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-foreground">
-              {values.experienceSummary?.trim() || "Sin información adicional."}
+      <dl className="overflow-hidden rounded-xl border border-border bg-card">
+        {items.map((item) => (
+          <div
+            key={item.label}
+            className="flex justify-between gap-3 border-b border-border px-4 py-3 last:border-b-0"
+          >
+            <dt className="text-sm text-muted-foreground">{item.label}</dt>
+            <dd className="text-right text-sm font-semibold text-foreground">
+              {item.value}
             </dd>
           </div>
-        </CardContent>
-      </Card>
+        ))}
+      </dl>
+
+      <div className="flex items-center gap-3 rounded-xl bg-azul-horizonte-soft p-4">
+        <Lock className="size-5 shrink-0 text-azul-horizonte" aria-hidden />
+        <p className="text-sm leading-snug text-foreground">
+          Tus datos están protegidos. Solo los usamos para personalizar tu
+          trayectoria.
+        </p>
+      </div>
     </section>
   );
 }

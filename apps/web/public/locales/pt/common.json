@@ -60,32 +60,32 @@
       "register": "Criar conta"
     },
     "hero": {
-      "badge": "Seu novo começo, todo dia",
+      "badge": "Seu novo começo, todos os dias",
       "title": "Cada check-in é uma oportunidade de avançar.",
-      "subtitle": "Orientação com IA, formação gratuita e vagas segundo seu perfil real. Tudo em um só lugar, pensado para você.",
-      "ctaPrimary": "Criar conta grátis →",
+      "subtitle": "Orientação com IA, formação gratuita e vagas de acordo com seu perfil real. Tudo em um só lugar, pensado para você.",
+      "ctaPrimary": "Criar conta gratuita →",
       "ctaSecondary": "Entrar"
     },
     "services": {
       "title": "Cinco serviços, um mesmo caminho",
-      "subtitle": "Desde o primeiro dia até seu primeiro emprego, BiT te acompanha em cada passo.",
-      "formacoes": {
+      "subtitle": "Desde o primeiro dia até seu primeiro emprego, BiT te acompanha em cada etapa.",
+      "formaciones": {
         "title": "Formações",
-        "description": "Cursos gratuitos do Google e Oracle para fechar suas lacunas de habilidades."
+        "description": "Cursos gratuitos do Google e da Oracle para fechar suas lacunas de skills."
       },
-      "empregabilidade": {
+      "empleabilidad": {
         "title": "Empregabilidade",
         "description": "Vagas ordenadas pela sua compatibilidade real, com o caminho para fechá-las."
       },
       "experiencias": {
         "title": "Experiências",
-        "description": "Histórias em vídeo de quem já percorreu o caminho que você está começando."
+        "description": "Histórias em vídeo de quem já percorreu o caminho que você está prestes a começar."
       },
       "mentorias": {
         "title": "Mentorias",
         "description": "Agende práticas com mentores reais e ganhe confiança antes de se candidatar."
       },
-      "saude": {
+      "salud": {
         "title": "Saúde mental",
         "description": "Um espaço seguro para seu check-in diário, com acompanhamento empático."
       }
@@ -96,14 +96,14 @@
       "matchImprovement": "melhora seu match",
       "services": "serviços integrados",
       "testimonial": {
-        "quote": "Graças ao BiT passei de não saber por onde começar a conseguir meu primeiro trabalho como desenvolvedora.",
+        "quote": "Graças à BiT passei de não saber por onde começar a conseguir meu primeiro emprego como desenvolvedora.",
         "name": "Camila R.",
         "meta": "22 anos · Córdoba"
       }
     },
     "cta": {
       "title": "Seu próximo começo é hoje",
-      "button": "Criar minha conta grátis →"
+      "button": "Criar minha conta gratuita →"
     },
     "footer": {
       "copyright": "© 2026 · Verdadeiramente humano",
@@ -117,8 +117,8 @@
       "brand": {
         "title": "Cada check-in é um novo começo.",
         "bullet1": "Orientação personalizada com IA",
-        "bullet2": "Formação gratuita do Google e Oracle",
-        "bullet3": "Vagas segundo seu perfil real"
+        "bullet2": "Formação gratuita do Google e da Oracle",
+        "bullet3": "Vagas de acordo com seu perfil real"
       },
       "title": "Crie sua conta",
       "subtitle": "Comece seu caminho em menos de 2 minutos.",
@@ -133,9 +133,9 @@
         "medium": "Média",
         "strong": "Forte"
       },
-      "terms": "Aceito os <terms>Termos e Condições</terms> e a Política de Privacidade do BiT.",
+      "terms": "Aceito os <terms>Termos e Condições</terms> e a Política de Privacidade da BiT.",
       "submit": "Criar conta",
-      "haveAccount": "Já tem conta?",
+      "haveAccount": "Já tem uma conta?",
       "loginLink": "Entrar",
       "successTitle": "Conta criada",
       "successApi": "Sua conta foi criada. Complete seu perfil para começar.",
@@ -155,11 +155,11 @@
       "passwordPlaceholder": "Sua senha",
       "forgot": "Esqueceu?",
       "submit": "Entrar",
-      "noAccount": "Não tem conta?",
+      "noAccount": "Não tem uma conta?",
       "registerLink": "Criar conta",
-      "successTitle": "Entrada bem-sucedida",
-      "successApi": "Bem-vindo de volta!",
-      "successMock": "Entrada simulada (a API ainda não está configurada).",
+      "successTitle": "Login bem-sucedido",
+      "successApi": "Bem-vinda de volta!",
+      "successMock": "Login simulado (a API ainda não está configurada).",
       "errorTitle": "Não foi possível entrar"
     }
   }

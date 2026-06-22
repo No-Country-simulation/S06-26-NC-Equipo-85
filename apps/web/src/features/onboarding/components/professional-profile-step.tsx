@@ -1,6 +1,8 @@
-import type {
-  FieldErrors,
-  UseFormRegister,
+import {
+  Controller,
+  type Control,
+  type FieldErrors,
+  type UseFormRegister,
 } from "react-hook-form";
 import { Label, Textarea } from "@app/ui";
 import type { OnboardingFormValues } from "../types/onboarding.types";
@@ -9,19 +11,21 @@ import {
   TECH_AREA_OPTIONS,
   TECH_LEVEL_OPTIONS,
 } from "../utils/onboarding-options";
+import { OptionCardGroup } from "./option-card-group";
+import { OptionChipGroup } from "./option-chip-group";
 
 type ProfessionalProfileStepProps = {
+  control: Control<OnboardingFormValues>;
   errors: FieldErrors<OnboardingFormValues>;
   register: UseFormRegister<OnboardingFormValues>;
 };
 
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";
-
 /**
- * Segundo paso del onboarding: perfil profesional y objetivo del usuario.
+ * Paso 2 — "Tu perfil profesional": nivel y área como chips, objetivo como
+ * tarjetas de selección, y un resumen opcional. Define el match con cursos/vacantes.
  */
 export function ProfessionalProfileStep({
+  control,
   errors,
   register,
 }: ProfessionalProfileStepProps) {
@@ -29,93 +33,103 @@ export function ProfessionalProfileStep({
     <fieldset className="space-y-6">
       <legend className="sr-only">Perfil profesional</legend>
 
-      <div className="grid gap-5 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="techLevel">Nivel actual</Label>
-          <select
-            aria-invalid={Boolean(errors.techLevel)}
-            className={selectClassName}
-            id="techLevel"
-            {...register("techLevel")}
-          >
-            <option value="">Seleccionar</option>
-            {TECH_LEVEL_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+      <div>
+        <h3 className="font-heading text-xl font-semibold text-cacao">
+          Tu perfil profesional
+        </h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Esto define tu match con cursos y vacantes.
+        </p>
+      </div>
 
-          {errors.techLevel?.message ? (
-            <p className="text-xs text-destructive">
-              {errors.techLevel.message}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="techArea">Área de interés</Label>
-          <select
-            aria-invalid={Boolean(errors.techArea)}
-            className={selectClassName}
-            id="techArea"
-            {...register("techArea")}
-          >
-            <option value="">Seleccionar</option>
-            {TECH_AREA_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-
-          {errors.techArea?.message ? (
-            <p className="text-xs text-destructive">{errors.techArea.message}</p>
-          ) : null}
-        </div>
-
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="objective">Objetivo principal</Label>
-          <select
-            aria-invalid={Boolean(errors.objective)}
-            className={selectClassName}
-            id="objective"
-            {...register("objective")}
-          >
-            <option value="">Seleccionar</option>
-            {OBJECTIVE_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-
-          {errors.objective?.message ? (
-            <p className="text-xs text-destructive">{errors.objective.message}</p>
-          ) : null}
-        </div>
-
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="experienceSummary">
-            Resumen de experiencia o contexto
-          </Label>
-          <Textarea
-            id="experienceSummary"
-            placeholder="Contá brevemente tu experiencia, estudios, intereses o dudas actuales."
-            rows={5}
-            {...register("experienceSummary")}
-          />
-
-          {errors.experienceSummary?.message ? (
-            <p className="text-xs text-destructive">
-              {errors.experienceSummary.message}
-            </p>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Campo opcional. Máximo 500 caracteres.
-            </p>
+      <div className="space-y-2">
+        <Label asChild>
+          <span>Tu nivel actual *</span>
+        </Label>
+        <Controller
+          control={control}
+          name="techLevel"
+          render={({ field }) => (
+            <OptionChipGroup
+              ariaLabel="Tu nivel actual"
+              options={TECH_LEVEL_OPTIONS}
+              value={field.value}
+              onChange={field.onChange}
+              invalid={Boolean(errors.techLevel)}
+            />
           )}
-        </div>
+        />
+        {errors.techLevel?.message ? (
+          <p className="text-xs font-medium text-destructive">
+            {errors.techLevel.message}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="space-y-2">
+        <Label asChild>
+          <span>Área de interés *</span>
+        </Label>
+        <Controller
+          control={control}
+          name="techArea"
+          render={({ field }) => (
+            <OptionChipGroup
+              ariaLabel="Área de interés"
+              options={TECH_AREA_OPTIONS}
+              value={field.value}
+              onChange={field.onChange}
+              invalid={Boolean(errors.techArea)}
+            />
+          )}
+        />
+        {errors.techArea?.message ? (
+          <p className="text-xs font-medium text-destructive">
+            {errors.techArea.message}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="space-y-2">
+        <Label asChild>
+          <span>¿Cuál es tu objetivo? *</span>
+        </Label>
+        <Controller
+          control={control}
+          name="objective"
+          render={({ field }) => (
+            <OptionCardGroup
+              ariaLabel="¿Cuál es tu objetivo?"
+              options={OBJECTIVE_OPTIONS}
+              value={field.value}
+              onChange={field.onChange}
+              invalid={Boolean(errors.objective)}
+            />
+          )}
+        />
+        {errors.objective?.message ? (
+          <p className="text-xs font-medium text-destructive">
+            {errors.objective.message}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="experienceSummary">
+          Resumen{" "}
+          <span className="font-normal text-muted-foreground">(opcional)</span>
+        </Label>
+        <Textarea
+          id="experienceSummary"
+          placeholder="Contanos en una línea qué te motiva…"
+          rows={3}
+          {...register("experienceSummary")}
+        />
+        {errors.experienceSummary?.message ? (
+          <p className="text-xs font-medium text-destructive">
+            {errors.experienceSummary.message}
+          </p>
+        ) : null}
       </div>
     </fieldset>
   );

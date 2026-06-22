@@ -86,6 +86,62 @@ appbit/
 
 ---
 
+## Modelo de datos (contrato con el backend)
+
+> Fuente: `ModeloEntidadRelacionV2.png`. El frontend persiste y envía los
+> **valores de ENUM tal cual** (sin traducir) para que el match score, los
+> filtros y la derivación CVV compartan catálogo con el backend.
+
+### Entidades principales
+
+| Entidad | Campos relevantes para el front |
+|---|---|
+| `User` | `id`, `email`, `password_hash`, `role` (`user_role`), `created_at` |
+| `Profile` | `user_id`, `full_name`, `birth_date`, `gender`, `education_level`, `continent`, `state`, `country`, `city`, `latitude`, `longitude`, `whatsapp`, `professional_level`, `tech_area`, `objective` |
+| `Skill` + join tables | `Skill(name, category)` y `Profile_skills`, `Job_skills`, `Course_skills`, `Experience_skills` → grafo que alimenta el **gap %** y el match score |
+| `Job` | `company`, `title`, `description` (match score se calcula vía `Job_skills`) |
+| `Course` | `name`, `provider`, `level` (`level_type`), `url` |
+| `Experience` | `title`, `description`, `speaker_name`, `speaker_role`, `type` (`experience_type`), `content_url`, `date_time` |
+| `Mentorship_sessions` | `mentor_profile_id`, `mentee_profile_id`, `schedule_date`, `status` (`session_status`), `is_practice_invitation` |
+| `Mod_checkins` | `profile_id`, `emoji` (`mood_emoji`), `rating` (1-5), `context`, `suggested_action`, `derive_cvv` (Boolean), `created_at` |
+
+### ENUMs (valores canónicos que usa el front)
+
+| ENUM | Valores | Usado en |
+|---|---|---|
+| `gender_type` | `MASCULINE`, `FEMININE`, `OTHER` | Onboarding (Fase 2) |
+| `education_level_type` | `SCHOOL`, `TECHNICAL`, `UNDERGRADUATE`, `POSTGRADUATE`, `SELF_TAUGHT` | Onboarding (Fase 2) |
+| `level_type` | `BEGINNER`, `INTERMEDIATE`, `ADVANCED` | Onboarding + `Course.level` (Fase 3) |
+| `skill_category` | `BACKEND`, `FRONTEND`, `MOBILE`, `DATA_SCIENCE`, `DESIGN_UX_UI`, `SOFT_SKILLS` | `tech_area` (Fase 2) + skills (Fase 3) |
+| `user_role` | `MENTOR`, `MENTEE` | Mentorías (Fase 3) |
+| `session_status` | `PENDING`, `SCHEDULED`, `COMPLETED`, `CANCELED` | Mentorías (Fase 3) |
+| `experience_type` | `WORKSHOP`, `BOOTCAMP`, `WEBINAR`, `JOB_EXPERIENCE` | Experiencias (Fase 3) |
+| `mood_emoji` | `HAPPY`, `DEPRESSED`, `FURIOUS`, `ANXIOUS`, `NEUTRAL` | Salud Mental (Fase 3) |
+
+> **⚠️ Typos en el diagrama a corregir en backend:** `HIGH_SCOOL` → `SCHOOL`,
+> `INTERMADIATE` → `INTERMEDIATE`. El front ya usa la grafía corregida; ambos
+> lados deben quedar alineados antes de integrar.
+>
+> **✅ Tipos corregidos:** `Experience.speaker_name` pasa de `Integer` a `String`
+> y `Experience.content_url` de `Boolean` a `String`/URL. El front asume estos
+> tipos; el backend debe alinear el diagrama.
+>
+> **⚠️ Tipo sospechoso pendiente:** `Profile.id` figura como `Integer` mientras
+> el resto del modelo usa `UUID`. Confirmar con backend.
+
+### Pendientes de definición con backend
+
+- **Skills del usuario:** el onboarding **no** captura `Profile_skills`. Sin eso,
+  el gap % depende de que el backend infiera skills desde `tech_area` + nivel.
+  Decidir si se agrega un paso de selección de skills al wizard.
+- **`experienceSummary`:** el textarea del onboarding no tiene campo destino en
+  `Profile`. Confirmar si mapea a `Mod_checkins.context` o se descarta.
+- **`continent` / `state` / `latitude` / `longitude`:** hoy el front solo pide
+  país y ciudad. Lat/lng se derivarán por geocoding en Fase 4; `continent`/`state`
+  quedan sin capturar.
+
+---
+
 ## Fase 0 — Foundation: infraestructura y design system
 
 **Semanas 1–2**
@@ -144,7 +200,9 @@ Construir la librería de componentes documentada antes de cualquier pantalla. T
 - `Badge` — para etiquetas de nivel, área, estado
 - `Avatar` — con fallback de iniciales
 - `Spinner` — para estados de carga
-- `EmojiCheckIn` — selector de estado emocional (feliz, cansado, triste, ansioso, sobrecargado) con animación Framer Motion
+- `EmojiCheckIn` — selector de estado emocional alineado al ENUM `mood_emoji`
+  del backend: `HAPPY`, `DEPRESSED`, `FURIOUS`, `ANXIOUS`, `NEUTRAL` (labels en
+  ES/PT vía i18n, valor enviado = enum). Animación Framer Motion
 
 **Moléculas — `packages/ui/src/molecules`**
 - `JobCard` — vacante con match score, área y CTA
@@ -176,9 +234,20 @@ El usuario puede crear su cuenta, completar su perfil personal y profesional en 
 ### Tareas
 
 **Wizard de onboarding (3 pasos)**
-- Paso 1: datos personales — nombre, e-mail, fecha de nacimiento, género, país, ciudad, WhatsApp
+- Paso 1: datos personales — nombre, e-mail, fecha de nacimiento, género, **nivel educativo**, país, ciudad, WhatsApp
 - Paso 2: perfil profesional — nivel, área de tecnología, objetivo (estudiar / definir camino / buscar empleo / cambiar empleo)
 - Paso 3: confirmación y bienvenida personalizada
+
+**Alineación de valores con ENUMs del backend** (ver _Modelo de datos_)
+- `gender` → `gender_type` (MASCULINE/FEMININE/OTHER). La UI mantiene **5 labels
+  inclusivos**; `no-binario`, `prefiero-no-decir` y `otro` se reducen a `OTHER`
+  vía `apiValue` al enviar (mapeo en `onboarding-options.ts` → `resolveApiValue`).
+- `educationLevel` → `education_level_type` (campo nuevo en el wizard).
+- `techLevel` → `professional_level` (`level_type`: BEGINNER/INTERMEDIATE/ADVANCED).
+- `techArea` → `skill_category` (BACKEND/FRONTEND/MOBILE/DATA_SCIENCE/DESIGN_UX_UI/SOFT_SKILLS).
+- `objective` → string libre en backend; se mantienen opciones acotadas en la UI.
+- El `value` de cada opción **es el enum** salvo género; los labels en ES/PT
+  salen de i18n.
 
 **react-hook-form + Zod**
 - Schema Zod separado por paso para validación progresiva
@@ -224,34 +293,47 @@ Implementar las cinco dimensiones del MVP navegables desde el dashboard: Formaci
 - Trayectoria sugerida con timeline visual (Framer Motion)
 - Historial de estado emocional de la semana (sparkline con `recharts`)
 
-**Módulo Formaciones**
+**Módulo Formaciones** (`Course` + `Course_skills`)
 - Grid de cursos con filtros por proveedor, nivel y área
+- Nivel = `level_type` (BEGINNER/INTERMEDIATE/ADVANCED); área vía `skill_category`
 - `@tanstack/react-table` para tabla densa de cursos con sorting y paginación
 - `nuqs` para persistir filtros activos en la URL
-- `react-player` para preview de cursos con video
+- `react-player` para preview de cursos con video (campo `Course.url`)
 
-**Módulo Empleabilidad**
+**Módulo Empleabilidad** (`Job` + `Job_skills`)
 - Lista de vacantes con match score y gap breakdown
+- **Match score = intersección `Profile_skills` ∩ `Job_skills`** (lo calcula el
+  backend; el front lo renderiza). Filtros por `skill_category`
 - `@tanstack/react-table` para tabla filtrable
 - Detalle de vacante: checklist de requisitos con indicador cumplido/pendiente
-- CTA contextual: "Falta esto → ver curso sugerido"
+- CTA contextual: "Falta esto → ver curso sugerido" (cruza `Job_skills` faltantes
+  con `Course_skills`)
 
-**Módulo Experiencias Estructurantes**
-- Feed de testimonios en video (CEOs, líderes, profesionales)
-- `react-player` soportando YouTube, Vimeo y MP4
-- Filtro por área y tipo de trayectoria
+**Módulo Experiencias Estructurantes** (`Experience` + `Experience_skills`)
+- Feed de testimonios en video (CEOs, líderes, profesionales): `title`,
+  `speaker_name`, `speaker_role`, `content_url`, `date_time`
+- `type` = `experience_type` (WORKSHOP/BOOTCAMP/WEBINAR/JOB_EXPERIENCE)
+- `react-player` soportando YouTube, Vimeo y MP4 (campo `content_url`)
+- Filtro por `skill_category` (vía `Experience_skills`) y por `type`
 
-**Módulo Mentorías**
-- Lista de mentores disponibles con disponibilidad en tiempo real
-- `@fullcalendar/react` para visualizar y agendar slots de práctica
+**Módulo Mentorías** (`Mentorship_sessions`)
+- Lista de mentores disponibles (perfiles con `user_role = MENTOR`); el usuario
+  agenda como `MENTEE` (`mentor_profile_id` / `mentee_profile_id`)
+- Estado de la cita = `session_status` (PENDING/SCHEDULED/COMPLETED/CANCELED)
+- Flag `is_practice_invitation` para distinguir sesiones de práctica
+- `@fullcalendar/react` para visualizar y agendar slots (`schedule_date`)
 - Vista semana con drag-and-drop de citas
 - Confirmación de agenda con toast (`sonner`)
 
-**Módulo Salud Mental**
-- `EmojiCheckIn` diario al entrar a la app (componente de Fase 1)
-- Integración con `POST /salud` — respuesta del agente con acción sugerida
-- Si `nota_semanal < 4` → modal urgente de derivación al CVV (no dismissable por click fuera)
-- Historial semanal con gráfica de línea (`recharts`)
+**Módulo Salud Mental** (`Mod_checkins`)
+- `EmojiCheckIn` diario al entrar a la app (componente de Fase 1) → `emoji`
+  (`mood_emoji`) + `rating` (1-5)
+- Integración con `POST /salud` — la respuesta trae `suggested_action` y `context`
+  del agente
+- **Derivación CVV la decide el backend** vía el campo booleano `derive_cvv`
+  (ya no es un cálculo de `nota_semanal < 4` en el front). Si `derive_cvv === true`
+  → modal urgente de derivación al CVV (no dismissable por click fuera)
+- Historial semanal con gráfica de línea (`recharts`) sobre `rating`/`created_at`
 - Agente de IA con `ai` (Vercel AI SDK) para respuestas en streaming
 
 ### Stack activo en esta fase
@@ -369,7 +451,7 @@ MVP en producción, cobertura de tests ≥ 80%, score Lighthouse ≥ 85, accesib
 
 ## Decisiones de arquitectura clave
 
-**1. App Router de Next.js 14**  
+**1. App Router de Next.js 16**  
 Layouts anidados para compartir estado de autenticación y onboarding sin prop-drilling. Server Components para fetching inicial de datos sin TanStack Query (solo en SSR); Client Components para interactividad y subscripciones en tiempo real.
 
 **2. TanStack Query como capa de sincronización**  
@@ -382,7 +464,10 @@ El wizard de onboarding persiste en localStorage para que el usuario no pierda p
 En desarrollo local (sin backend disponible) y en tests de Playwright/Vitest. Los handlers se comparten entre ambos contextos desde `src/mocks/handlers.ts`.
 
 **5. Derivación CVV es la feature más crítica**  
-El modal de crisis (nota < 4) debe tener cobertura de test del 100%, no puede ser dismissable accidentalmente, y cualquier error en su renderizado debe disparar una alerta de Sentry inmediatamente.
+El modal de crisis se dispara cuando el backend marca `Mod_checkins.derive_cvv = true`
+(la lógica de umbral vive en el backend, no en el front). Debe tener cobertura de
+test del 100%, no puede ser dismissable accidentalmente, y cualquier error en su
+renderizado debe disparar una alerta de Sentry inmediatamente.
 
 ---
 

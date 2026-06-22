@@ -1,31 +1,24 @@
-import { useTranslations } from "next-intl";
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
-import { Card, CardContent, CardHeader, CardTitle, Button } from "@app/ui";
+import { LoginView } from "@/features/auth/components/login-view";
 
-function LoginForm() {
-  const t = useTranslations("common");
+export const metadata: Metadata = {
+  title: "Ingresar",
+  description: "Ingresá a tu cuenta de App BiT para seguir tu progreso.",
+};
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl text-primary">App BiT</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <p className="text-muted-foreground text-sm">
-          {t("nav.dashboard")} · Placeholder de autenticación
-        </p>
-        <Button className="w-full">{t("buttons.login")}</Button>
-      </CardContent>
-    </Card>
-  );
-}
-
-export default async function LoginPage({
-  params,
-}: {
+type LoginPageProps = {
   params: Promise<{ locale: string }>;
-}) {
+};
+
+/**
+ * Página server-first de login. La composición e interactividad viven en
+ * LoginView / LoginForm (capa de feature).
+ */
+export default async function LoginPage({ params }: LoginPageProps) {
   const { locale } = await params;
+
   setRequestLocale(locale);
-  return <LoginForm />;
+
+  return <LoginView />;
 }
