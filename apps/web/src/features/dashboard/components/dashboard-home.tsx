@@ -1,8 +1,19 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { DASHBOARD_MODULES, type DashboardModule } from "@/data/dashboard-modules";
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, cn } from "@app/ui";
+import {
+  DASHBOARD_MODULES,
+  type DashboardModule,
+} from "@/data/dashboard-modules";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  cn,
+} from "@app/ui";
 import { useUserStore } from "@/store/user-store";
 
 const FALLBACK_PATH = [
@@ -59,18 +70,18 @@ type JobPreview = {
  */
 function getModuleAccentClasses(accent: DashboardModule["accent"]) {
   const classes: Record<DashboardModule["accent"], string> = {
-    amber: "border-t-[var(--bit-ambar)] text-[var(--bit-ambar)]",
+    amber: "border-t-ambar text-ambar",
     terracotta: "border-t-primary text-primary",
-    coral: "border-t-[var(--bit-coral)] text-[var(--bit-coral)]",
-    blue: "border-t-[var(--bit-azul)] text-[var(--bit-azul)]",
-    olive: "border-t-[var(--bit-oliva)] text-[var(--bit-oliva)]",
+    coral: "border-t-coral text-coral",
+    blue: "border-t-azul text-azul",
+    olive: "border-t-oliva text-oliva",
   };
 
   return classes[accent];
 }
 
 /**
- * Anillo visual del match/gap del perfil.
+ * Anillo visual del match del perfil.
  */
 function MatchRing({ value }: { value: number }) {
   const safeValue = Math.min(Math.max(value, 0), 100);
@@ -79,18 +90,19 @@ function MatchRing({ value }: { value: number }) {
   const offset = circumference - (safeValue / 100) * circumference;
 
   return (
-    <div className="relative size-36 shrink-0">
+    <div className="relative size-28 shrink-0 sm:size-36">
       <svg
         aria-hidden="true"
-        className="size-36 -rotate-90"
+        className="size-28 -rotate-90 text-coral sm:size-36"
         viewBox="0 0 120 120"
       >
         <circle
+          className="text-arena"
           cx="60"
           cy="60"
           fill="none"
           r={radius}
-          stroke="var(--bit-arena)"
+          stroke="currentColor"
           strokeWidth="12"
         />
         <circle
@@ -98,7 +110,7 @@ function MatchRing({ value }: { value: number }) {
           cy="60"
           fill="none"
           r={radius}
-          stroke="var(--bit-coral)"
+          stroke="currentColor"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
@@ -107,10 +119,10 @@ function MatchRing({ value }: { value: number }) {
       </svg>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <strong className="font-serif text-3xl font-semibold text-foreground">
+        <strong className="font-serif text-2xl font-semibold text-foreground sm:text-3xl">
           {safeValue}%
         </strong>
-        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-xs">
           match
         </span>
       </div>
@@ -133,12 +145,12 @@ function ModuleCard({ module }: { module: DashboardModule }) {
           getModuleAccentClasses(module.accent),
         )}
       >
-        <CardHeader>
+        <CardHeader className="pb-2">
           <div className="flex items-start justify-between gap-3">
             <CardTitle className="text-base">{module.title}</CardTitle>
             <span
               aria-hidden="true"
-              className="text-lg transition-transform group-hover:translate-x-1"
+              className="text-lg leading-none transition-transform group-hover:translate-x-1"
             >
               →
             </span>
@@ -161,14 +173,14 @@ function ModuleCard({ module }: { module: DashboardModule }) {
 function JobPreviewCard({ job }: { job: JobPreview }) {
   return (
     <Card>
-      <CardHeader className="space-y-3">
+      <CardHeader className="space-y-3 pb-2">
         <div className="flex items-start justify-between gap-3">
           <div>
             <CardTitle className="text-base">{job.title}</CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">{job.company}</p>
           </div>
 
-          <Badge className="bg-ambar-soft text-(--bit-ambar-text) hover:bg-ambar-soft">
+          <Badge className="bg-ambar-soft text-ambar-text hover:bg-ambar-soft">
             {job.matchScore}%
           </Badge>
         </div>
@@ -208,10 +220,10 @@ export function DashboardHome() {
     : FALLBACK_JOBS;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+          <p className="text-xs font-semibold uppercase tracking-wide text-primary md:text-sm">
             Dashboard
           </p>
           <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
@@ -223,31 +235,33 @@ export function DashboardHome() {
           </p>
         </div>
 
-        <div className="w-fit rounded-full bg-ambar-soft px-4 py-2 text-sm font-semibold text-(--bit-ambar-text)">
+        <div className="w-fit rounded-full bg-ambar-soft px-4 py-2 text-sm font-semibold text-ambar-text">
           ⏳ Check-in de hoy pendiente
         </div>
       </section>
 
       <section
         aria-labelledby="dashboard-progress-title"
-        className="rounded-3xl bg-linear-to-br from-primary via-coral to-ambar p-6 text-white shadow-lg md:p-8"
+        className="rounded-3xl bg-linear-to-br from-primary via-coral to-ambar p-5 text-white shadow-lg md:p-8"
       >
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
-          <MatchRing value={matchValue} />
+        <div className="grid gap-5 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+          <div className="flex justify-center lg:block">
+            <MatchRing value={matchValue} />
+          </div>
 
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 text-center lg:text-left">
             <h2
               id="dashboard-progress-title"
               className="font-serif text-2xl font-semibold md:text-3xl"
             >
               Estás a {100 - matchValue}% de tu meta
             </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/90">
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-white/90 lg:mx-0">
               Seguí cerrando tu brecha con formaciones sugeridas, vacantes
               compatibles y acompañamiento semanal.
             </p>
 
-            <div className="mt-5 flex flex-wrap gap-3">
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button asChild variant="secondary">
                 <Link href="/dashboard/formaciones">Ver formaciones</Link>
               </Button>
@@ -261,7 +275,7 @@ export function DashboardHome() {
             </div>
           </div>
 
-          <div className="grid min-w-56 gap-3 rounded-2xl bg-white/14 p-4 backdrop-blur">
+          <div className="grid gap-3 rounded-2xl bg-white/14 p-4 backdrop-blur sm:grid-cols-2 lg:min-w-56 lg:grid-cols-1">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
                 Confianza
@@ -284,7 +298,7 @@ export function DashboardHome() {
 
       {!orientationResult ? (
         <Card className="border-dashed">
-          <CardContent className="flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
+          <CardContent className="flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between md:py-6">
             <div>
               <h2 className="font-serif text-xl font-semibold">
                 Todavía no hay orientación real guardada
@@ -302,16 +316,16 @@ export function DashboardHome() {
         </Card>
       ) : null}
 
-      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+      <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle>Trayectoria sugerida</CardTitle>
           </CardHeader>
           <CardContent>
             <ol className="space-y-4">
               {suggestedPath.slice(0, 4).map((item, index) => (
                 <li className="flex gap-3" key={`${item}-${index}`}>
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ambar-soft text-sm font-semibold text-(--bit-ambar-text)">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ambar-soft text-sm font-semibold text-ambar-text">
                     {index + 1}
                   </span>
                   <p className="pt-1 text-sm leading-6 text-muted-foreground">
@@ -323,8 +337,8 @@ export function DashboardHome() {
           </CardContent>
         </Card>
 
-        <Card className="bg-(--bit-azul-soft)/70">
-          <CardHeader>
+        <Card className="bg-azul-soft/70">
+          <CardHeader className="pb-2">
             <CardTitle>Historial emocional semanal</CardTitle>
           </CardHeader>
           <CardContent>
@@ -335,8 +349,8 @@ export function DashboardHome() {
                   key={`${item.day}-${index}`}
                 >
                   <div
-                    className="w-full rounded-t-lg bg-(--bit-azul)"
-                    style={{ height: `${item.value * 18}px` }}
+                    className="w-full rounded-t-lg bg-azul"
+                    style={{ height: `${item.value * 16}px` }}
                   />
                   <span className="text-xs font-medium text-muted-foreground">
                     {item.day}

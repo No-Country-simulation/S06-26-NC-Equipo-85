@@ -1,8 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Link, usePathname } from "@/i18n/navigation";
 import { DASHBOARD_MODULES } from "@/data/dashboard-modules";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useUserStore } from "@/store/user-store";
 import { cn } from "@app/ui";
 
 type DashboardShellProps = {
@@ -52,6 +53,21 @@ function isActiveRoute(pathname: string, href: string) {
 }
 
 /**
+ * Construye iniciales seguras desde el nombre del perfil.
+ */
+function getInitials(name?: string) {
+  if (!name?.trim()) {
+    return "B";
+  }
+
+  const words = name.trim().split(/\s+/);
+  const firstInitial = words[0]?.[0] ?? "";
+  const secondInitial = words[1]?.[0] ?? "";
+
+  return `${firstInitial}${secondInitial}`.toUpperCase();
+}
+
+/**
  * Layout cliente del área privada.
  *
  * Implementa el patrón AppShell del dashboard: sidebar en desktop, topbar y
@@ -59,6 +75,11 @@ function isActiveRoute(pathname: string, href: string) {
  */
 export function DashboardShell({ children }: DashboardShellProps) {
   const pathname = usePathname();
+  const profile = useUserStore((state) => state.profile);
+
+  const displayName = profile?.name?.trim() || "Usuario BiT";
+  const displayArea = profile?.area || "Perfil inicial";
+  const initials = getInitials(displayName);
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
@@ -105,12 +126,12 @@ export function DashboardShell({ children }: DashboardShellProps) {
           <div className="mt-auto rounded-2xl bg-muted p-4">
             <div className="flex items-center gap-3">
               <span className="flex size-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-                MS
+                {initials}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold">Mariana Solís</p>
+                <p className="truncate text-sm font-semibold">{displayName}</p>
                 <p className="truncate text-xs text-muted-foreground">
-                  Frontend · Principiante
+                  {displayArea}
                 </p>
               </div>
             </div>
@@ -136,7 +157,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
               </div>
 
               <div className="ml-auto flex items-center gap-3">
-                <div className="hidden rounded-full bg-ambar-soft px-3 py-1.5 text-xs font-semibold text-(--bit-ambar-text) sm:block">
+                <div className="hidden rounded-full bg-ambar-soft px-3 py-1.5 text-xs font-semibold text-ambar-text sm:block">
                   Check-in pendiente
                 </div>
 
@@ -151,7 +172,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                 </div>
 
                 <span className="flex size-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-                  MS
+                  {initials}
                 </span>
               </div>
             </div>
