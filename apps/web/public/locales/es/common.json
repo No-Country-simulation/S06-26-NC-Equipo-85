@@ -53,5 +53,114 @@
     "no_results": "No hay vacantes disponibles",
     "detail": "Detalle de vacante",
     "close": "Cerrar"
+  },
+  "landing": {
+    "header": {
+      "login": "Ingresar",
+      "register": "Crear cuenta"
+    },
+    "hero": {
+      "badge": "Tu nuevo comienzo, cada día",
+      "title": "Cada check-in es una oportunidad de avanzar.",
+      "subtitle": "Orientación con IA, formación gratuita y vacantes según tu perfil real. Todo en un solo lugar, pensado para vos.",
+      "ctaPrimary": "Crear cuenta gratis →",
+      "ctaSecondary": "Ingresar"
+    },
+    "services": {
+      "title": "Cinco servicios, un mismo camino",
+      "subtitle": "Desde el primer día hasta tu primer empleo, BiT te acompaña en cada paso.",
+      "formaciones": {
+        "title": "Formaciones",
+        "description": "Cursos gratuitos de Google y Oracle para cerrar tus brechas de skills."
+      },
+      "empleabilidad": {
+        "title": "Empleabilidad",
+        "description": "Vacantes ordenadas por tu compatibilidad real, con el camino para cerrarlas."
+      },
+      "experiencias": {
+        "title": "Experiencias",
+        "description": "Historias en video de quienes ya recorrieron el camino que estás por empezar."
+      },
+      "mentorias": {
+        "title": "Mentorías",
+        "description": "Agendá prácticas con mentores reales y ganá confianza antes de postularte."
+      },
+      "salud": {
+        "title": "Salud mental",
+        "description": "Un espacio seguro para tu check-in diario, con acompañamiento empático."
+      }
+    },
+    "stats": {
+      "users": "jóvenes acompañados",
+      "courses": "cursos gratuitos",
+      "matchImprovement": "mejora su match",
+      "services": "servicios integrados",
+      "testimonial": {
+        "quote": "Gracias a BiT pasé de no saber por dónde empezar a conseguir mi primer trabajo como desarrolladora.",
+        "name": "Camila R.",
+        "meta": "22 años · Córdoba"
+      }
+    },
+    "cta": {
+      "title": "Tu próximo comienzo es hoy",
+      "button": "Crear mi cuenta gratis →"
+    },
+    "footer": {
+      "copyright": "© 2026 · Verdaderamente humano",
+      "privacy": "Privacidad",
+      "terms": "Términos",
+      "contact": "Contacto"
+    }
+  },
+  "auth": {
+    "register": {
+      "brand": {
+        "title": "Cada check-in es un nuevo comienzo.",
+        "bullet1": "Orientación personalizada con IA",
+        "bullet2": "Formación gratuita de Google y Oracle",
+        "bullet3": "Vacantes según tu perfil real"
+      },
+      "title": "Creá tu cuenta",
+      "subtitle": "Empezá tu camino en menos de 2 minutos.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "confirmLabel": "Confirmar contraseña",
+      "confirmPlaceholder": "Repetí la contraseña",
+      "strength": {
+        "weak": "Débil",
+        "medium": "Media",
+        "strong": "Fuerte"
+      },
+      "terms": "Acepto los <terms>Términos y Condiciones</terms> y la Política de Privacidad de BiT.",
+      "submit": "Crear cuenta",
+      "haveAccount": "¿Ya tenés cuenta?",
+      "loginLink": "Ingresar",
+      "successTitle": "Cuenta creada",
+      "successApi": "Tu cuenta fue creada. Completá tu perfil para empezar.",
+      "successMock": "Cuenta simulada (la API todavía no está configurada).",
+      "errorTitle": "No se pudo crear la cuenta"
+    },
+    "login": {
+      "brand": {
+        "title": "Tu progreso te está esperando.",
+        "subtitle": "Seguí cerrando tu brecha y descubrí nuevas vacantes compatibles con tu perfil."
+      },
+      "title": "Hola de nuevo",
+      "subtitle": "Ingresá para seguir tu progreso.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Tu contraseña",
+      "forgot": "¿La olvidaste?",
+      "submit": "Ingresar",
+      "noAccount": "¿No tenés cuenta?",
+      "registerLink": "Crear cuenta",
+      "successTitle": "Ingreso exitoso",
+      "successApi": "¡Bienvenida de nuevo!",
+      "successMock": "Ingreso simulado (la API todavía no está configurada).",
+      "errorTitle": "No se pudo iniciar sesión"
+    }
   }
 }
