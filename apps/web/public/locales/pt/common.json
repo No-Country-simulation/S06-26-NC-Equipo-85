@@ -33,6 +33,27 @@
     "warning": "Aviso",
     "info": "Informação"
   },
+  "courses": {
+    "title": "Formações",
+    "grid": "Grade",
+    "table": "Tabela",
+    "all": "Todos",
+    "watch_video": "Ver vídeo",
+    "no_results": "Nenhum curso com esses filtros",
+    "clear_filters": "Limpar filtros",
+    "loading": "Carregando cursos..."
+  },
+  "jobs": {
+    "title": "Empregabilidade",
+    "match_score": "Match",
+    "requirements": "Requisitos",
+    "completed": "Concluído",
+    "pending": "Pendente",
+    "see_course": "Ver curso sugerido",
+    "no_results": "Nenhuma vaga disponível",
+    "detail": "Detalhe da vaga",
+    "close": "Fechar"
+  },
   "landing": {
     "header": {
       "login": "Entrar",

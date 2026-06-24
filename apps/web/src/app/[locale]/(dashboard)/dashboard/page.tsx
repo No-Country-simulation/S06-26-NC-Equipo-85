@@ -13,11 +13,6 @@ type DashboardPageProps = {
   }>;
 };
 
-/**
- * Página server-first del dashboard.
- *
- * La lectura de estado persistido y la UI dinámica viven dentro de DashboardHome.
- */
 export default async function DashboardPage({ params }: DashboardPageProps) {
   const { locale } = await params;
 
