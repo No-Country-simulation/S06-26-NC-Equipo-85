@@ -263,14 +263,14 @@ export function DashboardHome() {
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button asChild variant="secondary">
-                <Link href="/dashboard/formaciones">Ver formaciones</Link>
+                <Link href="/dashboard/courses">Ver formaciones</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
                 className="border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
-                <Link href="/dashboard/empleabilidad">Ver vacantes</Link>
+                <Link href="/dashboard/jobs">Ver vacantes</Link>
               </Button>
             </div>
           </div>
@@ -382,7 +382,7 @@ export function DashboardHome() {
           </div>
 
           <Button asChild variant="outline">
-            <Link href="/dashboard/empleabilidad">Ver todas</Link>
+            <Link href="/dashboard/jobs">Ver todas</Link>
           </Button>
         </div>
 

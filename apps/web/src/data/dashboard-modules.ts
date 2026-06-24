@@ -19,7 +19,7 @@ export const DASHBOARD_MODULES = [
     title: "Formaciones",
     description:
       "Cursos gratuitos y rutas sugeridas para cerrar tus brechas de skills.",
-    href: "/dashboard/formaciones",
+    href: "/dashboard/courses",
     accent: "amber",
   },
   {
@@ -27,7 +27,7 @@ export const DASHBOARD_MODULES = [
     title: "Empleabilidad",
     description:
       "Vacantes compatibles ordenadas por match con tu perfil actual.",
-    href: "/dashboard/empleabilidad",
+    href: "/dashboard/jobs",
     accent: "terracotta",
   },
   {
