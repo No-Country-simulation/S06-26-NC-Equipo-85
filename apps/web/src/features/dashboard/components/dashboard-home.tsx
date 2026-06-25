@@ -69,7 +69,7 @@ type JobPreview = {
  */
 function getModuleAccentClasses(accent: DashboardModule["accent"]) {
   const classes: Record<DashboardModule["accent"], string> = {
-    amber: "border-t-ambar text-ambar",
+    amber: "border-t-ambar text-ambar-text",
     terracotta: "border-t-primary text-primary",
     coral: "border-t-coral text-coral",
     blue: "border-t-azul text-azul",

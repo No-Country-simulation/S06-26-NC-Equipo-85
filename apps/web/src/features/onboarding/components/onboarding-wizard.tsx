@@ -6,9 +6,10 @@ import { useForm, useWatch } from "react-hook-form";
 import type { ZodIssue } from "zod";
 import { Button, Card, CardContent, Spinner } from "@app/ui";
 import { toast } from "sonner";
-import { useOrientar } from "../hooks/use-orientar";
+import { useUpdateProfile } from "../hooks/use-update-profile";
+import { useRouter } from "@/i18n/navigation";
 import { useUserStore } from "@/store/user-store";
-import type { OrientationRequest } from "@/services/orientation/orientation.types";
+import type { ProfileUpsertRequest } from "@/services/profile/profile.types";
 import {
   ONBOARDING_DEFAULT_VALUES,
   onboardingFormSchema,
@@ -26,7 +27,6 @@ import {
 } from "../utils/onboarding-options";
 import { ConfirmationStep } from "./confirmation-step";
 import { OnboardingProgress } from "./onboarding-progress";
-import { OnboardingSuccess } from "./onboarding-success";
 import { PersonalDataStep } from "./personal-data-step";
 import { ProfessionalProfileStep } from "./professional-profile-step";
 
@@ -35,11 +35,6 @@ import { ProfessionalProfileStep } from "./professional-profile-step";
 type PersistApi = {
   hasHydrated: () => boolean;
   onFinishHydration: (callback: () => void) => () => void;
-};
-
-type CompletedState = {
-  name: string;
-  matchPercentage: number;
 };
 
 const FIRST_STEP = 0 satisfies OnboardingStep;
@@ -63,17 +58,6 @@ function normalizeStep(step: number): OnboardingStep {
 }
 
 /**
- * Genera un id local temporal hasta que el backend entregue el id real del usuario.
- */
-function createLocalProfileId() {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `local-${Date.now()}`;
-}
-
-/**
  * Lee el email de la sesión desde el draft persistido. Lo escribe el Registro
  * (POST /auth/register) porque el onboarding ya no lo vuelve a pedir.
  */
@@ -85,38 +69,53 @@ function getSessionEmail() {
   return data.email ?? "";
 }
 
+const WHATSAPP_API_PATTERN = /^\+?[0-9]{7,15}$/;
+
 /**
- * Convierte el match a partir del gap de `/orientar` (match = 100 − gap).
+ * Normaliza el WhatsApp al patrón del backend (`^\+?[0-9]{7,15}$`): quita
+ * espacios, guiones y paréntesis, y conserva un `+` inicial. Si tras limpiar no
+ * cumple el patrón se omite (es opcional) para no romper el PUT con un 400.
  */
-function getMatchPercentage(gapPercentage: number) {
-  return Math.max(0, Math.min(100, Math.round(100 - gapPercentage)));
+function toApiWhatsapp(raw?: string): string | undefined {
+  const trimmed = raw?.trim();
+  if (!trimmed) return undefined;
+
+  const hasPlus = trimmed.startsWith("+");
+  const digits = trimmed.replace(/\D/g, "");
+  if (!digits) return undefined;
+
+  const normalized = `${hasPlus ? "+" : ""}${digits}`;
+  return WHATSAPP_API_PATTERN.test(normalized) ? normalized : undefined;
 }
 
 /**
- * Convierte los valores validados del formulario al contrato de `/orientar`.
- * El `email` llega de la sesión (Registro), no del formulario.
+ * Convierte los valores validados del formulario al contrato de
+ * `PUT /api/v1/profile`. El `género` se reduce a su enum vía `apiValue`; el
+ * resto de selects ya persisten el enum del backend. `experienceSummary` no
+ * tiene campo en el perfil, así que no se envía.
  */
-function buildOrientationRequest(
+function buildProfileRequest(
   values: OnboardingFormValues,
-  email: string,
-): OrientationRequest {
+): ProfileUpsertRequest {
+  const whatsapp = toApiWhatsapp(values.whatsapp);
+
   return {
-    personal: {
-      fullName: values.fullName,
-      email,
-      birthDate: values.birthDate,
-      gender: resolveApiValue(GENDER_OPTIONS, values.gender),
-      educationLevel: values.educationLevel,
+    name: values.fullName,
+    birthDate: values.birthDate,
+    gender: resolveApiValue(
+      GENDER_OPTIONS,
+      values.gender,
+    ) as ProfileUpsertRequest["gender"],
+    education: values.educationLevel as ProfileUpsertRequest["education"],
+    professionalLevel:
+      values.techLevel as ProfileUpsertRequest["professionalLevel"],
+    techArea: values.techArea,
+    objective: values.objective,
+    location: {
       country: values.country,
       city: values.city,
-      whatsapp: values.whatsapp ?? "",
     },
-    professional: {
-      techLevel: values.techLevel,
-      techArea: values.techArea,
-      objective: values.objective,
-      experienceSummary: values.experienceSummary?.trim() || undefined,
-    },
+    contact: whatsapp ? { whatsapp } : undefined,
   };
 }
 
@@ -176,31 +175,29 @@ function getErrorMessage(error: unknown) {
     return error.message;
   }
 
-  return "Ocurrió un error inesperado al generar la orientación.";
+  return "Ocurrió un error inesperado al guardar el perfil.";
 }
 
 /**
  * Wizard principal de onboarding.
  *
  * Encapsula formularios, validación progresiva, navegación de pasos,
- * persistencia local, mutation de orientación inicial y pantalla de éxito.
+ * persistencia local y el UPSERT del perfil (`PUT /api/v1/profile`). Al
+ * confirmar persiste el perfil y deriva al dashboard.
  */
 export function OnboardingWizard() {
+  const router = useRouter();
   const hasLoadedInitialDraft = useRef(false);
-  const orientationMutation = useOrientar();
+  const updateProfile = useUpdateProfile();
   const [showHint, setShowHint] = useState(false);
-  const [completed, setCompleted] = useState<CompletedState | null>(null);
 
   const draftStep = useUserStore((state) => state.onboardingDraft.step);
   const setDraftStep = useUserStore((state) => state.setDraftStep);
   const updateDraftData = useUserStore((state) => state.updateDraftData);
   const completeOnboarding = useUserStore((state) => state.completeOnboarding);
-  const setOrientationResult = useUserStore(
-    (state) => state.setOrientationResult,
-  );
 
   const currentStep = normalizeStep(draftStep);
-  const isSubmitting = orientationMutation.isPending;
+  const isSubmitting = updateProfile.isPending;
 
   const {
     clearErrors,
@@ -342,45 +339,28 @@ export function OnboardingWizard() {
 
     try {
       const email = getSessionEmail();
-      const orientationResult = await orientationMutation.mutateAsync(
-        buildOrientationRequest(result.data, email),
-      );
 
+      await updateProfile.mutateAsync(buildProfileRequest(result.data));
+
+      // `id` local: el backend usa `user.id` como PK del perfil, que el front
+      // no decodifica del JWT; el email identifica al usuario en el store.
       completeOnboarding({
-        id: createLocalProfileId(),
+        id: email,
         name: result.data.fullName,
         email,
         area: result.data.techArea,
       });
 
-      setOrientationResult(orientationResult);
-
-      toast.success("Orientación inicial generada", {
-        description:
-          orientationResult.source === "mock"
-            ? "Se usó una respuesta mock porque la API todavía no está configurada."
-            : "El perfil fue enviado correctamente a /orientar.",
+      toast.success("Perfil guardado", {
+        description: "Tu perfil quedó listo. ¡Vamos al panel!",
       });
 
-      // Pantalla de éxito con el anillo de match antes de ir al dashboard.
-      setCompleted({
-        name: result.data.fullName.split(" ")[0] || result.data.fullName,
-        matchPercentage: getMatchPercentage(orientationResult.gapPercentage),
-      });
+      router.push("/dashboard");
     } catch (error) {
-      toast.error("No se pudo generar la orientación", {
+      toast.error("No se pudo guardar el perfil", {
         description: getErrorMessage(error),
       });
     }
-  }
-
-  if (completed) {
-    return (
-      <OnboardingSuccess
-        name={completed.name}
-        matchPercentage={completed.matchPercentage}
-      />
-    );
   }
 
   return (

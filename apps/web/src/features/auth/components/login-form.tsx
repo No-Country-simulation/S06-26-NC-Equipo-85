@@ -2,34 +2,53 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button, Input, Label, Spinner } from "@app/ui";
 import { Link, useRouter } from "@/i18n/navigation";
+import { ApiError } from "@/lib/api";
+import {
+  getProfile,
+  PROFILE_QUERY_KEY,
+} from "@/services/profile/profile.service";
 import { useUserStore } from "@/store/user-store";
 import { useLogin } from "../hooks/use-login";
 import { LOGIN_DEFAULT_VALUES, loginSchema } from "../schemas/auth.schema";
 import type { LoginFormValues } from "../types/auth.types";
 
-function getErrorMessage(error: unknown) {
-  if (error instanceof Error) {
-    return error.message;
+/**
+ * Mapea el error de la API a una clave de traducción bajo
+ * `common.auth.login.*`. El back devuelve 401 en credenciales inválidas y 429
+ * por rate-limit (Bucket4j); el resto cae en el mensaje genérico.
+ */
+function getErrorKey(
+  error: unknown,
+): "errorInvalid" | "errorRateLimit" | "errorGeneric" {
+  if (error instanceof ApiError) {
+    if (error.status === 401) return "errorInvalid";
+    if (error.status === 429) return "errorRateLimit";
   }
 
-  return "Ocurrió un error inesperado al iniciar sesión.";
+  return "errorGeneric";
 }
 
 /**
  * Formulario de login.
  *
- * Valida con Zod (loginSchema), autentica vía `useLogin` (`POST /auth/login`),
- * guarda el token y deriva según el estado del perfil.
+ * Valida con Zod (loginSchema), autentica vía `useLogin`
+ * (`POST /api/v1/auth/login`), guarda el token y deriva según el estado del
+ * perfil.
  */
 export function LoginForm() {
   const t = useTranslations("common.auth.login");
   const router = useRouter();
-  const setToken = useUserStore((state) => state.setToken);
+  const queryClient = useQueryClient();
+  const setSession = useUserStore((state) => state.setSession);
   const updateDraftData = useUserStore((state) => state.updateDraftData);
+  const isOnboardingCompleted = useUserStore(
+    (state) => state.isOnboardingCompleted,
+  );
   const loginMutation = useLogin();
 
   const {
@@ -48,7 +67,7 @@ export function LoginForm() {
     try {
       const result = await loginMutation.mutateAsync(values);
 
-      setToken(result.token);
+      setSession({ token: result.token, refreshToken: result.refreshToken });
 
       // Disponible para el onboarding si el perfil está incompleto (el email
       // no se vuelve a pedir). Ver onboarding-wizard → getSessionEmail.
@@ -59,13 +78,25 @@ export function LoginForm() {
           result.source === "mock" ? t("successMock") : t("successApi"),
       });
 
-      // Perfil incompleto → onboarding; completo → dashboard. La fuente de
-      // verdad es `profileCompleted` de la API (hoy mock); ver auth.types.
-      router.push(result.profileCompleted ? "/dashboard" : "/onboarding");
+      // El perfil del back decide el redirect: si existe (GET 200) el onboarding
+      // ya se completó → dashboard; si no (404 → null) → onboarding. Si la
+      // consulta falla, se cae al flag local del store.
+      let hasProfile = isOnboardingCompleted;
+
+      try {
+        hasProfile = Boolean(
+          await queryClient.fetchQuery({
+            queryKey: PROFILE_QUERY_KEY,
+            queryFn: getProfile,
+          }),
+        );
+      } catch {
+        // Se mantiene el fallback local (hasProfile = isOnboardingCompleted).
+      }
+
+      router.push(hasProfile ? "/dashboard" : "/onboarding");
     } catch (error) {
-      // TODO: el back aplica rate-limit (Bucket4j) → HTTP 429 en ApiError.status.
-      // Mapear a un mensaje "demasiados intentos" diferenciado del de credenciales.
-      toast.error(t("errorTitle"), { description: getErrorMessage(error) });
+      toast.error(t("errorTitle"), { description: t(getErrorKey(error)) });
     }
   }
 

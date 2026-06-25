@@ -51,11 +51,12 @@ export const COUNTRY_OPTIONS = [
 ] as const satisfies readonly SelectOption[];
 
 /**
- * Nivel educativo — enum `education_level_type`.
- * (`SCHOOL` corrige el typo `HIGH_SCOOL` del diagrama original.)
+ * Nivel educativo — enum `education` del backend
+ * (`HIGH_SCHOOL`, `TECHNICAL`, `UNDERGRADUATE`, `POSTGRADUATE`, `SELF_TAUGHT`).
+ * Los `value` coinciden 1:1 con el enum, así se envían sin transformar.
  */
 export const EDUCATION_LEVEL_OPTIONS = [
-  { value: "SCHOOL", label: "Secundario" },
+  { value: "HIGH_SCHOOL", label: "Secundario" },
   { value: "TECHNICAL", label: "Técnico / Terciario" },
   { value: "UNDERGRADUATE", label: "Universitario (grado)" },
   { value: "POSTGRADUATE", label: "Posgrado" },
