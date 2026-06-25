@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   DASHBOARD_MODULES,
@@ -84,6 +85,7 @@ function getModuleAccentClasses(accent: DashboardModule["accent"]) {
  * Anillo visual del match del perfil.
  */
 function MatchRing({ value }: { value: number }) {
+  const t = useTranslations("common.dashboard");
   const safeValue = Math.min(Math.max(value, 0), 100);
   const radius = 46;
   const circumference = 2 * Math.PI * radius;
@@ -123,7 +125,7 @@ function MatchRing({ value }: { value: number }) {
           {safeValue}%
         </strong>
         <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-xs">
-          match
+          {t("match_label")}
         </span>
       </div>
     </div>
@@ -134,6 +136,8 @@ function MatchRing({ value }: { value: number }) {
  * Card de acceso a un módulo del dashboard.
  */
 function ModuleCard({ module }: { module: DashboardModule }) {
+  const t = useTranslations("common.dashboard");
+
   return (
     <Link
       href={module.href}
@@ -147,7 +151,9 @@ function ModuleCard({ module }: { module: DashboardModule }) {
       >
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between gap-3">
-            <CardTitle className="text-base">{module.title}</CardTitle>
+            <CardTitle className="text-base">
+              {t(`modules.${module.id}.title`)}
+            </CardTitle>
             <span
               aria-hidden="true"
               className="text-lg leading-none transition-transform group-hover:translate-x-1"
@@ -159,7 +165,7 @@ function ModuleCard({ module }: { module: DashboardModule }) {
 
         <CardContent>
           <p className="text-sm leading-6 text-muted-foreground">
-            {module.description}
+            {t(`modules.${module.id}.description`)}
           </p>
         </CardContent>
       </Card>
@@ -171,6 +177,8 @@ function ModuleCard({ module }: { module: DashboardModule }) {
  * Card compacta de vacante compatible.
  */
 function JobPreviewCard({ job }: { job: JobPreview }) {
+  const t = useTranslations("common.dashboard");
+
   return (
     <Card>
       <CardHeader className="space-y-3 pb-2">
@@ -187,7 +195,7 @@ function JobPreviewCard({ job }: { job: JobPreview }) {
       </CardHeader>
 
       <CardContent>
-        <p className="text-sm font-medium">Skills a reforzar</p>
+        <p className="text-sm font-medium">{t("compatible_jobs.skills_to_reinforce")}</p>
         <ul className="mt-2 space-y-1">
           {job.missingRequirements.slice(0, 2).map((item) => (
             <li className="text-sm text-muted-foreground" key={item}>
@@ -207,6 +215,7 @@ function JobPreviewCard({ job }: { job: JobPreview }) {
  * del progreso, próximos pasos y accesos a los cinco servicios.
  */
 export function DashboardHome() {
+  const t = useTranslations("common.dashboard");
   const profile = useUserStore((state) => state.profile);
   const orientationResult = useUserStore((state) => state.orientationResult);
 
@@ -224,19 +233,20 @@ export function DashboardHome() {
       <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-primary md:text-sm">
-            Dashboard
+            {t("eyebrow")}
           </p>
           <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
-            Hola{profile?.name ? `, ${profile.name.split(" ")[0]}` : ""} 👋
+            {t("greeting", {
+              name: profile?.name ? `, ${profile.name.split(" ")[0]}` : "",
+            })}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Tu progreso de hoy y los próximos pasos hacia tu primera oportunidad
-            en tecnología.
+            {t("subtitle")}
           </p>
         </div>
 
         <div className="w-fit rounded-full bg-ambar-soft px-4 py-2 text-sm font-semibold text-ambar-text">
-          ⏳ Check-in de hoy pendiente
+          {t("checkin_pending")}
         </div>
       </section>
 
@@ -254,23 +264,22 @@ export function DashboardHome() {
               id="dashboard-progress-title"
               className="font-serif text-2xl font-semibold md:text-3xl"
             >
-              Estás a {100 - matchValue}% de tu meta
+              {t("progress.goal", { gap: 100 - matchValue })}
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-white/90 lg:mx-0">
-              Seguí cerrando tu brecha con formaciones sugeridas, vacantes
-              compatibles y acompañamiento semanal.
+              {t("progress.hint")}
             </p>
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button asChild variant="secondary">
-                <Link href="/dashboard/courses">Ver formaciones</Link>
+                <Link href="/courses">{t("progress.see_courses")}</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
                 className="border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
-                <Link href="/dashboard/jobs">Ver vacantes</Link>
+                <Link href="/jobs">{t("progress.see_jobs")}</Link>
               </Button>
             </div>
           </div>
@@ -278,7 +287,7 @@ export function DashboardHome() {
           <div className="grid gap-3 rounded-2xl bg-white/14 p-4 backdrop-blur sm:grid-cols-2 lg:min-w-56 lg:grid-cols-1">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-                Confianza
+                {t("progress.confidence")}
               </p>
               <p className="font-serif text-2xl font-semibold">
                 {orientationResult ? "92%" : "Mock"}
@@ -286,10 +295,12 @@ export function DashboardHome() {
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-                Fuente
+                {t("progress.source")}
               </p>
               <p className="font-medium">
-                {orientationResult?.source === "api" ? "API real" : "Mock dev"}
+                {orientationResult?.source === "api"
+                  ? t("progress.source_api")
+                  : t("progress.source_mock")}
               </p>
             </div>
           </div>
@@ -301,16 +312,15 @@ export function DashboardHome() {
           <CardContent className="flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between md:py-6">
             <div>
               <h2 className="font-serif text-xl font-semibold">
-                Todavía no hay orientación real guardada
+                {t("no_orientation.title")}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Completá el onboarding para generar tu gap, trayectoria y
-                vacantes compatibles desde tu perfil.
+                {t("no_orientation.body")}
               </p>
             </div>
 
             <Button asChild>
-              <Link href="/onboarding">Completar onboarding</Link>
+              <Link href="/onboarding">{t("no_orientation.cta")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -319,7 +329,7 @@ export function DashboardHome() {
       <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>Trayectoria sugerida</CardTitle>
+            <CardTitle>{t("suggested_path")}</CardTitle>
           </CardHeader>
           <CardContent>
             <ol className="space-y-4">
@@ -339,7 +349,7 @@ export function DashboardHome() {
 
         <Card className="bg-azul-soft/70">
           <CardHeader className="pb-2">
-            <CardTitle>Historial emocional semanal</CardTitle>
+            <CardTitle>{t("mood_history")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex h-28 items-end gap-2">
@@ -360,8 +370,7 @@ export function DashboardHome() {
             </div>
 
             <p className="mt-4 text-sm leading-6 text-muted-foreground">
-              Primer estado mock para visualizar la card. Luego se conecta a
-              `GET /salud/historial`.
+              {t("mood_note")}
             </p>
           </CardContent>
         </Card>
@@ -374,15 +383,15 @@ export function DashboardHome() {
               id="compatible-jobs-title"
               className="font-serif text-2xl font-semibold"
             >
-              Vacantes compatibles
+              {t("compatible_jobs.title")}
             </h2>
             <p className="text-sm text-muted-foreground">
-              Top oportunidades ordenadas por compatibilidad.
+              {t("compatible_jobs.subtitle")}
             </p>
           </div>
 
           <Button asChild variant="outline">
-            <Link href="/dashboard/jobs">Ver todas</Link>
+            <Link href="/jobs">{t("compatible_jobs.see_all")}</Link>
           </Button>
         </div>
 
@@ -396,10 +405,10 @@ export function DashboardHome() {
       <section aria-labelledby="services-title" className="space-y-4">
         <div>
           <h2 id="services-title" className="font-serif text-2xl font-semibold">
-            Cinco servicios, un mismo camino
+            {t("services.title")}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Accedé rápido a cada módulo del MVP.
+            {t("services.subtitle")}
           </p>
         </div>
 

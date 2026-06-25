@@ -19,7 +19,7 @@ export const DASHBOARD_MODULES = [
     title: "Formaciones",
     description:
       "Cursos gratuitos y rutas sugeridas para cerrar tus brechas de skills.",
-    href: "/dashboard/courses",
+    href: "/courses",
     accent: "amber",
   },
   {
@@ -27,7 +27,7 @@ export const DASHBOARD_MODULES = [
     title: "Empleabilidad",
     description:
       "Vacantes compatibles ordenadas por match con tu perfil actual.",
-    href: "/dashboard/jobs",
+    href: "/jobs",
     accent: "terracotta",
   },
   {
@@ -35,7 +35,7 @@ export const DASHBOARD_MODULES = [
     title: "Experiencias",
     description:
       "Historias de personas que ya recorrieron el camino que estás empezando.",
-    href: "/dashboard/experiencias",
+    href: "/experiencias",
     accent: "coral",
   },
   {
@@ -43,7 +43,7 @@ export const DASHBOARD_MODULES = [
     title: "Mentorías",
     description:
       "Prácticas y encuentros con mentores para ganar confianza antes de postular.",
-    href: "/dashboard/mentorias",
+    href: "/mentorias",
     accent: "blue",
   },
   {
@@ -51,7 +51,7 @@ export const DASHBOARD_MODULES = [
     title: "Salud mental",
     description:
       "Check-in diario, seguimiento emocional y acompañamiento empático.",
-    href: "/dashboard/salud",
+    href: "/salud",
     accent: "blue",
   },
 ] as const satisfies readonly DashboardModule[];

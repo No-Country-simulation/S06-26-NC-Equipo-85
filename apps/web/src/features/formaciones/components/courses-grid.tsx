@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { CourseCard } from "@app/ui";
 import type { Course } from "@/services/courses/courses.types";
 import { Spinner } from "@app/ui";
@@ -11,6 +12,8 @@ type CoursesGridProps = {
 };
 
 export function CoursesGrid({ courses, isLoading, onSelect }: CoursesGridProps) {
+  const t = useTranslations("common.courses");
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -30,7 +33,7 @@ export function CoursesGrid({ courses, isLoading, onSelect }: CoursesGridProps) 
             provider: course.provider,
             level: course.level,
           }}
-          ctaLabel={course.videoUrl ? "Ver video" : "Ver curso"}
+          ctaLabel={course.videoUrl ? t("watch_video") : t("see_course")}
           onAction={() => onSelect?.(course)}
         />
       ))}
