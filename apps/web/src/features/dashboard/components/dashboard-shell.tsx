@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { DASHBOARD_MODULES } from "@/data/dashboard-modules";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useUserStore } from "@/store/user-store";
@@ -9,19 +10,6 @@ import { cn } from "@app/ui";
 type DashboardShellProps = {
   children: ReactNode;
 };
-
-const DASHBOARD_NAV_ITEMS = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: "▦",
-  },
-  ...DASHBOARD_MODULES.map((module) => ({
-    title: module.title,
-    href: module.href,
-    icon: getModuleIcon(module.id),
-  })),
-];
 
 /**
  * Devuelve un ícono textual estable para navegación.
@@ -74,11 +62,27 @@ function getInitials(name?: string) {
  * navegación inferior compacta en mobile.
  */
 export function DashboardShell({ children }: DashboardShellProps) {
+  const t = useTranslations("common.dashboard");
   const pathname = usePathname();
   const profile = useUserStore((state) => state.profile);
 
-  const displayName = profile?.name?.trim() || "Usuario BiT";
-  const displayArea = profile?.area || "Perfil inicial";
+  const navItems = [
+    {
+      key: "home",
+      title: t("header_title"),
+      href: "/dashboard",
+      icon: "▦",
+    },
+    ...DASHBOARD_MODULES.map((module) => ({
+      key: module.id,
+      title: t(`modules.${module.id}.title`),
+      href: module.href,
+      icon: getModuleIcon(module.id),
+    })),
+  ];
+
+  const displayName = profile?.name?.trim() || t("user_fallback");
+  const displayArea = profile?.area || t("profile_fallback");
   const initials = getInitials(displayName);
 
   return (
@@ -88,7 +92,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
           <Link
             href="/dashboard"
             className="mb-8 flex items-center gap-3 px-2"
-            aria-label="Ir al dashboard de App BiT"
+            aria-label={t("go_home")}
           >
             <span className="flex size-9 items-center justify-center rounded-xl bg-primary font-serif text-lg font-bold text-primary-foreground">
               B
@@ -96,13 +100,13 @@ export function DashboardShell({ children }: DashboardShellProps) {
             <span className="font-serif text-xl font-semibold">BiT</span>
           </Link>
 
-          <nav aria-label="Navegación principal del dashboard">
+          <nav aria-label={t("nav_primary")}>
             <ul className="space-y-1">
-              {DASHBOARD_NAV_ITEMS.map((item) => {
+              {navItems.map((item) => {
                 const isActive = isActiveRoute(pathname, item.href);
 
                 return (
-                  <li key={item.href}>
+                  <li key={item.key}>
                     <Link
                       href={item.href}
                       aria-current={isActive ? "page" : undefined}
@@ -144,7 +148,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
               <Link
                 href="/dashboard"
                 className="flex items-center gap-2 lg:hidden"
-                aria-label="Ir al dashboard de App BiT"
+                aria-label={t("go_home")}
               >
                 <span className="flex size-8 items-center justify-center rounded-lg bg-primary font-serif font-bold text-primary-foreground">
                   B
@@ -153,16 +157,16 @@ export function DashboardShell({ children }: DashboardShellProps) {
               </Link>
 
               <div className="hidden lg:block">
-                <p className="font-serif text-xl font-semibold">Dashboard</p>
+                <p className="font-serif text-xl font-semibold">{t("header_title")}</p>
               </div>
 
               <div className="ml-auto flex items-center gap-3">
                 <div className="hidden rounded-full bg-ambar-soft px-3 py-1.5 text-xs font-semibold text-ambar-text sm:block">
-                  Check-in pendiente
+                  {t("checkin_badge")}
                 </div>
 
                 <div
-                  aria-label="Selector de idioma"
+                  aria-label={t("language_selector")}
                   className="flex overflow-hidden rounded-full border border-border text-xs font-semibold"
                 >
                   <span className="bg-primary px-2.5 py-1 text-primary-foreground">
@@ -185,15 +189,15 @@ export function DashboardShell({ children }: DashboardShellProps) {
       </div>
 
       <nav
-        aria-label="Navegación inferior del dashboard"
+        aria-label={t("nav_bottom")}
         className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/95 px-2 py-2 backdrop-blur lg:hidden"
       >
         <ul className="mx-auto grid max-w-xl grid-cols-6 gap-1">
-          {DASHBOARD_NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const isActive = isActiveRoute(pathname, item.href);
 
             return (
-              <li key={item.href}>
+              <li key={item.key}>
                 <Link
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}

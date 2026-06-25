@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { LayoutGrid, Table2 } from "lucide-react";
 import { cn } from "@app/ui";
 import { CoursesFilters } from "./courses-filters";
@@ -10,11 +11,17 @@ type CoursesToolbarProps = {
 };
 
 export function CoursesToolbar({ view, onViewChange }: CoursesToolbarProps) {
+  const t = useTranslations("common.courses");
+
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <CoursesFilters />
 
-      <div className="flex items-center gap-1 rounded-lg border p-1" role="tablist" aria-label="Vista de cursos">
+      <div
+        className="flex items-center gap-1 rounded-lg border p-1"
+        role="tablist"
+        aria-label={t("view_label")}
+      >
         <button
           role="tab"
           aria-selected={view === "grid"}
@@ -27,7 +34,7 @@ export function CoursesToolbar({ view, onViewChange }: CoursesToolbarProps) {
           )}
         >
           <LayoutGrid className="size-4" />
-          Grid
+          {t("grid")}
         </button>
         <button
           role="tab"
@@ -41,7 +48,7 @@ export function CoursesToolbar({ view, onViewChange }: CoursesToolbarProps) {
           )}
         >
           <Table2 className="size-4" />
-          Tabla
+          {t("table")}
         </button>
       </div>
     </div>

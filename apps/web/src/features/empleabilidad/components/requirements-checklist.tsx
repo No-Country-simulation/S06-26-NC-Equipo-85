@@ -1,8 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { CheckCircle2, Circle, GraduationCap } from "lucide-react";
 import { cn } from "@app/ui";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 type RequirementsChecklistProps = {
   requirements: string[];
@@ -15,9 +16,11 @@ export function RequirementsChecklist({
   missing,
   area,
 }: RequirementsChecklistProps) {
+  const t = useTranslations("common.jobs");
+
   return (
     <div className="space-y-3">
-      <p className="text-sm font-medium text-foreground">Requisitos</p>
+      <p className="text-sm font-medium text-foreground">{t("requirements")}</p>
       <ul className="space-y-2">
         {requirements.map((req) => {
           const isPending = missing.includes(req);
@@ -39,11 +42,11 @@ export function RequirementsChecklist({
                 </span>
                 {isPending && (
                   <Link
-                    href={area ? `/formaciones?area=${area}` : "/formaciones"}
+                    href={area ? `/courses?area=${area}` : "/courses"}
                     className="flex shrink-0 items-center gap-1 text-xs font-medium text-primary underline-offset-4 hover:underline"
                   >
                     <GraduationCap className="size-3" />
-                    Ver curso
+                    {t("see_course_short")}
                   </Link>
                 )}
               </div>

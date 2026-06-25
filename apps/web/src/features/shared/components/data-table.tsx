@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   type ColumnDef,
   type SortingState,
@@ -28,12 +29,14 @@ export function DataTable<T>({
   columns,
   data,
   isLoading,
-  emptyMessage = "Sin resultados",
+  emptyMessage,
   pageSize = 10,
   className,
 }: DataTableProps<T>) {
+  const t = useTranslations("common.table");
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- useReactTable() returns unstable function refs by design; not passed to memoized children here.
   const table = useReactTable({
     data,
     columns,
@@ -54,7 +57,7 @@ export function DataTable<T>({
   }
 
   if (data.length === 0) {
-    return <EmptyState title={emptyMessage} />;
+    return <EmptyState title={emptyMessage ?? t("empty")} />;
   }
 
   return (
@@ -109,7 +112,10 @@ export function DataTable<T>({
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
+            {t("page_of", {
+              page: table.getState().pagination.pageIndex + 1,
+              total: table.getPageCount(),
+            })}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -118,7 +124,7 @@ export function DataTable<T>({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              Anterior
+              {t("previous")}
             </Button>
             <Button
               variant="outline"
@@ -126,7 +132,7 @@ export function DataTable<T>({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              Siguiente
+              {t("next")}
             </Button>
           </div>
         </div>

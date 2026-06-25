@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useQueryState } from "nuqs";
 import type { CourseProvider, CourseLevel, CourseArea } from "@/services/courses/courses.types";
 
@@ -11,21 +12,12 @@ const PROVIDERS: { value: CourseProvider; label: string }[] = [
   { value: "freecodecamp", label: "freeCodeCamp" },
 ];
 
-const LEVELS: { value: CourseLevel; label: string }[] = [
-  { value: "principiante", label: "Principiante" },
-  { value: "intermedio", label: "Intermedio" },
-  { value: "avanzado", label: "Avanzado" },
-];
+const LEVELS: CourseLevel[] = ["principiante", "intermedio", "avanzado"];
 
-const AREAS: { value: CourseArea; label: string }[] = [
-  { value: "frontend", label: "Frontend" },
-  { value: "backend", label: "Backend" },
-  { value: "fullstack", label: "Full Stack" },
-  { value: "data", label: "Datos" },
-  { value: "qa", label: "QA" },
-];
+const AREAS: CourseArea[] = ["frontend", "backend", "fullstack", "data", "qa"];
 
 export function CoursesFilters() {
+  const t = useTranslations("common.courses");
   const [provider, setProvider] = useQueryState("provider");
   const [level, setLevel] = useQueryState("level");
   const [area, setArea] = useQueryState("area");
@@ -38,9 +30,9 @@ export function CoursesFilters() {
         value={provider ?? ""}
         onChange={(e) => setProvider(e.target.value || null)}
         className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm"
-        aria-label="Filtrar por proveedor"
+        aria-label={t("filters.by_provider")}
       >
-        <option value="">Todos los proveedores</option>
+        <option value="">{t("filters.all_providers")}</option>
         {PROVIDERS.map((p) => (
           <option key={p.value} value={p.value}>{p.label}</option>
         ))}
@@ -50,11 +42,11 @@ export function CoursesFilters() {
         value={level ?? ""}
         onChange={(e) => setLevel(e.target.value || null)}
         className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm"
-        aria-label="Filtrar por nivel"
+        aria-label={t("filters.by_level")}
       >
-        <option value="">Todos los niveles</option>
-        {LEVELS.map((l) => (
-          <option key={l.value} value={l.value}>{l.label}</option>
+        <option value="">{t("filters.all_levels")}</option>
+        {LEVELS.map((value) => (
+          <option key={value} value={value}>{t(`levels.${value}`)}</option>
         ))}
       </select>
 
@@ -62,11 +54,11 @@ export function CoursesFilters() {
         value={area ?? ""}
         onChange={(e) => setArea(e.target.value || null)}
         className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm"
-        aria-label="Filtrar por área"
+        aria-label={t("filters.by_area")}
       >
-        <option value="">Todas las áreas</option>
-        {AREAS.map((a) => (
-          <option key={a.value} value={a.value}>{a.label}</option>
+        <option value="">{t("filters.all_areas")}</option>
+        {AREAS.map((value) => (
+          <option key={value} value={value}>{t(`areas.${value}`)}</option>
         ))}
       </select>
 
@@ -80,7 +72,7 @@ export function CoursesFilters() {
           }}
           className="text-sm text-muted-foreground underline-offset-4 hover:underline hover:text-foreground"
         >
-          Limpiar filtros
+          {t("clear_filters")}
         </button>
       )}
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useCourses } from "../hooks/use-courses";
 import { CoursesToolbar } from "./courses-toolbar";
 import { CoursesGrid } from "./courses-grid";
@@ -11,6 +12,7 @@ import { AlertCircle } from "lucide-react";
 import type { Course } from "@/services/courses/courses.types";
 
 export function CoursesPage() {
+  const t = useTranslations("common.courses");
   const [view, setView] = useState<"grid" | "table">("grid");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
@@ -27,13 +29,13 @@ export function CoursesPage() {
     return (
       <div className="flex flex-col items-center gap-4 py-16">
         <AlertCircle className="size-8 text-destructive" />
-        <p className="text-sm text-muted-foreground">Error al cargar cursos</p>
+        <p className="text-sm text-muted-foreground">{t("load_error")}</p>
         <button
           type="button"
           onClick={() => refetch()}
           className="text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
-          Reintentar
+          {t("retry")}
         </button>
       </div>
     );
@@ -42,10 +44,8 @@ export function CoursesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-semibold text-foreground">Formaciones</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Cursos recomendados para cerrar tu brecha de habilidades.
-        </p>
+        <h1 className="text-3xl font-semibold text-foreground">{t("title")}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       <CoursesToolbar view={view} onViewChange={setView} />
@@ -57,7 +57,7 @@ export function CoursesPage() {
       )}
 
       {!isLoading && courses?.length === 0 && (
-        <EmptyState title="No hay cursos con esos filtros" />
+        <EmptyState title={t("no_results")} />
       )}
 
       <CourseVideoDialog

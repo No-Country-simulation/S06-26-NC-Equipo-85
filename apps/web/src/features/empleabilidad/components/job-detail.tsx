@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@app/ui";
 import { Badge } from "@app/ui";
 import { MatchScoreBar } from "./match-score-bar";
@@ -13,6 +14,8 @@ type JobDetailProps = {
 };
 
 export function JobDetail({ job, open, onOpenChange }: JobDetailProps) {
+  const t = useTranslations("common.jobs");
+
   if (!job) return null;
 
   return (
@@ -27,34 +30,36 @@ export function JobDetail({ job, open, onOpenChange }: JobDetailProps) {
                 {job.location ? ` · ${job.location}` : ""}
               </SheetDescription>
             </div>
-            <Badge variant="success">{job.matchScore}% match</Badge>
+            <Badge variant="success">{t("match_badge", { score: job.matchScore })}</Badge>
           </div>
         </SheetHeader>
 
         <div className="space-y-6">
           <div>
-            <p className="text-sm font-medium text-foreground">Salario estimado</p>
-            <p className="text-sm text-muted-foreground">{job.salary ?? "No especificado"}</p>
+            <p className="text-sm font-medium text-foreground">{t("salary_estimated")}</p>
+            <p className="text-sm text-muted-foreground">
+              {job.salary ?? t("salary_unspecified")}
+            </p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-foreground">Descripción</p>
+            <p className="text-sm font-medium text-foreground">{t("description")}</p>
             <p className="mt-1 text-sm text-muted-foreground">{job.description}</p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-foreground mb-2">Match de perfil</p>
+            <p className="text-sm font-medium text-foreground mb-2">{t("match_profile")}</p>
             <MatchScoreBar score={job.matchScore} showLabel={false} />
             <p className="mt-2 text-xs text-muted-foreground">
               {job.matchScore >= 70
-                ? "Tenés un buen perfil para esta vacante."
+                ? t("match_hint.high")
                 : job.matchScore >= 50
-                  ? "Te falta cubrir algunos requisitos clave."
-                  : "Esta vacante requiere más preparación."}
+                  ? t("match_hint.medium")
+                  : t("match_hint.low")}
             </p>
           </div>
 
-           <RequirementsChecklist
+          <RequirementsChecklist
             requirements={job.requirements}
             missing={job.missingRequirements}
             area={job.area}

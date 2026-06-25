@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { cn } from "@app/ui";
 
 type MatchScoreBarProps = {
@@ -13,6 +16,8 @@ function getColor(score: number) {
 }
 
 export function MatchScoreBar({ score, showLabel = true, className }: MatchScoreBarProps) {
+  const t = useTranslations("common.jobs");
+
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <div className="h-2 w-20 overflow-hidden rounded-full bg-muted">
@@ -23,7 +28,7 @@ export function MatchScoreBar({ score, showLabel = true, className }: MatchScore
           aria-valuenow={score}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`${score}% de match`}
+          aria-label={t("match_aria", { score })}
         />
       </div>
       {showLabel && (

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Job } from "@/services/jobs/jobs.types";
 import { DataTable } from "@/features/shared/components/data-table";
@@ -13,20 +14,22 @@ type JobsTableProps = {
 };
 
 export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
+  const t = useTranslations("common.jobs");
+
   const columns: ColumnDef<Job>[] = [
     {
       accessorKey: "title",
-      header: "Vacante",
+      header: t("columns.job"),
       enableSorting: true,
     },
     {
       accessorKey: "company",
-      header: "Empresa",
+      header: t("columns.company"),
       enableSorting: true,
     },
     {
       accessorKey: "area",
-      header: "Área",
+      header: t("columns.area"),
       enableSorting: true,
       cell: ({ row }) => (
         <Badge variant="secondary">{row.original.area}</Badge>
@@ -34,13 +37,13 @@ export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
     },
     {
       id: "matchScore",
-      header: "Match",
+      header: t("columns.match"),
       enableSorting: true,
       cell: ({ row }) => <MatchScoreBar score={row.original.matchScore} />,
     },
     {
       accessorKey: "salary",
-      header: "Salario",
+      header: t("columns.salary"),
       cell: ({ row }) => row.original.salary ?? "-",
     },
     {
@@ -52,7 +55,7 @@ export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
           onClick={() => onSelect?.(row.original)}
           className="text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
-          Ver requisitos
+          {t("see_requirements")}
         </button>
       ),
     },
@@ -63,7 +66,7 @@ export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
       columns={columns}
       data={jobs}
       isLoading={isLoading}
-      emptyMessage="No hay vacantes disponibles"
+      emptyMessage={t("no_results")}
     />
   );
 }

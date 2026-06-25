@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@app/ui";
 import type { Course } from "@/services/courses/courses.types";
 
@@ -16,6 +17,8 @@ type CourseVideoDialogProps = {
 };
 
 export function CourseVideoDialog({ course, open, onOpenChange }: CourseVideoDialogProps) {
+  const t = useTranslations("common.courses");
+
   if (!course) return null;
 
   return (
@@ -35,7 +38,7 @@ export function CourseVideoDialog({ course, open, onOpenChange }: CourseVideoDia
             />
           ) : (
             <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-              Preview no disponible para este curso
+              {t("preview_unavailable")}
             </div>
           )}
         </div>

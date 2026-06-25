@@ -35,24 +35,152 @@
   },
   "courses": {
     "title": "Formaciones",
+    "subtitle": "Cursos recomendados para cerrar tu brecha de habilidades.",
     "grid": "Cuadrícula",
     "table": "Tabla",
+    "view_label": "Vista de cursos",
     "all": "Todos",
     "watch_video": "Ver video",
+    "see_course": "Ver curso",
+    "no_preview": "Sin preview",
+    "preview_unavailable": "Preview no disponible para este curso",
     "no_results": "No hay cursos con esos filtros",
     "clear_filters": "Limpiar filtros",
-    "loading": "Cargando cursos..."
+    "load_error": "Error al cargar cursos",
+    "retry": "Reintentar",
+    "loading": "Cargando cursos...",
+    "filters": {
+      "all_providers": "Todos los proveedores",
+      "all_levels": "Todos los niveles",
+      "all_areas": "Todas las áreas",
+      "by_provider": "Filtrar por proveedor",
+      "by_level": "Filtrar por nivel",
+      "by_area": "Filtrar por área"
+    },
+    "levels": {
+      "principiante": "Principiante",
+      "intermedio": "Intermedio",
+      "avanzado": "Avanzado"
+    },
+    "areas": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "fullstack": "Full Stack",
+      "data": "Datos",
+      "qa": "QA"
+    },
+    "columns": {
+      "course": "Curso",
+      "provider": "Proveedor",
+      "level": "Nivel",
+      "area": "Área",
+      "duration": "Duración"
+    }
   },
   "jobs": {
     "title": "Empleabilidad",
+    "subtitle": "Vacantes compatibles con tu perfil. Revisá qué requisitos te faltan y encontrá el curso ideal para cerrar la brecha.",
     "match_score": "Match",
+    "match_badge": "{score}% match",
+    "match_aria": "{score}% de match",
+    "match_profile": "Match de perfil",
+    "match_hint": {
+      "high": "Tenés un buen perfil para esta vacante.",
+      "medium": "Te falta cubrir algunos requisitos clave.",
+      "low": "Esta vacante requiere más preparación."
+    },
     "requirements": "Requisitos",
     "completed": "Cumplido",
     "pending": "Pendiente",
     "see_course": "Ver curso sugerido",
+    "see_course_short": "Ver curso",
+    "see_requirements": "Ver requisitos",
+    "salary_estimated": "Salario estimado",
+    "salary_unspecified": "No especificado",
+    "description": "Descripción",
     "no_results": "No hay vacantes disponibles",
+    "load_error": "Error al cargar vacantes",
+    "retry": "Reintentar",
     "detail": "Detalle de vacante",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "columns": {
+      "job": "Vacante",
+      "company": "Empresa",
+      "area": "Área",
+      "match": "Match",
+      "salary": "Salario"
+    }
+  },
+  "table": {
+    "empty": "Sin resultados",
+    "page_of": "Página {page} de {total}",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "dashboard": {
+    "eyebrow": "Dashboard",
+    "greeting": "Hola{name} 👋",
+    "subtitle": "Tu progreso de hoy y los próximos pasos hacia tu primera oportunidad en tecnología.",
+    "checkin_pending": "⏳ Check-in de hoy pendiente",
+    "header_title": "Dashboard",
+    "checkin_badge": "Check-in pendiente",
+    "language_selector": "Selector de idioma",
+    "nav_primary": "Navegación principal del dashboard",
+    "nav_bottom": "Navegación inferior del dashboard",
+    "go_home": "Ir al dashboard de App BiT",
+    "user_fallback": "Usuario BiT",
+    "profile_fallback": "Perfil inicial",
+    "match_label": "match",
+    "progress": {
+      "goal": "Estás a {gap}% de tu meta",
+      "hint": "Seguí cerrando tu brecha con formaciones sugeridas, vacantes compatibles y acompañamiento semanal.",
+      "see_courses": "Ver formaciones",
+      "see_jobs": "Ver vacantes",
+      "confidence": "Confianza",
+      "source": "Fuente",
+      "source_api": "API real",
+      "source_mock": "Mock dev"
+    },
+    "no_orientation": {
+      "title": "Todavía no hay orientación real guardada",
+      "body": "Completá el onboarding para generar tu gap, trayectoria y vacantes compatibles desde tu perfil.",
+      "cta": "Completar onboarding"
+    },
+    "suggested_path": "Trayectoria sugerida",
+    "mood_history": "Historial emocional semanal",
+    "mood_note": "Primer estado mock para visualizar la card. Luego se conecta a GET /salud/historial.",
+    "compatible_jobs": {
+      "title": "Vacantes compatibles",
+      "subtitle": "Top oportunidades ordenadas por compatibilidad.",
+      "see_all": "Ver todas",
+      "skills_to_reinforce": "Skills a reforzar"
+    },
+    "services": {
+      "title": "Cinco servicios, un mismo camino",
+      "subtitle": "Accedé rápido a cada módulo del MVP."
+    },
+    "modules": {
+      "formaciones": {
+        "title": "Formaciones",
+        "description": "Cursos gratuitos y rutas sugeridas para cerrar tus brechas de skills."
+      },
+      "empleabilidad": {
+        "title": "Empleabilidad",
+        "description": "Vacantes compatibles ordenadas por match con tu perfil actual."
+      },
+      "experiencias": {
+        "title": "Experiencias",
+        "description": "Historias de personas que ya recorrieron el camino que estás empezando."
+      },
+      "mentorias": {
+        "title": "Mentorías",
+        "description": "Prácticas y encuentros con mentores para ganar confianza antes de postular."
+      },
+      "salud": {
+        "title": "Salud mental",
+        "description": "Check-in diario, seguimiento emocional y acompañamiento empático."
+      }
+    }
   },
   "landing": {
     "header": {
