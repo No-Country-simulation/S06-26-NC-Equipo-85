@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button, Checkbox, Input, Label, Spinner } from "@app/ui";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useUserStore } from "@/store/user-store";
-import { useRegister } from "@/hooks/use-register";
+import { useRegister } from "../hooks/use-register";
 import {
   REGISTER_DEFAULT_VALUES,
   registerSchema,

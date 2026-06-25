@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
-import { CoursesPage as CoursesView } from "@/features/formaciones/components/courses-page";
+import { CoursesPage as CoursesView } from "@/features/courses/components/courses-page";
 
 export const metadata: Metadata = {
   title: "Formaciones",

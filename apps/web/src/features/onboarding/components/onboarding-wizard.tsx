@@ -6,7 +6,7 @@ import { useForm, useWatch } from "react-hook-form";
 import type { ZodIssue } from "zod";
 import { Button, Card, CardContent, Spinner } from "@app/ui";
 import { toast } from "sonner";
-import { useOrientar } from "@/hooks/use-orientar";
+import { useOrientar } from "../hooks/use-orientar";
 import { useUserStore } from "@/store/user-store";
 import type { OrientationRequest } from "@/services/orientation/orientation.types";
 import {

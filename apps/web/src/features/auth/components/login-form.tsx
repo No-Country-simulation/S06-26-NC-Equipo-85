@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button, Input, Label, Spinner } from "@app/ui";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useUserStore } from "@/store/user-store";
-import { useLogin } from "@/hooks/use-login";
+import { useLogin } from "../hooks/use-login";
 import { LOGIN_DEFAULT_VALUES, loginSchema } from "../schemas/auth.schema";
 import type { LoginFormValues } from "../types/auth.types";
 

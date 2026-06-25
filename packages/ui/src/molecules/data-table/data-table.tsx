@@ -81,35 +81,55 @@ function DataTable<T>({
   return (
     <div className={cn("space-y-4", className)}>
       <div className="overflow-x-auto rounded-xl border">
-        <table className="w-full caption-bottom text-sm" role="grid">
+        <table className="w-full caption-bottom text-sm">
           <thead className="border-b bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="h-10 px-3 text-left text-xs font-medium text-muted-foreground has-data-sort:cursor-pointer has-data-sort:select-none"
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    <div className="flex items-center gap-1" data-sort>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
+                {headerGroup.headers.map((header) => {
+                  const canSort = header.column.getCanSort();
+                  const sorted = header.column.getIsSorted();
+                  const headerContent = flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  );
+                  return (
+                    <th
+                      key={header.id}
+                      scope="col"
+                      aria-sort={
+                        sorted === "asc"
+                          ? "ascending"
+                          : sorted === "desc"
+                            ? "descending"
+                            : canSort
+                              ? "none"
+                              : undefined
+                      }
+                      className="h-10 px-3 text-left text-xs font-medium text-muted-foreground"
+                    >
+                      {canSort ? (
+                        <button
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                          className="-mx-1 inline-flex cursor-pointer items-center gap-1 rounded-sm px-1 outline-none transition-colors select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                        >
+                          {headerContent}
+                          <span className="text-muted-foreground/50">
+                            {sorted === "asc" ? (
+                              <ChevronUp className="size-3.5" />
+                            ) : sorted === "desc" ? (
+                              <ChevronDown className="size-3.5" />
+                            ) : (
+                              <ChevronsUpDown className="size-3.5" />
+                            )}
+                          </span>
+                        </button>
+                      ) : (
+                        headerContent
                       )}
-                      {header.column.getCanSort() && (
-                        <span className="text-muted-foreground/50">
-                          {header.column.getIsSorted() === "asc" ? (
-                            <ChevronUp className="size-3.5" />
-                          ) : header.column.getIsSorted() === "desc" ? (
-                            <ChevronDown className="size-3.5" />
-                          ) : (
-                            <ChevronsUpDown className="size-3.5" />
-                          )}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                ))}
+                    </th>
+                  );
+                })}
               </tr>
             ))}
           </thead>
