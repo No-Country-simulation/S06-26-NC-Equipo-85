@@ -2,10 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import {
-  DASHBOARD_MODULES,
-  type DashboardModule,
-} from "@/data/dashboard-modules";
+import { DASHBOARD_MODULES } from "@/features/dashboard/utils/dashboard-modules";
+import type { DashboardModule } from "@/features/dashboard/types/dashboard.types";
 import {
   Badge,
   Button,

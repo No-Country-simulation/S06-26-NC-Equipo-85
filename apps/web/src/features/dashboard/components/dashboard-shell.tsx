@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { DASHBOARD_MODULES } from "@/data/dashboard-modules";
+import { DASHBOARD_MODULES } from "@/features/dashboard/utils/dashboard-modules";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useUserStore } from "@/store/user-store";
 import { cn } from "@app/ui";

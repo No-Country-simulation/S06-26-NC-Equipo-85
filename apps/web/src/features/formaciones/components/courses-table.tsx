@@ -3,8 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Course } from "@/services/courses/courses.types";
-import { DataTable } from "@/features/shared/components/data-table";
-import { Badge } from "@app/ui";
+import { Badge, DataTable } from "@app/ui";
 
 type CoursesTableProps = {
   courses: Course[];
@@ -21,6 +20,7 @@ const PROVIDER_LABEL: Record<string, string> = {
 
 export function CoursesTable({ courses, isLoading }: CoursesTableProps) {
   const t = useTranslations("common.courses");
+  const tTable = useTranslations("common.table");
 
   const columns: ColumnDef<Course>[] = [
     {
@@ -60,7 +60,10 @@ export function CoursesTable({ courses, isLoading }: CoursesTableProps) {
       cell: ({ row }) => (
         <button
           type="button"
-          onClick={() => row.original.videoUrl && window.open(row.original.videoUrl, "_blank")}
+          onClick={() =>
+            row.original.videoUrl &&
+            window.open(row.original.videoUrl, "_blank")
+          }
           className="text-sm font-medium text-primary underline-offset-4 hover:underline"
           disabled={!row.original.videoUrl}
         >
@@ -76,6 +79,12 @@ export function CoursesTable({ courses, isLoading }: CoursesTableProps) {
       data={courses}
       isLoading={isLoading}
       emptyMessage={t("no_results")}
+      labels={{
+        empty: tTable("empty"),
+        previous: tTable("previous"),
+        next: tTable("next"),
+        pageInfo: (page, total) => tTable("page_of", { page, total }),
+      }}
     />
   );
 }

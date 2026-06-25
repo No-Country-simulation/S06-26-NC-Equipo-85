@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useJobs } from "../hooks/use-jobs";
 import { JobsTable } from "./jobs-table";
 import { JobDetail } from "./job-detail";
-import { EmptyState } from "@/features/shared/components/empty-state";
+import { EmptyState } from "@app/ui";
 import { AlertCircle } from "lucide-react";
 import type { Job } from "@/services/jobs/jobs.types";
 

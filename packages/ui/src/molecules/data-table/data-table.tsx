@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 import {
   type ColumnDef,
   type SortingState,
@@ -12,28 +11,47 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
-import { Button, cn } from "@app/ui";
-import { Spinner } from "@app/ui";
-import { EmptyState } from "./empty-state";
+
+import { cn } from "../../lib/utils";
+import { Button } from "../../atoms/button";
+import { Spinner } from "../../atoms/spinner";
+import { EmptyState } from "../empty-state";
+
+/**
+ * Textos de UI. Se inyectan desde la app (i18n) para mantener el
+ * componente agnóstico de Next/next-intl.
+ */
+type DataTableLabels = {
+  /** Texto cuando la tabla no tiene filas. */
+  empty: string;
+  /** Etiqueta del botón "página anterior". */
+  previous: string;
+  /** Etiqueta del botón "página siguiente". */
+  next: string;
+  /** Indicador de paginación, p. ej. "Página 1 de 3". */
+  pageInfo: (page: number, total: number) => string;
+};
 
 type DataTableProps<T> = {
   columns: ColumnDef<T>[];
   data: T[];
+  labels: DataTableLabels;
   isLoading?: boolean;
+  /** Mensaje de vacío; si se omite usa `labels.empty`. */
   emptyMessage?: string;
   pageSize?: number;
   className?: string;
 };
 
-export function DataTable<T>({
+function DataTable<T>({
   columns,
   data,
+  labels,
   isLoading,
   emptyMessage,
   pageSize = 10,
   className,
 }: DataTableProps<T>) {
-  const t = useTranslations("common.table");
   const [sorting, setSorting] = useState<SortingState>([]);
 
   // eslint-disable-next-line react-hooks/incompatible-library -- useReactTable() returns unstable function refs by design; not passed to memoized children here.
@@ -57,7 +75,7 @@ export function DataTable<T>({
   }
 
   if (data.length === 0) {
-    return <EmptyState title={emptyMessage ?? t("empty")} />;
+    return <EmptyState title={emptyMessage ?? labels.empty} />;
   }
 
   return (
@@ -70,11 +88,14 @@ export function DataTable<T>({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="h-10 px-3 text-left text-xs font-medium text-muted-foreground [&:has([data-sort])]:cursor-pointer [&:has([data-sort])]:select-none"
+                    className="h-10 px-3 text-left text-xs font-medium text-muted-foreground has-data-sort:cursor-pointer has-data-sort:select-none"
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     <div className="flex items-center gap-1" data-sort>
-                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                       {header.column.getCanSort() && (
                         <span className="text-muted-foreground/50">
                           {header.column.getIsSorted() === "asc" ? (
@@ -112,10 +133,10 @@ export function DataTable<T>({
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            {t("page_of", {
-              page: table.getState().pagination.pageIndex + 1,
-              total: table.getPageCount(),
-            })}
+            {labels.pageInfo(
+              table.getState().pagination.pageIndex + 1,
+              table.getPageCount(),
+            )}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -124,7 +145,7 @@ export function DataTable<T>({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              {t("previous")}
+              {labels.previous}
             </Button>
             <Button
               variant="outline"
@@ -132,7 +153,7 @@ export function DataTable<T>({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              {t("next")}
+              {labels.next}
             </Button>
           </div>
         </div>
@@ -140,3 +161,6 @@ export function DataTable<T>({
     </div>
   );
 }
+
+export { DataTable };
+export type { DataTableProps, DataTableLabels };
