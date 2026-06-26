@@ -45,6 +45,7 @@ export function LoginForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const setSession = useUserStore((state) => state.setSession);
+  const setProfile = useUserStore((state) => state.setProfile);
   const updateDraftData = useUserStore((state) => state.updateDraftData);
   const isOnboardingCompleted = useUserStore(
     (state) => state.isOnboardingCompleted,
@@ -84,12 +85,25 @@ export function LoginForm() {
       let hasProfile = isOnboardingCompleted;
 
       try {
-        hasProfile = Boolean(
-          await queryClient.fetchQuery({
-            queryKey: PROFILE_QUERY_KEY,
-            queryFn: getProfile,
-          }),
-        );
+        const profile = await queryClient.fetchQuery({
+          queryKey: PROFILE_QUERY_KEY,
+          queryFn: getProfile,
+        });
+
+        if (profile) {
+          // El backend usa `user.id` como PK del perfil, que el front no
+          // decodifica del JWT; el email identifica al usuario en el store
+          // (mismo criterio que el onboarding → completeOnboarding). Esto deja
+          // el nombre/área disponibles para el dashboard (sidebar).
+          setProfile({
+            id: values.email,
+            name: profile.name,
+            email: values.email,
+            area: profile.techArea,
+          });
+        }
+
+        hasProfile = Boolean(profile);
       } catch {
         // Se mantiene el fallback local (hasProfile = isOnboardingCompleted).
       }
