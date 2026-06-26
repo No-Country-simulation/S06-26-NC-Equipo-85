@@ -2,10 +2,12 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { DASHBOARD_MODULES } from "@/data/dashboard-modules";
+import { LogOut } from "lucide-react";
+import { useLogout } from "@/features/auth/hooks/use-logout";
+import { DASHBOARD_MODULES } from "@/features/dashboard/utils/dashboard-modules";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useUserStore } from "@/store/user-store";
-import { cn } from "@app/ui";
+import { Button, cn } from "@app/ui";
 
 type DashboardShellProps = {
   children: ReactNode;
@@ -65,6 +67,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const t = useTranslations("common.dashboard");
   const pathname = usePathname();
   const profile = useUserStore((state) => state.profile);
+  const logout = useLogout();
 
   const navItems = [
     {
@@ -139,6 +142,16 @@ export function DashboardShell({ children }: DashboardShellProps) {
                 </p>
               </div>
             </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              className="mt-3 w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <LogOut />
+              {t("logout")}
+            </Button>
           </div>
         </aside>
 
@@ -178,6 +191,16 @@ export function DashboardShell({ children }: DashboardShellProps) {
                 <span className="flex size-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
                   {initials}
                 </span>
+
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={logout}
+                  aria-label={t("logout")}
+                  className="text-muted-foreground hover:text-foreground lg:hidden"
+                >
+                  <LogOut />
+                </Button>
               </div>
             </div>
           </header>

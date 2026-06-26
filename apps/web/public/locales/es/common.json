@@ -130,6 +130,7 @@
     "go_home": "Ir al dashboard de App BiT",
     "user_fallback": "Usuario BiT",
     "profile_fallback": "Perfil inicial",
+    "logout": "Cerrar sesión",
     "match_label": "match",
     "progress": {
       "goal": "Estás a {gap}% de tu meta",
@@ -288,7 +289,10 @@
       "successTitle": "Ingreso exitoso",
       "successApi": "¡Bienvenida de nuevo!",
       "successMock": "Ingreso simulado (la API todavía no está configurada).",
-      "errorTitle": "No se pudo iniciar sesión"
+      "errorTitle": "No se pudo iniciar sesión",
+      "errorInvalid": "El correo o la contraseña no son correctos.",
+      "errorRateLimit": "Demasiados intentos. Esperá unos minutos e intentá de nuevo.",
+      "errorGeneric": "Ocurrió un error inesperado. Intentá de nuevo."
     }
   }
 }

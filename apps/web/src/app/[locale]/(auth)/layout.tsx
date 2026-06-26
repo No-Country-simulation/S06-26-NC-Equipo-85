@@ -1,3 +1,5 @@
+import { GuestGuard } from "@/features/auth/components/guest-guard";
+
 export default function AuthLayout({
   children,
 }: Readonly<{
@@ -5,7 +7,9 @@ export default function AuthLayout({
 }>) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-crema p-4 sm:p-6">
-      <main className="w-full max-w-4xl">{children}</main>
+      <main className="w-full max-w-4xl">
+        <GuestGuard>{children}</GuestGuard>
+      </main>
     </div>
   );
 }

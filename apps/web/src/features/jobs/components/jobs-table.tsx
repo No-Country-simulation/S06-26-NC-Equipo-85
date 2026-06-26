@@ -3,8 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Job } from "@/services/jobs/jobs.types";
-import { DataTable } from "@/features/shared/components/data-table";
-import { Badge } from "@app/ui";
+import { Badge, DataTable } from "@app/ui";
 import { MatchScoreBar } from "./match-score-bar";
 
 type JobsTableProps = {
@@ -15,6 +14,7 @@ type JobsTableProps = {
 
 export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
   const t = useTranslations("common.jobs");
+  const tTable = useTranslations("common.table");
 
   const columns: ColumnDef<Job>[] = [
     {
@@ -31,9 +31,7 @@ export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
       accessorKey: "area",
       header: t("columns.area"),
       enableSorting: true,
-      cell: ({ row }) => (
-        <Badge variant="secondary">{row.original.area}</Badge>
-      ),
+      cell: ({ row }) => <Badge variant="secondary">{row.original.area}</Badge>,
     },
     {
       id: "matchScore",
@@ -67,6 +65,12 @@ export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
       data={jobs}
       isLoading={isLoading}
       emptyMessage={t("no_results")}
+      labels={{
+        empty: tTable("empty"),
+        previous: tTable("previous"),
+        next: tTable("next"),
+        pageInfo: (page, total) => tTable("page_of", { page, total }),
+      }}
     />
   );
 }

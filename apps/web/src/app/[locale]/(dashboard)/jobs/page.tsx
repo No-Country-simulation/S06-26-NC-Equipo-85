@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
-import { JobsPage as JobsView } from "@/features/empleabilidad/components/jobs-page";
+import { JobsPage as JobsView } from "@/features/jobs/components/jobs-page";
 
 export const metadata: Metadata = {
   title: "Empleabilidad",

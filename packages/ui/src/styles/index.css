@@ -42,6 +42,7 @@
   --color-coral-soft: var(--bit-coral-soft);
   --color-ambar: var(--bit-ambar);
   --color-ambar-soft: var(--bit-ambar-soft);
+  --color-ambar-text: var(--bit-ambar-text);
   --color-azul-horizonte: var(--bit-azul-horizonte);
   --color-azul-horizonte-soft: var(--bit-azul-horizonte-soft);
   --color-oliva: var(--bit-oliva);
@@ -69,6 +70,9 @@
   --bit-coral-soft: #F5DEDB;
   --bit-ambar: #D98E32;
   --bit-ambar-soft: #F7E8DC;
+  /* ambar como texto: #D98E32 falla AA (2.66:1 sobre blanco, 2.23:1 sobre ambar-soft).
+     Se oscurece para pasar 4.5:1 en ambos: 5.91:1 sobre blanco, 4.94:1 sobre ambar-soft. */
+  --bit-ambar-text: #8A5A12;
   --bit-azul-horizonte: #2C4E9E;
   --bit-azul-horizonte-soft: #E8F0F7;
   --bit-oliva: #5F7E3F;

@@ -7,7 +7,7 @@ import { CoursesToolbar } from "./courses-toolbar";
 import { CoursesGrid } from "./courses-grid";
 import { CoursesTable } from "./courses-table";
 import { CourseVideoDialog } from "./course-video-dialog";
-import { EmptyState } from "@/features/shared/components/empty-state";
+import { EmptyState } from "@app/ui";
 import { AlertCircle } from "lucide-react";
 import type { Course } from "@/services/courses/courses.types";
 

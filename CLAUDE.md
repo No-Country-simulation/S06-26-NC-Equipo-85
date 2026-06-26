@@ -109,6 +109,7 @@ capas y responsabilidad única. Referencia canónica:
 ```
 apps/web/src/features/<feature>/
 ├── components/   # componentes React de la feature; "use client" SOLO donde haya interactividad
+├── hooks/        # hooks de la feature: wrappers de TanStack Query/Mutation sobre services/ (solo si consume datos)
 ├── schemas/      # validación Zod (solo si la feature tiene formularios/inputs)
 ├── types/        # tipos TS de la feature (enums backend, props, z.infer de los schemas)
 └── utils/        # data estática (opciones de selects, contenido) + helpers puros (sin JSX)
@@ -129,6 +130,34 @@ apps/web/src/features/<feature>/
   `schemas/` (el landing no tiene; el onboarding sí).
 - Los primitivos reutilizables (`Button`, `Card`, `ServiceCard`, …) siguen
   viviendo en `@app/ui`; las features los **consumen**, no los recrean.
+- **Hooks de datos en la feature.** Todo hook que consuma la API vive en
+  `features/<feature>/hooks/use-<recurso>.ts`: envuelve `useQuery`/`useMutation`
+  y llama a la función del service (no hace `fetch` directo). Los componentes
+  importan el hook por ruta relativa (`../hooks/use-jobs`). No hay `src/hooks/`
+  top-level; un hook solo subiría de nivel si fuera realmente cross-feature.
+  Referencias: [use-jobs.ts](apps/web/src/features/empleabilidad/hooks/use-jobs.ts),
+  [use-login.ts](apps/web/src/features/auth/hooks/use-login.ts).
+
+## Capa de datos (`apps/web/src/services/`)
+
+Acceso a datos remotos, **transversal a las features** (no pertenece a ninguna).
+Una feature consume su service vía el hook correspondiente; nunca al revés.
+
+```
+apps/web/src/services/<dominio>/
+├── <dominio>.service.ts   # funciones async (getJobs, loginUser, …): HTTP + fallback a mocks
+└── <dominio>.types.ts     # tipos del dominio (request/response, filtros, enums backend)
+```
+
+**Reglas:**
+- Todo `fetch`/HTTP pasa por `apiRequest`/`getApiBaseUrl` de
+  [@/lib/api](apps/web/src/lib/api.ts). Sin `API_BASE_URL` configurada, el
+  service devuelve **mocks** (patrón actual en `jobs`/`courses`), así el front
+  avanza sin backend.
+- Las funciones son **agnósticas de React**: sin hooks ni JSX. La integración
+  con TanStack Query ocurre en `features/<feature>/hooks/`.
+- `services/*.types.ts` es la fuente de verdad de los tipos de API; las features
+  los importan, no los duplican.
 
 ## Plan por fases
 

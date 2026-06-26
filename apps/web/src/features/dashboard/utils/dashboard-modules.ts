@@ -1,17 +1,4 @@
-export type DashboardModuleAccent =
-  | "amber"
-  | "terracotta"
-  | "coral"
-  | "blue"
-  | "olive";
-
-export type DashboardModule = {
-  id: string;
-  title: string;
-  description: string;
-  href: string;
-  accent: DashboardModuleAccent;
-};
+import type { DashboardModule } from "../types/dashboard.types";
 
 export const DASHBOARD_MODULES = [
   {

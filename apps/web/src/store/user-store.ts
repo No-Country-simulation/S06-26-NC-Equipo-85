@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { setAuthTokenGetter } from "@/lib/api";
 import type { OrientationResult } from "@/services/orientation/orientation.types";
 
 export type OnboardingDraft = {
@@ -14,13 +15,21 @@ export type UserProfile = {
   area?: string;
 };
 
+/** Par de JWT que mantiene viva la sesión (access + refresh). */
+export type Session = {
+  token: string;
+  refreshToken: string | null;
+};
+
 type UserState = {
   token: string | null;
+  refreshToken: string | null;
   onboardingDraft: OnboardingDraft;
   isOnboardingCompleted: boolean;
   orientationResult: OrientationResult | null;
   profile: UserProfile | null;
-  setToken: (token: string | null) => void;
+  /** Persiste el par de JWT tras register/login/refresh. */
+  setSession: (session: Session) => void;
   setDraftStep: (step: number) => void;
   updateDraftData: (data: Record<string, unknown>) => void;
   setProfile: (profile: UserProfile | null) => void;
@@ -50,12 +59,13 @@ export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
       token: null,
+      refreshToken: null,
       onboardingDraft: createInitialDraft(),
       isOnboardingCompleted: false,
       orientationResult: null,
       profile: null,
 
-      setToken: (token) => set({ token }),
+      setSession: ({ token, refreshToken }) => set({ token, refreshToken }),
 
       setDraftStep: (step) =>
         set((state) => ({
@@ -95,6 +105,7 @@ export const useUserStore = create<UserState>()(
       reset: () => {
         set({
           token: null,
+          refreshToken: null,
           onboardingDraft: createInitialDraft(),
           isOnboardingCompleted: false,
           orientationResult: null,
@@ -109,6 +120,7 @@ export const useUserStore = create<UserState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         token: state.token,
+        refreshToken: state.refreshToken,
         onboardingDraft: state.onboardingDraft,
         isOnboardingCompleted: state.isOnboardingCompleted,
         orientationResult: state.orientationResult,
@@ -118,3 +130,7 @@ export const useUserStore = create<UserState>()(
     },
   ),
 );
+
+// Inyecta el access token a la capa HTTP sin acoplar `lib/api` al store.
+// `apiRequest` lo lee en cada request, así sigue vigente tras login/refresh.
+setAuthTokenGetter(() => useUserStore.getState().token);

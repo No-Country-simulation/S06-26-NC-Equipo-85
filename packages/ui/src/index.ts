@@ -17,6 +17,8 @@ export * from "./atoms/textarea";
 
 export * from "./molecules/job-card";
 export * from "./molecules/course-card";
+export * from "./molecules/data-table";
+export * from "./molecules/empty-state";
 export * from "./molecules/mentor-card";
 export * from "./molecules/mood-banner";
 export * from "./molecules/notification-toast";

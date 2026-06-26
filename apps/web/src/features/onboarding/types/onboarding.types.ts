@@ -5,15 +5,13 @@ export type OnboardingStep = 0 | 1 | 2;
 
 /**
  * Enums del backend (tabla Profile y catálogos). El frontend persiste estos
- * valores tal cual para enviarlos al endpoint `/orientar` sin transformaciones.
- *
- * Nota: el diagrama original traía typos (`HIGH_SCOOL`, `INTERMADIATE`).
- * Acá usamos la grafía corregida; el backend debe alinear sus ENUMs a estos.
+ * valores tal cual; coinciden 1:1 con el OpenAPI del backend
+ * (`gender`, `education`, `professionalLevel`).
  */
 export type GenderEnum = "MASCULINE" | "FEMININE" | "OTHER";
 
 export type EducationLevelEnum =
-  | "SCHOOL"
+  | "HIGH_SCHOOL"
   | "TECHNICAL"
   | "UNDERGRADUATE"
   | "POSTGRADUATE"

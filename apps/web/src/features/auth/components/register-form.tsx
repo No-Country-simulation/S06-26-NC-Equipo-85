@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button, Checkbox, Input, Label, Spinner } from "@app/ui";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useUserStore } from "@/store/user-store";
-import { useRegister } from "@/hooks/use-register";
+import { useRegister } from "../hooks/use-register";
 import {
   REGISTER_DEFAULT_VALUES,
   registerSchema,
@@ -27,12 +27,13 @@ function getErrorMessage(error: unknown) {
  * Formulario de registro.
  *
  * Valida con Zod (registerSchema), crea la cuenta vía `useRegister`
- * (`POST /auth/register` → auto-login), guarda el token y deriva al onboarding.
+ * (`POST /api/v1/auth/register`, que ya devuelve el JWT), guarda el token y
+ * deriva al onboarding.
  */
 export function RegisterForm() {
   const t = useTranslations("common.auth.register");
   const router = useRouter();
-  const setToken = useUserStore((state) => state.setToken);
+  const setSession = useUserStore((state) => state.setSession);
   const updateDraftData = useUserStore((state) => state.updateDraftData);
   const registerMutation = useRegister();
 
@@ -57,15 +58,13 @@ export function RegisterForm() {
         password: values.password,
       });
 
-      setToken(result.token);
+      setSession({ token: result.token, refreshToken: result.refreshToken });
 
       // El email no se vuelve a pedir en el onboarding: se guarda en el draft
       // para que el wizard lo inyecte al construir el request de /orientar.
       updateDraftData({ email: values.email });
 
       // Registro → siempre onboarding: el Profile recién creado está incompleto.
-      // TODO: cuando el backend devuelva refreshToken, persistirlo además del
-      // token (ver AuthResponse en services/auth/auth.types.ts).
       toast.success(t("successTitle"), {
         description:
           result.source === "mock" ? t("successMock") : t("successApi"),

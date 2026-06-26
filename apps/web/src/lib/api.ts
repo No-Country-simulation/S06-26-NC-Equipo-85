@@ -17,6 +17,19 @@ export class ApiConfigurationError extends Error {
   }
 }
 
+let authTokenGetter: () => string | null = () => null;
+
+/**
+ * Registra cómo obtener el access token para las requests autenticadas.
+ *
+ * La capa de estado (userStore) lo inyecta al inicializarse, de modo que
+ * `lib/api` no depende del store: la dependencia va store → api, no al revés.
+ * Así `apiRequest` adjunta `Authorization: Bearer` cuando hay sesión.
+ */
+export function setAuthTokenGetter(getter: () => string | null) {
+  authTokenGetter = getter;
+}
+
 /**
  * Devuelve la URL base configurada para la API.
  *
@@ -53,10 +66,12 @@ export async function apiRequest<TResponse>(
   }
 
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const token = authTokenGetter();
   const response = await fetch(`${baseUrl}${normalizedPath}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init?.headers,
     },
   });

@@ -2,10 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import {
-  DASHBOARD_MODULES,
-  type DashboardModule,
-} from "@/data/dashboard-modules";
+import { DASHBOARD_MODULES } from "@/features/dashboard/utils/dashboard-modules";
+import type { DashboardModule } from "@/features/dashboard/types/dashboard.types";
 import {
   Badge,
   Button,
@@ -71,7 +69,7 @@ type JobPreview = {
  */
 function getModuleAccentClasses(accent: DashboardModule["accent"]) {
   const classes: Record<DashboardModule["accent"], string> = {
-    amber: "border-t-ambar text-ambar",
+    amber: "border-t-ambar text-ambar-text",
     terracotta: "border-t-primary text-primary",
     coral: "border-t-coral text-coral",
     blue: "border-t-azul text-azul",

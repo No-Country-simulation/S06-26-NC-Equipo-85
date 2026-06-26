@@ -3,6 +3,13 @@ import type { Course, CourseFilters } from "./courses.types";
 
 const MOCK_DELAY_MS = 300;
 
+/**
+ * Fuerza el uso de mocks para cursos: el backend aún no expone `/cursos`.
+ * Mientras tanto, auth y onboarding sí consumen el backend real (este flag es
+ * local a este service). Cuando exista el endpoint, poner en `false`.
+ */
+const USE_MOCKS = true;
+
 const MOCK_COURSES: Course[] = [
   {
     id: "google-ux",
@@ -179,7 +186,7 @@ function applyFilters(courses: Course[], filters?: CourseFilters): Course[] {
 }
 
 export async function getCourses(filters?: CourseFilters): Promise<Course[]> {
-  if (!getApiBaseUrl()) {
+  if (USE_MOCKS || !getApiBaseUrl()) {
     await wait(MOCK_DELAY_MS);
     return applyFilters(MOCK_COURSES, filters);
   }
@@ -194,7 +201,7 @@ export async function getCourses(filters?: CourseFilters): Promise<Course[]> {
 }
 
 export async function getCourseById(id: string): Promise<Course | null> {
-  if (!getApiBaseUrl()) {
+  if (USE_MOCKS || !getApiBaseUrl()) {
     await wait(MOCK_DELAY_MS);
     return MOCK_COURSES.find((c) => c.id === id) ?? null;
   }
