@@ -3,6 +3,13 @@ import type { Job, JobFilters } from "./jobs.types";
 
 const MOCK_DELAY_MS = 300;
 
+/**
+ * Fuerza el uso de mocks para empleos: el backend aún no expone `/vacantes`.
+ * Mientras tanto, auth y onboarding sí consumen el backend real (este flag es
+ * local a este service). Cuando exista el endpoint, poner en `false`.
+ */
+const USE_MOCKS = true;
+
 const MOCK_JOBS: Job[] = [
   {
     id: "frontend-trainee",
@@ -149,7 +156,7 @@ function applyFilters(jobs: Job[], filters?: JobFilters): Job[] {
 }
 
 export async function getJobs(filters?: JobFilters): Promise<Job[]> {
-  if (!getApiBaseUrl()) {
+  if (USE_MOCKS || !getApiBaseUrl()) {
     await wait(MOCK_DELAY_MS);
     return applyFilters(MOCK_JOBS, filters);
   }
@@ -163,7 +170,7 @@ export async function getJobs(filters?: JobFilters): Promise<Job[]> {
 }
 
 export async function getJobById(id: string): Promise<Job | null> {
-  if (!getApiBaseUrl()) {
+  if (USE_MOCKS || !getApiBaseUrl()) {
     await wait(MOCK_DELAY_MS);
     return MOCK_JOBS.find((j) => j.id === id) ?? null;
   }
