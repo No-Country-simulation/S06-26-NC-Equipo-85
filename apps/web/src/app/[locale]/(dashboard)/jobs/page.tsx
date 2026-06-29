@@ -15,7 +15,7 @@ type JobsPageProps = {
 
 export default async function JobsPage({ params }: JobsPageProps) {
   const { locale } = await params;
-
+  // test deploy temp.
   setRequestLocale(locale);
 
   return <JobsView />;
