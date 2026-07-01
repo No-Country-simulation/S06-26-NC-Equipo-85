@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { CoursesPage } from "@/features/formaciones/components/courses-page";
 
@@ -8,5 +9,9 @@ export default async function FormacionesPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <CoursesPage />;
+  return (
+    <Suspense>
+      <CoursesPage />
+    </Suspense>
+  );
 }

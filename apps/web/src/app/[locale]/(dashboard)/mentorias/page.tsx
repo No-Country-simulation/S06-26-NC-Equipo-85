@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { MentoriasPage } from "@/features/mentorias/components/mentorias-page";
 
@@ -8,5 +9,9 @@ export default async function Page({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <MentoriasPage />;
+  return (
+    <Suspense>
+      <MentoriasPage />
+    </Suspense>
+  );
 }

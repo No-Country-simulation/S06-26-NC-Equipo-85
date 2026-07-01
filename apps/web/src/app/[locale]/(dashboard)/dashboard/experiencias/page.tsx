@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { ExperienciasPage } from "@/features/experiencias/components/experiencias-page";
 
@@ -8,5 +9,9 @@ export default async function Page({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <ExperienciasPage />;
+  return (
+    <Suspense>
+      <ExperienciasPage />
+    </Suspense>
+  );
 }
