@@ -45,7 +45,7 @@ export function LoginForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const setSession = useUserStore((state) => state.setSession);
-  const setProfile = useUserStore((state) => state.setProfile);
+  const completeOnboarding = useUserStore((state) => state.completeOnboarding);
   const updateDraftData = useUserStore((state) => state.updateDraftData);
   const isOnboardingCompleted = useUserStore(
     (state) => state.isOnboardingCompleted,
@@ -93,9 +93,10 @@ export function LoginForm() {
         if (profile) {
           // El backend usa `user.id` como PK del perfil, que el front no
           // decodifica del JWT; el email identifica al usuario en el store
-          // (mismo criterio que el onboarding → completeOnboarding). Esto deja
-          // el nombre/área disponibles para el dashboard (sidebar).
-          setProfile({
+          // (mismo criterio que el onboarding → completeOnboarding). Marca el
+          // onboarding como completado para esta cuenta y deja nombre/área
+          // disponibles para el dashboard (sidebar), coherente con OnboardingGuard.
+          completeOnboarding({
             id: values.email,
             name: profile.name,
             email: values.email,

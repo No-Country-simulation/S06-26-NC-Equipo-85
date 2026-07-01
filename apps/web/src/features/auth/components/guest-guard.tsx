@@ -15,7 +15,10 @@ type GuestGuardProps = {
  * Protege rutas de invitado (login, register).
  *
  * Complemento de `AuthGuard`: si ya hay sesión, redirige al dashboard para que
- * un usuario logueado no vuelva a ver los formularios de auth.
+ * un usuario logueado no vuelva a ver los formularios de auth. El onboarding
+ * obligatorio lo resuelve `OnboardingGuard` en el layout privado, no acá: así
+ * este guard elige un destino sin depender de un flag que puede estar desfasado
+ * (evita mandar erróneamente a `/onboarding` a alguien ya onboardeado).
  */
 export function GuestGuard({ children }: GuestGuardProps) {
   const hydrated = useStoreHydrated();
