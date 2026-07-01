@@ -6,7 +6,7 @@ import { useExperiencias } from "../hooks/use-experiencias";
 import { ExperienciasFilters } from "./experiencias-filters";
 import { ExperienciasGrid } from "./experiencias-grid";
 import { ExperienceDialog } from "./experience-dialog";
-import { EmptyState } from "@/features/shared/components/empty-state";
+import { EmptyState } from "@app/ui";
 import { AlertCircle } from "lucide-react";
 import type { Experience } from "@/services/experiencias/experiencias.types";
 

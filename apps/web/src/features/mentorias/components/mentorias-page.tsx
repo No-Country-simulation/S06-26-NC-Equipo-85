@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMentores } from "../hooks/use-mentorias";
 import { MentoresGrid } from "./mentores-grid";
 import { BookingSheet } from "./booking-sheet";
-import { EmptyState } from "@/features/shared/components/empty-state";
+import { EmptyState } from "@app/ui";
 import { AlertCircle } from "lucide-react";
 import type { Mentor } from "@/services/mentorias/mentorias.types";
 
