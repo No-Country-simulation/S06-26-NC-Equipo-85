@@ -17,6 +17,19 @@ export class ApiConfigurationError extends Error {
   }
 }
 
+let authTokenGetter: () => string | null = () => null;
+
+/**
+ * Registra cómo obtener el access token para las requests autenticadas.
+ *
+ * La capa de estado (userStore) lo inyecta al inicializarse, de modo que
+ * `lib/api` no depende del store: la dependencia va store → api, no al revés.
+ * Así `apiRequest` adjunta `Authorization: Bearer` cuando hay sesión.
+ */
+export function setAuthTokenGetter(getter: () => string | null) {
+  authTokenGetter = getter;
+}
+
 /**
  * Devuelve la URL base configurada para la API.
  *
@@ -38,11 +51,32 @@ export function getApiBaseUrl() {
 }
 
 /**
+ * Timeout por defecto (ms) de cada request.
+ *
+ * Generoso a propósito: el backend corre en un plan free (Render) que duerme la
+ * instancia tras inactividad, y el primer request tras el "cold start" puede
+ * tardar decenas de segundos. El timeout evita que el `fetch` quede colgado
+ * indefinidamente, pero sin cortar un arranque legítimo. Ajustable por request
+ * vía `options.timeoutMs`.
+ */
+export const DEFAULT_TIMEOUT_MS = 60_000;
+
+type ApiRequestOptions = {
+  /** Timeout en ms para esta request puntual (default `DEFAULT_TIMEOUT_MS`). */
+  timeoutMs?: number;
+};
+
+/**
  * Cliente HTTP mínimo para consumir endpoints del backend.
+ *
+ * Aborta la request si supera el timeout, traduciendo el corte a un `ApiError`
+ * 408 legible (útil mientras el backend "despierta"). Respeta un `init.signal`
+ * provisto por el llamador: tanto ese signal como el timeout pueden abortarla.
  */
 export async function apiRequest<TResponse>(
   path: string,
   init?: RequestInit,
+  options?: ApiRequestOptions,
 ): Promise<TResponse> {
   const baseUrl = getApiBaseUrl();
 
@@ -53,25 +87,67 @@ export async function apiRequest<TResponse>(
   }
 
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const response = await fetch(`${baseUrl}${normalizedPath}`, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
-  });
+  const token = authTokenGetter();
 
-  const contentType = response.headers.get("content-type");
-  const hasJsonBody = contentType?.includes("application/json");
-  const payload = hasJsonBody ? await response.json() : null;
+  const controller = new AbortController();
+  let timedOut = false;
+  const timeoutId = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, options?.timeoutMs ?? DEFAULT_TIMEOUT_MS);
 
-  if (!response.ok) {
-    throw new ApiError(
-      `Error HTTP ${response.status} al consumir ${normalizedPath}.`,
-      response.status,
-      payload,
-    );
+  // Encadena el signal del llamador (p. ej. cancelación de TanStack Query) con
+  // el nuestro: cualquiera de los dos aborta la misma request.
+  const callerSignal = init?.signal;
+  if (callerSignal) {
+    if (callerSignal.aborted) {
+      controller.abort();
+    } else {
+      callerSignal.addEventListener("abort", () => controller.abort(), {
+        once: true,
+      });
+    }
   }
 
-  return payload as TResponse;
+  try {
+    const response = await fetch(`${baseUrl}${normalizedPath}`, {
+      ...init,
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...init?.headers,
+      },
+    });
+
+    const contentType = response.headers.get("content-type");
+    const hasJsonBody = contentType?.includes("application/json");
+    const payload = hasJsonBody ? await response.json() : null;
+
+    if (!response.ok) {
+      throw new ApiError(
+        `Error HTTP ${response.status} al consumir ${normalizedPath}.`,
+        response.status,
+        payload,
+      );
+    }
+
+    return payload as TResponse;
+  } catch (error) {
+    // Solo el corte por timeout se traduce a 408; un abort del llamador se
+    // propaga tal cual para que Query lo trate como cancelación, no como error.
+    if (error instanceof DOMException && error.name === "AbortError") {
+      if (timedOut) {
+        throw new ApiError(
+          `La petición a ${normalizedPath} superó el tiempo de espera. El servidor puede estar iniciándose; volvé a intentar en unos segundos.`,
+          408,
+          null,
+        );
+      }
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
