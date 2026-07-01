@@ -12,7 +12,7 @@ type JobsPageProps = {
     locale: string;
   }>;
 };
-
+// test deploy
 export default async function JobsPage({ params }: JobsPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
