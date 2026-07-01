@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NODE_ENV", "SKIP_ENV_VALIDATION"],
   "tasks": {
     "dev": {
       "cache": false,
@@ -7,6 +8,7 @@
     },
     "build": {
       "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_API_URL"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "build-storybook": {
