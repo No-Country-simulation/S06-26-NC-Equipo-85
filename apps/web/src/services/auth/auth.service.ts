@@ -14,6 +14,28 @@ function wait(ms: number) {
   });
 }
 
+function encodeBase64Url(value: unknown): string {
+  return btoa(JSON.stringify(value))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+/**
+ * Genera un JWT simulado con forma real (header.payload.firma) y claim `sub`.
+ *
+ * `lib/jwt.ts#getUserIdFromToken` deriva `userId` decodificando el claim `sub`
+ * del access token; un token mock que no respete esa forma dejaría a jobs y
+ * orientación sin `userId` en desarrollo sin backend. La "firma" es literal
+ * (no hay verificación real: nadie valida un token mock).
+ */
+function createMockAccessToken(userId: string): string {
+  const header = encodeBase64Url({ alg: "none", typ: "JWT" });
+  const payload = encodeBase64Url({ sub: userId, mock: true });
+
+  return `${header}.${payload}.mock-signature`;
+}
+
 /**
  * Genera un token simulado para mantener el flujo de auth usable en desarrollo
  * cuando no hay `NEXT_PUBLIC_API_URL` configurada.
@@ -23,7 +45,7 @@ async function createMockAuth(): Promise<AuthResponse> {
   await wait(MOCK_DELAY_MS);
 
   return {
-    token: `mock-jwt-${crypto.randomUUID()}`,
+    token: createMockAccessToken(crypto.randomUUID()),
     refreshToken: null,
     source: "mock",
   };

@@ -2,21 +2,21 @@
 
 import { useTranslations } from "next-intl";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Job } from "@/services/jobs/jobs.types";
-import { Badge, DataTable } from "@app/ui";
+import type { JobMatch } from "@/services/jobs/jobs.types";
+import { DataTable } from "@app/ui";
 import { MatchScoreBar } from "./match-score-bar";
 
 type JobsTableProps = {
-  jobs: Job[];
+  jobs: JobMatch[];
   isLoading?: boolean;
-  onSelect?: (job: Job) => void;
+  onSelect?: (job: JobMatch) => void;
 };
 
 export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
   const t = useTranslations("common.jobs");
   const tTable = useTranslations("common.table");
 
-  const columns: ColumnDef<Job>[] = [
+  const columns: ColumnDef<JobMatch>[] = [
     {
       accessorKey: "title",
       header: t("columns.job"),
@@ -28,21 +28,10 @@ export function JobsTable({ jobs, isLoading, onSelect }: JobsTableProps) {
       enableSorting: true,
     },
     {
-      accessorKey: "area",
-      header: t("columns.area"),
-      enableSorting: true,
-      cell: ({ row }) => <Badge variant="secondary">{row.original.area}</Badge>,
-    },
-    {
-      id: "matchScore",
+      id: "matchRate",
       header: t("columns.match"),
       enableSorting: true,
-      cell: ({ row }) => <MatchScoreBar score={row.original.matchScore} />,
-    },
-    {
-      accessorKey: "salary",
-      header: t("columns.salary"),
-      cell: ({ row }) => row.original.salary ?? "-",
+      cell: ({ row }) => <MatchScoreBar score={row.original.matchRate} />,
     },
     {
       id: "actions",

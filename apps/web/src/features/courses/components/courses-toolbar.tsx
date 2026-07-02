@@ -8,14 +8,15 @@ import { CoursesFilters } from "./courses-filters";
 type CoursesToolbarProps = {
   view: "grid" | "table";
   onViewChange: (view: "grid" | "table") => void;
+  providers: string[];
 };
 
-export function CoursesToolbar({ view, onViewChange }: CoursesToolbarProps) {
+export function CoursesToolbar({ view, onViewChange, providers }: CoursesToolbarProps) {
   const t = useTranslations("common.courses");
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <CoursesFilters />
+      <CoursesFilters providers={providers} />
 
       <div
         className="flex items-center gap-1 rounded-lg border p-1"
