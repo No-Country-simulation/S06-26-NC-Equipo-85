@@ -7,8 +7,9 @@ import type { ZodIssue } from "zod";
 import { Button, Card, CardContent, Spinner } from "@app/ui";
 import { toast } from "sonner";
 import { useUpdateProfile } from "../hooks/use-update-profile";
-import { useRouter } from "@/i18n/navigation";
+import { useOrientar } from "../hooks/use-orientar";
 import { useUserStore } from "@/store/user-store";
+import { getUserIdFromToken } from "@/lib/jwt";
 import type { ProfileUpsertRequest } from "@/services/profile/profile.types";
 import {
   ONBOARDING_DEFAULT_VALUES,
@@ -27,6 +28,7 @@ import {
 } from "../utils/onboarding-options";
 import { ConfirmationStep } from "./confirmation-step";
 import { OnboardingProgress } from "./onboarding-progress";
+import { OnboardingSuccess } from "./onboarding-success";
 import { PersonalDataStep } from "./personal-data-step";
 import { ProfessionalProfileStep } from "./professional-profile-step";
 
@@ -183,18 +185,24 @@ function getErrorMessage(error: unknown) {
  *
  * Encapsula formularios, validación progresiva, navegación de pasos,
  * persistencia local y el UPSERT del perfil (`PUT /api/v1/profile`). Al
- * confirmar persiste el perfil y deriva al dashboard.
+ * confirmar persiste el perfil, dispara `POST /api/orientar` con el `userId`
+ * del JWT y muestra `OnboardingSuccess` con el resultado real (nunca
+ * redirige directo al dashboard: la orientación puede fallar sin que el
+ * perfil ya guardado se pierda, ver `triggerOrientation`).
  */
 export function OnboardingWizard() {
-  const router = useRouter();
   const hasLoadedInitialDraft = useRef(false);
   const updateProfile = useUpdateProfile();
+  const orientar = useOrientar();
   const [showHint, setShowHint] = useState(false);
+  const [completedProfileName, setCompletedProfileName] = useState<string | null>(null);
+  const [orientationBlocked, setOrientationBlocked] = useState(false);
 
   const draftStep = useUserStore((state) => state.onboardingDraft.step);
   const setDraftStep = useUserStore((state) => state.setDraftStep);
   const updateDraftData = useUserStore((state) => state.updateDraftData);
   const completeOnboarding = useUserStore((state) => state.completeOnboarding);
+  const setOrientationResult = useUserStore((state) => state.setOrientationResult);
 
   const currentStep = normalizeStep(draftStep);
   const isSubmitting = updateProfile.isPending;
@@ -315,6 +323,36 @@ export function OnboardingWizard() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  /**
+   * Dispara `POST /api/orientar` con el `userId` derivado del JWT.
+   *
+   * Se llama tanto al terminar el submit como desde el botón de reintento de
+   * `OnboardingSuccess`: el perfil ya está guardado en ambos casos, así que un
+   * fallo acá nunca debe perderlo ni bloquear el acceso al dashboard.
+   */
+  function triggerOrientation() {
+    const token = useUserStore.getState().token;
+    const userId = getUserIdFromToken(token);
+
+    if (!userId) {
+      // Sesión sin `sub` decodificable: no hay `userId` que enviar. Se trata
+      // como el mismo estado de error recuperable que un fallo de red (ver
+      // spec jobs "userId no derivable"), con el mismo componente de retry.
+      setOrientationBlocked(true);
+      return;
+    }
+
+    setOrientationBlocked(false);
+    orientar.mutate(
+      { userId },
+      {
+        onSuccess: (data) => {
+          setOrientationResult(data);
+        },
+      },
+    );
+  }
+
   async function submitOnboarding() {
     clearErrors();
 
@@ -355,12 +393,29 @@ export function OnboardingWizard() {
         description: "Tu perfil quedó listo. ¡Vamos al panel!",
       });
 
-      router.push("/dashboard");
+      // El perfil ya quedó persistido: a partir de acá, `OnboardingSuccess`
+      // maneja loading/error/retry de la orientación sin volver al form.
+      setCompletedProfileName(result.data.fullName);
+      triggerOrientation();
     } catch (error) {
       toast.error("No se pudo guardar el perfil", {
         description: getErrorMessage(error),
       });
     }
+  }
+
+  if (completedProfileName !== null) {
+    return (
+      <div className="w-full">
+        <OnboardingSuccess
+          name={completedProfileName}
+          isLoading={orientar.isPending}
+          error={orientationBlocked ? new Error("missing-user-id") : orientar.error}
+          onRetry={triggerOrientation}
+          result={orientar.data}
+        />
+      </div>
+    );
   }
 
   return (

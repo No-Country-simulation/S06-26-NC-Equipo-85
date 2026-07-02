@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQueryState } from "nuqs";
 import { useCourses } from "../hooks/use-courses";
 import { CoursesToolbar } from "./courses-toolbar";
 import { CoursesGrid } from "./courses-grid";
 import { CoursesTable } from "./courses-table";
 import { CourseVideoDialog } from "./course-video-dialog";
+import { filterCourses, getAvailableProviders } from "../utils/course-filters";
+import { isEmbeddableVideoUrl } from "../utils/course-media";
+import { ApiErrorState } from "@/components/api-error-state";
 import { EmptyState } from "@app/ui";
-import { AlertCircle } from "lucide-react";
-import type { Course } from "@/services/courses/courses.types";
+import type { Course, CourseLevel } from "@/services/courses/courses.types";
+import type { SkillCategory } from "@/services/skills/skills.types";
 
 export function CoursesPage() {
   const t = useTranslations("common.courses");
@@ -18,27 +22,39 @@ export function CoursesPage() {
   const [videoOpen, setVideoOpen] = useState(false);
   const { data: courses, isLoading, error, refetch } = useCourses();
 
+  const [provider] = useQueryState("provider");
+  const [level] = useQueryState("level");
+  const [skillCategory] = useQueryState("skillCategory");
+
+  const providers = useMemo(
+    () => getAvailableProviders(courses ?? []),
+    [courses],
+  );
+
+  const filteredCourses = useMemo(
+    () =>
+      filterCourses(courses ?? [], {
+        provider: provider ?? undefined,
+        level: (level as CourseLevel | null) ?? undefined,
+        skillCategory: (skillCategory as SkillCategory | null) ?? undefined,
+      }),
+    [courses, provider, level, skillCategory],
+  );
+
   function handleSelect(course: Course) {
-    setSelectedCourse(course);
-    if (course.videoUrl) {
+    if (isEmbeddableVideoUrl(course.url)) {
+      setSelectedCourse(course);
       setVideoOpen(true);
+      return;
+    }
+
+    if (typeof window !== "undefined") {
+      window.open(course.url, "_blank", "noopener,noreferrer");
     }
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center gap-4 py-16">
-        <AlertCircle className="size-8 text-destructive" />
-        <p className="text-sm text-muted-foreground">{t("load_error")}</p>
-        <button
-          type="button"
-          onClick={() => refetch()}
-          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-        >
-          {t("retry")}
-        </button>
-      </div>
-    );
+    return <ApiErrorState error={error} onRetry={() => refetch()} />;
   }
 
   return (
@@ -48,15 +64,15 @@ export function CoursesPage() {
         <p className="mt-2 text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <CoursesToolbar view={view} onViewChange={setView} />
+      <CoursesToolbar view={view} onViewChange={setView} providers={providers} />
 
       {view === "grid" ? (
-        <CoursesGrid courses={courses ?? []} isLoading={isLoading} onSelect={handleSelect} />
+        <CoursesGrid courses={filteredCourses} isLoading={isLoading} onSelect={handleSelect} />
       ) : (
-        <CoursesTable courses={courses ?? []} isLoading={isLoading} />
+        <CoursesTable courses={filteredCourses} isLoading={isLoading} onSelect={handleSelect} />
       )}
 
-      {!isLoading && courses?.length === 0 && (
+      {!isLoading && filteredCourses.length === 0 && (
         <EmptyState title={t("no_results")} />
       )}
 

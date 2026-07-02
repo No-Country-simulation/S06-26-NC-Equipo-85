@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { setAuthTokenGetter } from "@/lib/api";
-import type { OrientationResult } from "@/services/orientation/orientation.types";
+import type { OrientationResponse } from "@/services/orientation/orientation.types";
 
 export type OnboardingDraft = {
   step: number;
@@ -26,14 +26,14 @@ type UserState = {
   refreshToken: string | null;
   onboardingDraft: OnboardingDraft;
   isOnboardingCompleted: boolean;
-  orientationResult: OrientationResult | null;
+  orientationResult: OrientationResponse | null;
   profile: UserProfile | null;
   /** Persiste el par de JWT tras register/login/refresh. */
   setSession: (session: Session) => void;
   setDraftStep: (step: number) => void;
   updateDraftData: (data: Record<string, unknown>) => void;
   setProfile: (profile: UserProfile | null) => void;
-  setOrientationResult: (result: OrientationResult | null) => void;
+  setOrientationResult: (result: OrientationResponse | null) => void;
   completeOnboarding: (profile: UserProfile) => void;
   resetOnboardingDraft: () => void;
   /** Limpia el estado y la entrada persistida. Usar en logout o reinicio total. */

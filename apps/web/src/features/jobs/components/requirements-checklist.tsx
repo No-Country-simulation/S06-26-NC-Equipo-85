@@ -1,59 +1,44 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CheckCircle2, Circle, GraduationCap } from "lucide-react";
-import { cn } from "@app/ui";
-import { Link } from "@/i18n/navigation";
+import { Badge } from "@app/ui";
+import type { JobSkill } from "@/services/jobs/jobs.types";
 
 type RequirementsChecklistProps = {
-  requirements: string[];
-  missing: string[];
-  area?: string;
+  skills: JobSkill[];
 };
 
-export function RequirementsChecklist({
-  requirements,
-  missing,
-  area,
-}: RequirementsChecklistProps) {
+/**
+ * Lista de skills requeridas por la vacante.
+ *
+ * El contrato real (`Job.skills`) no informa cumplido/pendiente por skill (a
+ * diferencia del mock anterior), así que ya no es un checklist: solo lista
+ * las skills requeridas.
+ *
+ * TODO(backend): si se agrega el detalle de qué skills ya cumple el usuario
+ * (cruzando con su perfil), este componente puede volver a distinguir
+ * cumplido/pendiente como antes.
+ */
+export function RequirementsChecklist({ skills }: RequirementsChecklistProps) {
   const t = useTranslations("common.jobs");
+  const tSkills = useTranslations("common.skills.categories");
 
   return (
     <div className="space-y-3">
       <p className="text-sm font-medium text-foreground">{t("requirements")}</p>
-      <ul className="space-y-2">
-        {requirements.map((req) => {
-          const isPending = missing.includes(req);
-          return (
-            <li key={req} className="flex items-start gap-3">
-              {isPending ? (
-                <Circle className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-              ) : (
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-oliva" />
-              )}
-              <div className="flex flex-1 items-start justify-between gap-2">
-                <span
-                  className={cn(
-                    "text-sm",
-                    isPending ? "text-muted-foreground" : "text-foreground"
-                  )}
-                >
-                  {req}
-                </span>
-                {isPending && (
-                  <Link
-                    href={area ? `/courses?area=${area}` : "/courses"}
-                    className="flex shrink-0 items-center gap-1 text-xs font-medium text-primary underline-offset-4 hover:underline"
-                  >
-                    <GraduationCap className="size-3" />
-                    {t("see_course_short")}
-                  </Link>
-                )}
-              </div>
+      {skills.length === 0 ? (
+        <p className="text-sm text-muted-foreground">{t("no_requirements")}</p>
+      ) : (
+        <ul className="flex flex-wrap gap-2">
+          {skills.map((skill) => (
+            <li key={skill.id}>
+              <Badge variant="outline" title={tSkills(skill.category)}>
+                {skill.name}
+              </Badge>
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

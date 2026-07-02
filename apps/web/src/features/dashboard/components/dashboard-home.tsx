@@ -15,37 +15,8 @@ import {
 } from "@app/ui";
 import { useUserStore } from "@/store/user-store";
 
-const FALLBACK_PATH = [
-  "Completar fundamentos técnicos del área elegida.",
-  "Construir un proyecto guiado para validar habilidades.",
-  "Preparar perfil laboral y optimizar el CV.",
-  "Aplicar a oportunidades compatibles con feedback semanal.",
-];
-
-const FALLBACK_JOBS = [
-  {
-    id: "frontend-trainee",
-    title: "Frontend Trainee",
-    company: "BiT Partner",
-    matchScore: 64,
-    missingRequirements: ["React", "Testing básico"],
-  },
-  {
-    id: "web-ui-junior",
-    title: "Web UI Junior",
-    company: "Impact Tech",
-    matchScore: 58,
-    missingRequirements: ["Accesibilidad", "Consumo de APIs"],
-  },
-  {
-    id: "qa-trainee",
-    title: "QA Manual Trainee",
-    company: "BiT Partner",
-    matchScore: 52,
-    missingRequirements: ["Casos de prueba", "Reporte de bugs"],
-  },
-];
-
+// TODO(salud): datos mock del módulo Salud Mental (aún no integrado). Se
+// reemplazan por `GET /api/v1/health/checkins` cuando esa integración exista.
 const WEEKLY_MOOD = [
   { day: "L", value: 3 },
   { day: "M", value: 4 },
@@ -57,11 +28,10 @@ const WEEKLY_MOOD = [
 ];
 
 type JobPreview = {
-  id: string;
+  jobId: string;
   title: string;
   company: string;
-  matchScore: number;
-  missingRequirements: string[];
+  matchRate: number;
 };
 
 /**
@@ -82,9 +52,10 @@ function getModuleAccentClasses(accent: DashboardModule["accent"]) {
 /**
  * Anillo visual del match del perfil.
  */
-function MatchRing({ value }: { value: number }) {
+function MatchRing({ value }: { value: number | null }) {
   const t = useTranslations("common.dashboard");
-  const safeValue = Math.min(Math.max(value, 0), 100);
+  const hasValue = value !== null;
+  const safeValue = hasValue ? Math.min(Math.max(value, 0), 100) : 0;
   const radius = 46;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (safeValue / 100) * circumference;
@@ -120,7 +91,7 @@ function MatchRing({ value }: { value: number }) {
 
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <strong className="font-serif text-2xl font-semibold text-foreground sm:text-3xl">
-          {safeValue}%
+          {hasValue ? `${safeValue}%` : "—"}
         </strong>
         <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-xs">
           {t("match_label")}
@@ -173,10 +144,12 @@ function ModuleCard({ module }: { module: DashboardModule }) {
 
 /**
  * Card compacta de vacante compatible.
+ *
+ * TODO(backend): `JobMatch` no informa qué skills le faltan al usuario para
+ * esa vacante puntual (a diferencia del mock anterior); si se agrega, esta
+ * card puede volver a mostrar "skills a reforzar" por vacante.
  */
 function JobPreviewCard({ job }: { job: JobPreview }) {
-  const t = useTranslations("common.dashboard");
-
   return (
     <Card>
       <CardHeader className="space-y-3 pb-2">
@@ -187,21 +160,10 @@ function JobPreviewCard({ job }: { job: JobPreview }) {
           </div>
 
           <Badge className="bg-ambar-soft text-ambar-text hover:bg-ambar-soft">
-            {job.matchScore}%
+            {job.matchRate}%
           </Badge>
         </div>
       </CardHeader>
-
-      <CardContent>
-        <p className="text-sm font-medium">{t("compatible_jobs.skills_to_reinforce")}</p>
-        <ul className="mt-2 space-y-1">
-          {job.missingRequirements.slice(0, 2).map((item) => (
-            <li className="text-sm text-muted-foreground" key={item}>
-              · {item}
-            </li>
-          ))}
-        </ul>
-      </CardContent>
     </Card>
   );
 }
@@ -218,13 +180,16 @@ export function DashboardHome() {
   const orientationResult = useUserStore((state) => state.orientationResult);
 
   const matchValue = orientationResult
-    ? Math.max(0, 100 - orientationResult.gapPercentage)
-    : 64;
+    ? Math.max(0, 100 - orientationResult.gapPorcentual)
+    : null;
 
-  const suggestedPath = orientationResult?.suggestedPath ?? FALLBACK_PATH;
-  const compatibleJobs = orientationResult?.compatibleJobs?.length
-    ? orientationResult.compatibleJobs
-    : FALLBACK_JOBS;
+  const suggestedPath =
+    orientationResult?.trayectoriaSugerida.map(
+      (course) => `${course.title} · ${course.provider}`,
+    ) ?? [];
+
+  const compatibleJobs: JobPreview[] =
+    orientationResult?.vacantesCompatibles ?? [];
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -262,7 +227,9 @@ export function DashboardHome() {
               id="dashboard-progress-title"
               className="font-serif text-2xl font-semibold md:text-3xl"
             >
-              {t("progress.goal", { gap: 100 - matchValue })}
+              {matchValue !== null
+                ? t("progress.goal", { gap: 100 - matchValue })
+                : t("progress.goal_empty")}
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-white/90 lg:mx-0">
               {t("progress.hint")}
@@ -288,17 +255,15 @@ export function DashboardHome() {
                 {t("progress.confidence")}
               </p>
               <p className="font-serif text-2xl font-semibold">
-                {orientationResult ? "92%" : "Mock"}
+                {orientationResult ? `${orientationResult.confianza}%` : "—"}
               </p>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-                {t("progress.source")}
+                {t("progress.matches_count")}
               </p>
               <p className="font-medium">
-                {orientationResult?.source === "api"
-                  ? t("progress.source_api")
-                  : t("progress.source_mock")}
+                {orientationResult ? orientationResult.vacantesCompatibles.length : "—"}
               </p>
             </div>
           </div>
@@ -330,18 +295,24 @@ export function DashboardHome() {
             <CardTitle>{t("suggested_path")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <ol className="space-y-4">
-              {suggestedPath.slice(0, 4).map((item, index) => (
-                <li className="flex gap-3" key={`${item}-${index}`}>
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ambar-soft text-sm font-semibold text-ambar-text">
-                    {index + 1}
-                  </span>
-                  <p className="pt-1 text-sm leading-6 text-muted-foreground">
-                    {item}
-                  </p>
-                </li>
-              ))}
-            </ol>
+            {suggestedPath.length === 0 ? (
+              <p className="text-sm leading-6 text-muted-foreground">
+                {t("suggested_path_empty")}
+              </p>
+            ) : (
+              <ol className="space-y-4">
+                {suggestedPath.slice(0, 4).map((item, index) => (
+                  <li className="flex gap-3" key={`${item}-${index}`}>
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ambar-soft text-sm font-semibold text-ambar-text">
+                      {index + 1}
+                    </span>
+                    <p className="pt-1 text-sm leading-6 text-muted-foreground">
+                      {item}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            )}
           </CardContent>
         </Card>
 
@@ -393,11 +364,17 @@ export function DashboardHome() {
           </Button>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {compatibleJobs.slice(0, 3).map((job) => (
-            <JobPreviewCard job={job} key={job.id} />
-          ))}
-        </div>
+        {compatibleJobs.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            {t("compatible_jobs.empty")}
+          </p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {compatibleJobs.slice(0, 3).map((job) => (
+              <JobPreviewCard job={job} key={job.jobId} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section aria-labelledby="services-title" className="space-y-4">

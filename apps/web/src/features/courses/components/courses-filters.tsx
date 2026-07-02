@@ -2,27 +2,33 @@
 
 import { useTranslations } from "next-intl";
 import { useQueryState } from "nuqs";
-import type { CourseProvider, CourseLevel, CourseArea } from "@/services/courses/courses.types";
+import type { CourseLevel } from "@/services/courses/courses.types";
+import type { SkillCategory } from "@/services/skills/skills.types";
 
-const PROVIDERS: { value: CourseProvider; label: string }[] = [
-  { value: "google", label: "Google" },
-  { value: "oracle", label: "Oracle" },
-  { value: "aws", label: "AWS" },
-  { value: "microsoft", label: "Microsoft" },
-  { value: "freecodecamp", label: "freeCodeCamp" },
+type CoursesFiltersProps = {
+  /** Proveedores presentes en el catálogo cargado (`getAvailableProviders`). */
+  providers: string[];
+};
+
+const LEVELS: CourseLevel[] = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
+
+const SKILL_CATEGORIES: SkillCategory[] = [
+  "BACKEND",
+  "FRONTEND",
+  "MOBILE",
+  "DATA_SCIENCE",
+  "DESIGN_UX_UI",
+  "SOFT_SKILLS",
 ];
 
-const LEVELS: CourseLevel[] = ["principiante", "intermedio", "avanzado"];
-
-const AREAS: CourseArea[] = ["frontend", "backend", "fullstack", "data", "qa"];
-
-export function CoursesFilters() {
+export function CoursesFilters({ providers }: CoursesFiltersProps) {
   const t = useTranslations("common.courses");
+  const tSkills = useTranslations("common.skills.categories");
   const [provider, setProvider] = useQueryState("provider");
   const [level, setLevel] = useQueryState("level");
-  const [area, setArea] = useQueryState("area");
+  const [skillCategory, setSkillCategory] = useQueryState("skillCategory");
 
-  const hasFilters = provider || level || area;
+  const hasFilters = provider || level || skillCategory;
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -33,8 +39,8 @@ export function CoursesFilters() {
         aria-label={t("filters.by_provider")}
       >
         <option value="">{t("filters.all_providers")}</option>
-        {PROVIDERS.map((p) => (
-          <option key={p.value} value={p.value}>{p.label}</option>
+        {providers.map((p) => (
+          <option key={p} value={p}>{p}</option>
         ))}
       </select>
 
@@ -51,14 +57,14 @@ export function CoursesFilters() {
       </select>
 
       <select
-        value={area ?? ""}
-        onChange={(e) => setArea(e.target.value || null)}
+        value={skillCategory ?? ""}
+        onChange={(e) => setSkillCategory(e.target.value || null)}
         className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm"
-        aria-label={t("filters.by_area")}
+        aria-label={t("filters.by_skill_category")}
       >
-        <option value="">{t("filters.all_areas")}</option>
-        {AREAS.map((value) => (
-          <option key={value} value={value}>{t(`areas.${value}`)}</option>
+        <option value="">{t("filters.all_skill_categories")}</option>
+        {SKILL_CATEGORIES.map((value) => (
+          <option key={value} value={value}>{tSkills(value)}</option>
         ))}
       </select>
 
@@ -68,7 +74,7 @@ export function CoursesFilters() {
           onClick={() => {
             setProvider(null);
             setLevel(null);
-            setArea(null);
+            setSkillCategory(null);
           }}
           className="text-sm text-muted-foreground underline-offset-4 hover:underline hover:text-foreground"
         >

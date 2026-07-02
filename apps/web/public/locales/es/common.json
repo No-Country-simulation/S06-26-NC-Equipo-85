@@ -24,7 +24,19 @@
     "password_mismatch": "Las contraseñas no coinciden",
     "something_went_wrong": "Algo salió mal. Intenta de nuevo.",
     "loading": "Cargando...",
-    "not_found": "No encontrado"
+    "not_found": "No encontrado",
+    "cold_start": "El servidor está iniciándose. Puede tardar unos segundos, volvé a intentar.",
+    "retry": "Reintentar"
+  },
+  "skills": {
+    "categories": {
+      "BACKEND": "Backend",
+      "FRONTEND": "Frontend",
+      "MOBILE": "Mobile",
+      "DATA_SCIENCE": "Ciencia de datos",
+      "DESIGN_UX_UI": "Diseño UX/UI",
+      "SOFT_SKILLS": "Habilidades blandas"
+    }
   },
   "common": {
     "loading": "Cargando...",
@@ -42,39 +54,27 @@
     "all": "Todos",
     "watch_video": "Ver video",
     "see_course": "Ver curso",
-    "no_preview": "Sin preview",
-    "preview_unavailable": "Preview no disponible para este curso",
     "no_results": "No hay cursos con esos filtros",
     "clear_filters": "Limpiar filtros",
-    "load_error": "Error al cargar cursos",
-    "retry": "Reintentar",
     "loading": "Cargando cursos...",
     "filters": {
       "all_providers": "Todos los proveedores",
       "all_levels": "Todos los niveles",
-      "all_areas": "Todas las áreas",
+      "all_skill_categories": "Todas las categorías",
       "by_provider": "Filtrar por proveedor",
       "by_level": "Filtrar por nivel",
-      "by_area": "Filtrar por área"
+      "by_skill_category": "Filtrar por categoría"
     },
     "levels": {
-      "principiante": "Principiante",
-      "intermedio": "Intermedio",
-      "avanzado": "Avanzado"
-    },
-    "areas": {
-      "frontend": "Frontend",
-      "backend": "Backend",
-      "fullstack": "Full Stack",
-      "data": "Datos",
-      "qa": "QA"
+      "BEGINNER": "Principiante",
+      "INTERMEDIATE": "Intermedio",
+      "ADVANCED": "Avanzado"
     },
     "columns": {
       "course": "Curso",
       "provider": "Proveedor",
       "level": "Nivel",
-      "area": "Área",
-      "duration": "Duración"
+      "skills": "Habilidades"
     }
   },
   "jobs": {
@@ -89,26 +89,23 @@
       "medium": "Te falta cubrir algunos requisitos clave.",
       "low": "Esta vacante requiere más preparación."
     },
-    "requirements": "Requisitos",
-    "completed": "Cumplido",
-    "pending": "Pendiente",
-    "see_course": "Ver curso sugerido",
-    "see_course_short": "Ver curso",
-    "see_requirements": "Ver requisitos",
-    "salary_estimated": "Salario estimado",
-    "salary_unspecified": "No especificado",
+    "requirements": "Skills requeridas",
+    "no_requirements": "Esta vacante no especifica skills requeridas.",
+    "see_requirements": "Ver detalle",
     "description": "Descripción",
     "no_results": "No hay vacantes disponibles",
-    "load_error": "Error al cargar vacantes",
-    "retry": "Reintentar",
+    "not_found": "Vacante no encontrada",
+    "back_to_list": "Volver al listado",
     "detail": "Detalle de vacante",
     "close": "Cerrar",
+    "session_error": {
+      "title": "No pudimos identificar tu sesión",
+      "body": "Volvé a iniciar sesión para ver tus vacantes compatibles."
+    },
     "columns": {
       "job": "Vacante",
       "company": "Empresa",
-      "area": "Área",
-      "match": "Match",
-      "salary": "Salario"
+      "match": "Match"
     }
   },
   "table": {
@@ -116,6 +113,22 @@
     "page_of": "Página {page} de {total}",
     "previous": "Anterior",
     "next": "Siguiente"
+  },
+  "onboarding": {
+    "success": {
+      "match_label": "tu match inicial",
+      "greeting": "¡Bienvenida, {name}! 🌅",
+      "loading": "Estamos generando tu orientación inicial…",
+      "subtitle": "Tu perfil está listo. Empezás con un {match}% de match y te preparamos una trayectoria para cerrar la brecha.",
+      "gap_items_title": "Skills a reforzar",
+      "gap_items_empty": "No detectamos brechas de skills en tu perfil.",
+      "suggested_path_title": "Trayectoria sugerida",
+      "suggested_path_empty": "Todavía no hay cursos sugeridos para tu perfil.",
+      "compatible_jobs_title": "Vacantes compatibles",
+      "compatible_jobs_empty": "Todavía no hay vacantes compatibles con tu perfil.",
+      "cta": "Ir a mi Dashboard →",
+      "go_dashboard_anyway": "Ir al dashboard igual"
+    }
   },
   "dashboard": {
     "eyebrow": "Dashboard",
@@ -134,13 +147,12 @@
     "match_label": "match",
     "progress": {
       "goal": "Estás a {gap}% de tu meta",
+      "goal_empty": "Completá tu onboarding para ver tu progreso real",
       "hint": "Seguí cerrando tu brecha con formaciones sugeridas, vacantes compatibles y acompañamiento semanal.",
       "see_courses": "Ver formaciones",
       "see_jobs": "Ver vacantes",
       "confidence": "Confianza",
-      "source": "Fuente",
-      "source_api": "API real",
-      "source_mock": "Mock dev"
+      "matches_count": "Vacantes compatibles"
     },
     "no_orientation": {
       "title": "Todavía no hay orientación real guardada",
@@ -148,13 +160,14 @@
       "cta": "Completar onboarding"
     },
     "suggested_path": "Trayectoria sugerida",
+    "suggested_path_empty": "Todavía no hay trayectoria: completá el onboarding para generarla desde tu perfil.",
     "mood_history": "Historial emocional semanal",
     "mood_note": "Primer estado mock para visualizar la card. Luego se conecta a GET /salud/historial.",
     "compatible_jobs": {
       "title": "Vacantes compatibles",
       "subtitle": "Top oportunidades ordenadas por compatibilidad.",
       "see_all": "Ver todas",
-      "skills_to_reinforce": "Skills a reforzar"
+      "empty": "Todavía no hay vacantes compatibles: completá el onboarding para calcularlas."
     },
     "services": {
       "title": "Cinco servicios, un mismo camino",
