@@ -33,9 +33,6 @@ export type OrientationResponse = {
   trayectoriaSugerida: SuggestedCourse[];
   /** Reutiliza `JobMatch` de jobs: mismo `matchRate` ya normalizado. */
   vacantesCompatibles: JobMatch[];
-  /**
-   * Indicador de confianza del modelo. El OpenAPI no aclara si viaja como
-   * fracción (`0-1`) o porcentaje; se normaliza igual que `gapPorcentual`.
-   */
+  /** Indicador de confianza del modelo, escala 0-100 (redondeado en el service). */
   confianza: number;
 };

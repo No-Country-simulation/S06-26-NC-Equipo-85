@@ -65,10 +65,7 @@ export function RegisterForm() {
       updateDraftData({ email: values.email });
 
       // Registro → siempre onboarding: el Profile recién creado está incompleto.
-      toast.success(t("successTitle"), {
-        description:
-          result.source === "mock" ? t("successMock") : t("successApi"),
-      });
+      toast.success(t("successTitle"), { description: t("successApi") });
 
       router.push("/onboarding");
     } catch (error) {

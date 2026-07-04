@@ -1,4 +1,4 @@
-import { apiRequest, getApiBaseUrl } from "@/lib/api";
+import { apiRequest } from "@/lib/api";
 import type {
   AuthResponse,
   AuthTokenResponse,
@@ -6,66 +6,17 @@ import type {
   RegisterRequest,
 } from "./auth.types";
 
-const MOCK_DELAY_MS = 500;
-
-function wait(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-function encodeBase64Url(value: unknown): string {
-  return btoa(JSON.stringify(value))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-/**
- * Genera un JWT simulado con forma real (header.payload.firma) y claim `sub`.
- *
- * `lib/jwt.ts#getUserIdFromToken` deriva `userId` decodificando el claim `sub`
- * del access token; un token mock que no respete esa forma dejaría a jobs y
- * orientación sin `userId` en desarrollo sin backend. La "firma" es literal
- * (no hay verificación real: nadie valida un token mock).
- */
-function createMockAccessToken(userId: string): string {
-  const header = encodeBase64Url({ alg: "none", typ: "JWT" });
-  const payload = encodeBase64Url({ sub: userId, mock: true });
-
-  return `${header}.${payload}.mock-signature`;
-}
-
-/**
- * Genera un token simulado para mantener el flujo de auth usable en desarrollo
- * cuando no hay `NEXT_PUBLIC_API_URL` configurada.
- * Mismo criterio que el mock de `/orientar` (ver orientation.service).
- */
-async function createMockAuth(): Promise<AuthResponse> {
-  await wait(MOCK_DELAY_MS);
-
-  return {
-    token: createMockAccessToken(crypto.randomUUID()),
-    refreshToken: null,
-    source: "mock",
-  };
-}
-
 /**
  * Registra la cuenta y deja la sesión iniciada.
  *
- * `POST /api/v1/auth/register` ya devuelve el par de JWT (access + refresh),
- * así que no hace falta un segundo login. Un usuario recién registrado nunca
- * tiene el `Profile` completo, por eso `profileCompleted: false` (el front lo
- * lleva a `/onboarding`).
+ * `POST /api/v1/auth/register` ya devuelve el par de JWT (access + refresh), así
+ * que no hace falta un segundo login. Un usuario recién registrado nunca tiene
+ * el `Profile` completo, por eso el form lo lleva siempre a `/onboarding`.
+ * Consume solo el backend real (sin mock).
  */
 export async function registerUser(
   payload: RegisterRequest,
 ): Promise<AuthResponse> {
-  if (!getApiBaseUrl()) {
-    return createMockAuth();
-  }
-
   const result = await apiRequest<AuthTokenResponse>("/api/v1/auth/register", {
     method: "POST",
     body: JSON.stringify({
@@ -79,7 +30,6 @@ export async function registerUser(
   return {
     token: result.accessToken,
     refreshToken: result.refreshToken,
-    source: "api",
   };
 }
 
@@ -92,10 +42,6 @@ export async function registerUser(
  * `ApiError.status` para mostrar "demasiados intentos" en el form.
  */
 export async function loginUser(payload: LoginRequest): Promise<AuthResponse> {
-  if (!getApiBaseUrl()) {
-    return createMockAuth();
-  }
-
   const result = await apiRequest<AuthTokenResponse>("/api/v1/auth/login", {
     method: "POST",
     body: JSON.stringify(payload),
@@ -104,7 +50,6 @@ export async function loginUser(payload: LoginRequest): Promise<AuthResponse> {
   return {
     token: result.accessToken,
     refreshToken: result.refreshToken,
-    source: "api",
   };
 }
 
@@ -118,10 +63,6 @@ export async function loginUser(payload: LoginRequest): Promise<AuthResponse> {
 export async function refreshSession(
   refreshToken: string,
 ): Promise<AuthResponse> {
-  if (!getApiBaseUrl()) {
-    return createMockAuth();
-  }
-
   const result = await apiRequest<AuthTokenResponse>("/api/v1/auth/refresh", {
     method: "POST",
     body: JSON.stringify({ refreshToken }),
@@ -130,6 +71,5 @@ export async function refreshSession(
   return {
     token: result.accessToken,
     refreshToken: result.refreshToken,
-    source: "api",
   };
 }

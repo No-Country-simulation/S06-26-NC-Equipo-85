@@ -1,17 +1,11 @@
 /**
- * Normaliza un porcentaje potencialmente expresado como fracción (`0-1`) a
- * escala `0-100`, redondeado y acotado al rango válido.
+ * Redondea y acota un porcentaje a la escala 0-100.
  *
- * El OpenAPI no aclara la escala real de `JobMatch.matchRate` ni de
- * `OrientationResponse.gapPorcentual` (`double`, sin más contexto). Esta
- * heurística defensiva asume que un valor `<= 1` es una fracción y lo escala;
- * valores mayores se asumen ya expresados en `0-100` y solo se acotan.
- *
- * TODO(backend): confirmar la escala real de `matchRate`/`gapPorcentual` con
- * un request contra el backend desplegado y, si hace falta, ajustar o quitar
- * esta heurística.
+ * El contrato del backend expresa `matchRate`, `gapPorcentual` y `confianza` en
+ * escala 0-100 (p. ej. `78.5`, `35.5`, `92.0`); acá solo se redondea y se acota
+ * al rango válido. No se aplica heurística de fracción (`value <= 1 ? ×100`):
+ * inflaría un porcentaje legítimo ≤1 (un match de 1% se volvería 100%).
  */
 export function normalizePercentage(value: number): number {
-  const normalized = value <= 1 ? value * 100 : value;
-  return Math.round(Math.min(100, Math.max(0, normalized)));
+  return Math.round(Math.min(100, Math.max(0, value)));
 }

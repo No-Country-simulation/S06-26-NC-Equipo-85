@@ -1,12 +1,57 @@
+export type ApiFieldError = { field: string; message: string };
+
+/**
+ * Extrae `message` y `fieldErrors` del cuerpo de error estándar del backend
+ * (`{ status, error, message, path, fieldErrors[] }`) de forma defensiva: si el
+ * payload no matchea esa forma, ambos quedan `undefined`.
+ */
+function parseErrorBody(payload: unknown): {
+  message?: string;
+  fieldErrors?: ApiFieldError[];
+} {
+  if (typeof payload !== "object" || payload === null) {
+    return {};
+  }
+
+  const body = payload as Record<string, unknown>;
+  const message = typeof body.message === "string" ? body.message : undefined;
+
+  let fieldErrors: ApiFieldError[] | undefined;
+  if (Array.isArray(body.fieldErrors)) {
+    const parsed = body.fieldErrors
+      .filter(
+        (item): item is Record<string, unknown> =>
+          typeof item === "object" && item !== null,
+      )
+      .map((item) => ({
+        field: typeof item.field === "string" ? item.field : "",
+        message: typeof item.message === "string" ? item.message : "",
+      }))
+      .filter((item) => item.field !== "" || item.message !== "");
+
+    fieldErrors = parsed.length > 0 ? parsed : undefined;
+  }
+
+  return { message, fieldErrors };
+}
+
 export class ApiError extends Error {
   status: number;
   payload: unknown;
+  /** `message` del cuerpo de error estándar del backend, si vino. */
+  backendMessage?: string;
+  /** Errores por campo del cuerpo estándar (validación 400), si vinieron. */
+  fieldErrors?: ApiFieldError[];
 
   constructor(message: string, status: number, payload: unknown = null) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.payload = payload;
+
+    const parsed = parseErrorBody(payload);
+    this.backendMessage = parsed.message;
+    this.fieldErrors = parsed.fieldErrors;
   }
 }
 
