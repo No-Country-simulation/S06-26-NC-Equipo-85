@@ -26,6 +26,7 @@
     "loading": "Carregando...",
     "not_found": "Não encontrado",
     "cold_start": "O servidor está iniciando. Pode levar alguns segundos, tente novamente.",
+    "field_errors_title": "Revise estes campos:",
     "retry": "Tentar novamente"
   },
   "skills": {
@@ -281,7 +282,6 @@
       "loginLink": "Entrar",
       "successTitle": "Conta criada",
       "successApi": "Sua conta foi criada. Complete seu perfil para começar.",
-      "successMock": "Conta simulada (a API ainda não está configurada).",
       "errorTitle": "Não foi possível criar a conta"
     },
     "login": {
@@ -301,7 +301,6 @@
       "registerLink": "Criar conta",
       "successTitle": "Login bem-sucedido",
       "successApi": "Bem-vinda de volta!",
-      "successMock": "Login simulado (a API ainda não está configurada).",
       "errorTitle": "Não foi possível entrar",
       "errorInvalid": "O e-mail ou a senha estão incorretos.",
       "errorRateLimit": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",

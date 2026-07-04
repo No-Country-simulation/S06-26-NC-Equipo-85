@@ -36,17 +36,12 @@ export type AuthTokenResponse = {
 /**
  * Respuesta normalizada de autenticación que consume el front.
  *
- * El contrato real de auth (`register`/`login`) solo devuelve el par de JWT, no
- * trae `profileCompleted`. Por eso el redirect post-login se decide en el form
- * con el flag local `isOnboardingCompleted` del userStore.
- *
- * TODO(backend): cuando exista `GET /profile` (o el JWT lleve el claim),
- * derivar el redirect de la API en vez del estado local.
+ * El contrato real de auth (`register`/`login`/`refresh`) solo devuelve el par de
+ * JWT. El redirect post-login se deriva del perfil real (`GET /api/v1/profile`)
+ * en el form, no de esta respuesta.
  */
 export type AuthResponse = {
   token: string;
-  /** Token de refresco para `POST /auth/refresh`; `null` en el mock local. */
+  /** Token de refresco para `POST /auth/refresh`. */
   refreshToken: string | null;
-  /** Origen del dato: respuesta real de la API o mock local de desarrollo. */
-  source: "api" | "mock";
 };

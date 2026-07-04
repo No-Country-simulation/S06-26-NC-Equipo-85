@@ -26,13 +26,7 @@ export type JobMatch = {
   jobId: string;
   company: string;
   title: string;
-  /**
-   * Normalizado a escala 0-100 en `jobs.service.ts`.
-   *
-   * TODO(backend): confirmar la escala real (`0-1` vs `0-100`) de `matchRate`
-   * con un request real contra `/api/jobs/matches`; hoy se asume fracción si
-   * el valor crudo es `<= 1`.
-   */
+  /** Escala 0-100 (redondeado en `jobs.service.ts`; el contrato lo expresa así). */
   matchRate: number;
 };
 

@@ -74,14 +74,11 @@ export function LoginForm() {
       // no se vuelve a pedir). Ver onboarding-wizard → getSessionEmail.
       updateDraftData({ email: values.email });
 
-      toast.success(t("successTitle"), {
-        description:
-          result.source === "mock" ? t("successMock") : t("successApi"),
-      });
+      toast.success(t("successTitle"), { description: t("successApi") });
 
-      // El perfil del back decide el redirect: si existe (GET 200) el onboarding
-      // ya se completó → dashboard; si no (404 → null) → onboarding. Si la
-      // consulta falla, se cae al flag local del store.
+      // El perfil del back decide el redirect: si existe con `name` (GET 200) el
+      // onboarding ya se completó → dashboard; si no (404 → null, o sin `name`)
+      // → onboarding. Si la consulta falla, se cae al flag local del store.
       let hasProfile = isOnboardingCompleted;
 
       try {
@@ -90,7 +87,7 @@ export function LoginForm() {
           queryFn: getProfile,
         });
 
-        if (profile) {
+        if (profile?.name) {
           // El backend usa `user.id` como PK del perfil, que el front no
           // decodifica del JWT; el email identifica al usuario en el store
           // (mismo criterio que el onboarding → completeOnboarding). Marca el
@@ -104,7 +101,7 @@ export function LoginForm() {
           });
         }
 
-        hasProfile = Boolean(profile);
+        hasProfile = Boolean(profile?.name);
       } catch {
         // Se mantiene el fallback local (hasProfile = isOnboardingCompleted).
       }
