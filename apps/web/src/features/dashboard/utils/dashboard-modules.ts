@@ -22,7 +22,7 @@ export const DASHBOARD_MODULES = [
     title: "Experiencias",
     description:
       "Historias de personas que ya recorrieron el camino que estás empezando.",
-    href: "/experiencias",
+    href: "/experiences",
     accent: "coral",
   },
   {
@@ -30,7 +30,7 @@ export const DASHBOARD_MODULES = [
     title: "Mentorías",
     description:
       "Prácticas y encuentros con mentores para ganar confianza antes de postular.",
-    href: "/mentorias",
+    href: "/mentorships",
     accent: "blue",
   },
   {
