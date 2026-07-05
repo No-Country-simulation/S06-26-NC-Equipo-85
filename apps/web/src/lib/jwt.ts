@@ -29,6 +29,43 @@ function decodeBase64Url(segment: string): string {
 }
 
 /**
+ * Indica si el access token está vencido según su claim `exp` (segundos epoch).
+ *
+ * `skewSeconds` da un margen para renovar antes del vencimiento exacto y evitar
+ * carreras. Ante la duda (sin `exp` o no decodificable) NO declara expiración
+ * —salvo token nulo— para no cerrar sesiones válidas: el manejo real del rechazo
+ * queda en el interceptor de `apiRequest` (401/403 del backend).
+ */
+export function isTokenExpired(token: string | null, skewSeconds = 30): boolean {
+  if (!token) {
+    return true;
+  }
+
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return false;
+    }
+
+    const payload: unknown = JSON.parse(decodeBase64Url(parts[1]));
+
+    if (
+      typeof payload === "object" &&
+      payload !== null &&
+      "exp" in payload &&
+      typeof (payload as { exp: unknown }).exp === "number"
+    ) {
+      const expiresAtMs = (payload as { exp: number }).exp * 1000;
+      return expiresAtMs <= Date.now() + skewSeconds * 1000;
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Extrae el claim `sub` (identificador del usuario) del access token JWT.
  *
  * Devuelve `null` ante cualquier fallo: token nulo, formato inválido, payload

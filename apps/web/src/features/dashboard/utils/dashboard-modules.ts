@@ -38,7 +38,7 @@ export const DASHBOARD_MODULES = [
     title: "Salud mental",
     description:
       "Check-in diario, seguimiento emocional y acompañamiento empático.",
-    href: "/salud",
+    href: "/health",
     accent: "blue",
   },
 ] as const satisfies readonly DashboardModule[];

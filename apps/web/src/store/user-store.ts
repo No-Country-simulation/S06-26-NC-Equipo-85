@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { setAuthTokenGetter } from "@/lib/api";
+import { setAuthRefreshHandler, setAuthTokenGetter } from "@/lib/api";
+import { refreshSession } from "@/services/auth/auth.service";
 import type { OrientationResponse } from "@/services/orientation/orientation.types";
 
 export type OnboardingDraft = {
@@ -134,3 +135,28 @@ export const useUserStore = create<UserState>()(
 // Inyecta el access token a la capa HTTP sin acoplar `lib/api` al store.
 // `apiRequest` lo lee en cada request, así sigue vigente tras login/refresh.
 setAuthTokenGetter(() => useUserStore.getState().token);
+
+// Renueva la sesión cuando una request devuelve 401/403 (token vencido). Rota
+// el par de JWT y actualiza el store; si el refresh falla o no hay refresh
+// token, cierra la sesión (`reset`) para forzar el redirect a /login.
+setAuthRefreshHandler(async () => {
+  const state = useUserStore.getState();
+  const { refreshToken } = state;
+
+  if (!refreshToken) {
+    state.reset();
+    return null;
+  }
+
+  try {
+    const session = await refreshSession(refreshToken);
+    state.setSession({
+      token: session.token,
+      refreshToken: session.refreshToken,
+    });
+    return session.token;
+  } catch {
+    state.reset();
+    return null;
+  }
+});

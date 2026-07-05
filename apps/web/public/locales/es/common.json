@@ -109,6 +109,57 @@
       "match": "Match"
     }
   },
+  "health": {
+    "title": "Salud mental",
+    "subtitle": "Un espacio seguro para tu check-in diario. Registrá cómo te sentís y recibí acompañamiento empático.",
+    "form": {
+      "card_title": "¿Cómo te sentís hoy?",
+      "mood_label": "Elegí el emoji que mejor te representa",
+      "moods": {
+        "feliz": "Feliz",
+        "cansado": "Cansado",
+        "triste": "Triste",
+        "ansioso": "Ansioso",
+        "sobrecargado": "Sobrecargado"
+      },
+      "rating_label": "¿Cómo calificarías tu bienestar hoy?",
+      "rating_hint": "1 = muy mal · 5 = muy bien",
+      "rating_levels": {
+        "1": "Muy mal",
+        "2": "Mal",
+        "3": "Regular",
+        "4": "Bien",
+        "5": "Muy bien"
+      },
+      "context_label": "¿Querés contarnos algo más? (opcional)",
+      "context_placeholder": "Escribí lo que sentís, sin filtros.",
+      "submit": "Registrar check-in",
+      "submitting": "Registrando…",
+      "error_title": "No pudimos registrar tu check-in",
+      "error_body": "Ocurrió un error. Volvé a intentarlo en unos segundos."
+    },
+    "response": {
+      "card_title": "Gracias por compartir",
+      "title": "Estamos con vos",
+      "suggested_action": "Acción sugerida",
+      "empathic_cta": "Quiero leer algo que me acompañe",
+      "empathic_loading": "Generando…",
+      "new_checkin": "Registrar otro check-in"
+    },
+    "history": {
+      "card_title": "Tu historial",
+      "loading": "Cargando tu historial…",
+      "empty_title": "Aún no hay check-ins",
+      "empty_body": "Cuando registres tu primer check-in, aparecerá acá.",
+      "rating": "Bienestar: {value}/5",
+      "suggested_action": "Sugerencia: {action}"
+    },
+    "cvv": {
+      "title": "No estás solo/a",
+      "body": "Si estás atravesando un momento difícil, hablar con alguien puede ayudar. La línea de ayuda es gratuita y confidencial.",
+      "line": "Línea CVV: 135 (CABA/GBA) o (011) 5275-1135"
+    }
+  },
   "table": {
     "empty": "Sin resultados",
     "page_of": "Página {page} de {total}",
@@ -163,7 +214,9 @@
     "suggested_path": "Trayectoria sugerida",
     "suggested_path_empty": "Todavía no hay trayectoria: completá el onboarding para generarla desde tu perfil.",
     "mood_history": "Historial emocional semanal",
-    "mood_note": "Primer estado mock para visualizar la card. Luego se conecta a GET /salud/historial.",
+    "mood_note": "Tus últimos check-ins emocionales, del 1 al 5.",
+    "mood_empty": "Todavía no registraste ningún check-in.",
+    "mood_cta": "Hacé tu primer check-in →",
     "compatible_jobs": {
       "title": "Vacantes compatibles",
       "subtitle": "Top oportunidades ordenadas por compatibilidad.",

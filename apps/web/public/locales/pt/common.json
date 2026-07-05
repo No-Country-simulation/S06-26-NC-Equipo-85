@@ -109,6 +109,57 @@
       "match": "Match"
     }
   },
+  "health": {
+    "title": "Saúde mental",
+    "subtitle": "Um espaço seguro para o seu check-in diário. Registre como você se sente e receba acolhimento empático.",
+    "form": {
+      "card_title": "Como você está se sentindo hoje?",
+      "mood_label": "Escolha o emoji que melhor representa você",
+      "moods": {
+        "feliz": "Feliz",
+        "cansado": "Cansado",
+        "triste": "Triste",
+        "ansioso": "Ansioso",
+        "sobrecargado": "Sobrecarregado"
+      },
+      "rating_label": "Como você avaliaria o seu bem-estar hoje?",
+      "rating_hint": "1 = muito mal · 5 = muito bem",
+      "rating_levels": {
+        "1": "Muito mal",
+        "2": "Mal",
+        "3": "Regular",
+        "4": "Bem",
+        "5": "Muito bem"
+      },
+      "context_label": "Quer nos contar algo mais? (opcional)",
+      "context_placeholder": "Escreva o que você sente, sem filtros.",
+      "submit": "Registrar check-in",
+      "submitting": "Registrando…",
+      "error_title": "Não conseguimos registrar seu check-in",
+      "error_body": "Ocorreu um erro. Tente novamente em alguns segundos."
+    },
+    "response": {
+      "card_title": "Obrigado por compartilhar",
+      "title": "Estamos com você",
+      "suggested_action": "Ação sugerida",
+      "empathic_cta": "Quero ler algo que me acolha",
+      "empathic_loading": "Gerando…",
+      "new_checkin": "Registrar outro check-in"
+    },
+    "history": {
+      "card_title": "Seu histórico",
+      "loading": "Carregando seu histórico…",
+      "empty_title": "Ainda não há check-ins",
+      "empty_body": "Quando você registrar seu primeiro check-in, ele aparecerá aqui.",
+      "rating": "Bem-estar: {value}/5",
+      "suggested_action": "Sugestão: {action}"
+    },
+    "cvv": {
+      "title": "Você não está sozinho(a)",
+      "body": "Se você está passando por um momento difícil, conversar com alguém pode ajudar. A linha de apoio é gratuita e confidencial.",
+      "line": "CVV: 188 (ligação gratuita, 24h)"
+    }
+  },
   "table": {
     "empty": "Sem resultados",
     "page_of": "Página {page} de {total}",
@@ -163,7 +214,9 @@
     "suggested_path": "Trajetória sugerida",
     "suggested_path_empty": "Ainda não há trajetória: complete o onboarding para gerá-la a partir do seu perfil.",
     "mood_history": "Histórico emocional semanal",
-    "mood_note": "Primeiro estado mock para visualizar o card. Depois conecta-se a GET /salud/historial.",
+    "mood_note": "Seus últimos check-ins emocionais, de 1 a 5.",
+    "mood_empty": "Você ainda não registrou nenhum check-in.",
+    "mood_cta": "Faça seu primeiro check-in →",
     "compatible_jobs": {
       "title": "Vagas compatíveis",
       "subtitle": "Principais oportunidades ordenadas por compatibilidade.",
