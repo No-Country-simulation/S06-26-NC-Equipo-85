@@ -66,6 +66,42 @@ export function isTokenExpired(token: string | null, skewSeconds = 30): boolean 
 }
 
 /**
+ * Extrae el claim `role` del access token JWT (`MENTEE` | `MENTOR`).
+ *
+ * Es la única fuente del rol en el cliente: el back lo incluye en el token
+ * (claims = `role, sub, iat, exp`). Se usa para habilitar la UI exclusiva de
+ * MENTOR (crear/editar/borrar experiencias). Devuelve `null` ante cualquier
+ * fallo, para tratar la ausencia de rol como "no autorizado" sin lanzar.
+ */
+export function getRoleFromToken(token: string | null): string | null {
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const payload: unknown = JSON.parse(decodeBase64Url(parts[1]));
+
+    if (
+      typeof payload === "object" &&
+      payload !== null &&
+      "role" in payload &&
+      typeof (payload as { role: unknown }).role === "string"
+    ) {
+      return (payload as { role: string }).role;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Extrae el claim `sub` (identificador del usuario) del access token JWT.
  *
  * Devuelve `null` ante cualquier fallo: token nulo, formato inválido, payload
