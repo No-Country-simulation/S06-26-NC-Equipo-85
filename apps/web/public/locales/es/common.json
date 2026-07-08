@@ -179,6 +179,121 @@
       "line": "Línea CVV: 135 (CABA/GBA) o (011) 5275-1135"
     }
   },
+  "experiences": {
+    "title": "Experiencias",
+    "subtitle": "Charlas, workshops y experiencias de mentores que ya recorrieron el camino que estás empezando.",
+    "create": "Crear experiencia",
+    "view": "Ver experiencia",
+    "loading": "Cargando experiencias…",
+    "empty_title": "No hay experiencias disponibles",
+    "empty_body": "Cuando haya experiencias publicadas, aparecerán acá.",
+    "types": {
+      "WORKSHOP": "Workshop",
+      "BOOTCAMP": "Bootcamp",
+      "WEBINAR": "Webinar",
+      "JOB_EXPERIENCE": "Experiencia laboral"
+    },
+    "filters": {
+      "type_label": "Filtrar por tipo",
+      "all_types": "Todos los tipos",
+      "skill_label": "Filtrar por skill",
+      "all_skills": "Todas las skills",
+      "clear": "Limpiar filtros"
+    },
+    "detail": {
+      "title": "Detalle de la experiencia",
+      "not_found": "No encontramos esta experiencia.",
+      "external": "Este contenido se abre en un sitio externo.",
+      "open_link": "Abrir contenido",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "confirm_delete": "¿Eliminar esta experiencia?",
+      "confirm_delete_cta": "Sí, eliminar",
+      "cancel": "Cancelar",
+      "deleted": "Experiencia eliminada.",
+      "delete_error": "No pudimos eliminar la experiencia."
+    },
+    "form": {
+      "create_title": "Nueva experiencia",
+      "edit_title": "Editar experiencia",
+      "title_label": "Título",
+      "type_label": "Tipo",
+      "datetime_label": "Fecha y hora",
+      "speaker_role_label": "Rol del/la speaker",
+      "content_url_label": "Enlace al contenido",
+      "description_label": "Descripción",
+      "skills_label": "Skills relacionadas",
+      "cancel": "Cancelar",
+      "save": "Guardar cambios",
+      "create": "Crear",
+      "saving": "Guardando…",
+      "created": "Experiencia creada.",
+      "updated": "Experiencia actualizada.",
+      "create_error": "No pudimos crear la experiencia.",
+      "update_error": "No pudimos actualizar la experiencia."
+    }
+  },
+  "mentorships": {
+    "title": "Mentorías",
+    "subtitle": "Agendá prácticas con mentores reales y ganá confianza antes de postularte.",
+    "create": "Crear sesión",
+    "loading": "Cargando sesiones…",
+    "practice": "Práctica",
+    "tabs": {
+      "explore": "Explorar sesiones",
+      "mine": "Mis sesiones"
+    },
+    "empty_explore_title": "No hay sesiones disponibles",
+    "empty_explore_body": "Cuando un mentor publique nuevos espacios, aparecerán acá.",
+    "empty_mine_title": "Todavía no tenés sesiones",
+    "empty_mine_body": "Reservá una sesión disponible para verla acá.",
+    "status": {
+      "AVAILABLE": "Disponible",
+      "PENDING": "Pendiente",
+      "SCHEDULED": "Agendada",
+      "COMPLETED": "Completada",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status_label": "Estado",
+      "practice_label": "Tipo",
+      "all_practice": "Prácticas y reales",
+      "practice_only": "Solo prácticas",
+      "real_only": "Solo reales",
+      "date_label": "Fecha",
+      "clear": "Limpiar filtros"
+    },
+    "actions": {
+      "view": "Ver detalle",
+      "book": "Reservar",
+      "complete": "Marcar completada",
+      "cancel": "Cancelar",
+      "confirm_cancel": "¿Cancelar esta sesión?",
+      "confirm_cancel_cta": "Sí, cancelar",
+      "keep": "No, volver",
+      "booked": "Sesión reservada.",
+      "completed": "Sesión marcada como completada.",
+      "canceled": "Sesión cancelada.",
+      "book_error": "No pudimos reservar la sesión.",
+      "complete_error": "No pudimos completar la sesión.",
+      "cancel_error": "No pudimos cancelar la sesión."
+    },
+    "detail": {
+      "title": "Detalle de la sesión",
+      "not_found": "No encontramos esta sesión."
+    },
+    "form": {
+      "create_title": "Nueva sesión",
+      "title_label": "Título",
+      "datetime_label": "Fecha y hora",
+      "practice_label": "Es una invitación a práctica",
+      "cancel": "Cancelar",
+      "create": "Crear",
+      "saving": "Guardando…",
+      "created": "Sesión creada.",
+      "create_error": "No pudimos crear la sesión."
+    }
+  },
   "table": {
     "empty": "Sin resultados",
     "page_of": "Página {page} de {total}",
