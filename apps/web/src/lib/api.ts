@@ -1,3 +1,5 @@
+import { isTokenExpired } from "./jwt";
+
 export type ApiFieldError = { field: string; message: string };
 
 /**
@@ -75,6 +77,50 @@ export function setAuthTokenGetter(getter: () => string | null) {
   authTokenGetter = getter;
 }
 
+let authRefreshHandler: (() => Promise<string | null>) | null = null;
+let refreshInFlight: Promise<string | null> | null = null;
+
+/**
+ * Registra cómo renovar la sesión cuando una request devuelve 401/403.
+ *
+ * El userStore inyecta un handler que llama a `POST /auth/refresh`, actualiza el
+ * par de JWT y devuelve el nuevo access token (o `null` si la renovación falla,
+ * tras cerrar la sesión). Igual que el token getter, mantiene la dependencia
+ * store → api (no al revés).
+ */
+export function setAuthRefreshHandler(
+  handler: (() => Promise<string | null>) | null,
+) {
+  authRefreshHandler = handler;
+}
+
+/**
+ * Renueva la sesión a lo sumo una vez de forma concurrente: varias requests que
+ * fallan al mismo tiempo comparten la misma promesa de refresh en vuelo.
+ */
+function refreshAuthOnce(): Promise<string | null> {
+  if (!authRefreshHandler) {
+    return Promise.resolve(null);
+  }
+
+  if (!refreshInFlight) {
+    refreshInFlight = authRefreshHandler().finally(() => {
+      refreshInFlight = null;
+    });
+  }
+
+  return refreshInFlight;
+}
+
+/**
+ * Fuerza una renovación de sesión (comparte la promesa en vuelo de
+ * `refreshAuthOnce`). Lo usa `AuthGuard` para pre-renovar un token expirado
+ * antes de renderizar el área privada.
+ */
+export function refreshAuth(): Promise<string | null> {
+  return refreshAuthOnce();
+}
+
 /**
  * Devuelve la URL base configurada para la API.
  *
@@ -109,29 +155,28 @@ export const DEFAULT_TIMEOUT_MS = 60_000;
 type ApiRequestOptions = {
   /** Timeout en ms para esta request puntual (default `DEFAULT_TIMEOUT_MS`). */
   timeoutMs?: number;
+  /**
+   * Evita el refresh automático de sesión ante 401/403. Lo usan los propios
+   * endpoints de auth (`login`/`register`/`refresh`): un fallo ahí no debe
+   * disparar el ciclo de renovación (evita loops y renovaciones espurias).
+   */
+  skipAuthRefresh?: boolean;
 };
 
 /**
- * Cliente HTTP mínimo para consumir endpoints del backend.
+ * Ejecuta una request HTTP con timeout y manejo de abort.
  *
  * Aborta la request si supera el timeout, traduciendo el corte a un `ApiError`
  * 408 legible (útil mientras el backend "despierta"). Respeta un `init.signal`
  * provisto por el llamador: tanto ese signal como el timeout pueden abortarla.
+ * No conoce la lógica de sesión: el refresh lo orquesta `apiRequest`.
  */
-export async function apiRequest<TResponse>(
-  path: string,
+async function sendRequest<TResponse>(
+  baseUrl: string,
+  normalizedPath: string,
   init?: RequestInit,
   options?: ApiRequestOptions,
 ): Promise<TResponse> {
-  const baseUrl = getApiBaseUrl();
-
-  if (!baseUrl) {
-    throw new ApiConfigurationError(
-      "NEXT_PUBLIC_API_URL no está configurada con una URL válida.",
-    );
-  }
-
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   const token = authTokenGetter();
 
   const controller = new AbortController();
@@ -194,5 +239,56 @@ export async function apiRequest<TResponse>(
     throw error;
   } finally {
     clearTimeout(timeoutId);
+  }
+}
+
+/**
+ * Cliente HTTP del backend.
+ *
+ * Adjunta el Bearer token y, ante un 401 (o un 403 con token expirado), intenta
+ * **una** renovación de sesión y reintenta la request con el token nuevo. Un 403
+ * con token vigente se propaga tal cual (es autorización, no sesión): no se
+ * renueva para no rotar el refresh en denegaciones legítimas. Si la renovación
+ * falla, la sesión se cierra (handler del userStore) y el error original sube.
+ */
+export async function apiRequest<TResponse>(
+  path: string,
+  init?: RequestInit,
+  options?: ApiRequestOptions,
+): Promise<TResponse> {
+  const baseUrl = getApiBaseUrl();
+
+  if (!baseUrl) {
+    throw new ApiConfigurationError(
+      "NEXT_PUBLIC_API_URL no está configurada con una URL válida.",
+    );
+  }
+
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+
+  try {
+    return await sendRequest<TResponse>(baseUrl, normalizedPath, init, options);
+  } catch (error) {
+    const canRefresh =
+      !options?.skipAuthRefresh &&
+      authRefreshHandler !== null &&
+      error instanceof ApiError &&
+      (error.status === 401 ||
+        (error.status === 403 && isTokenExpired(authTokenGetter())));
+
+    if (!canRefresh) {
+      throw error;
+    }
+
+    const newToken = await refreshAuthOnce();
+    if (!newToken) {
+      throw error;
+    }
+
+    // Reintento único con el token renovado (evita bucles de refresh).
+    return sendRequest<TResponse>(baseUrl, normalizedPath, init, {
+      ...options,
+      skipAuthRefresh: true,
+    });
   }
 }

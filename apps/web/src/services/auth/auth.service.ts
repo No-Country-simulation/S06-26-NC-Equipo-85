@@ -17,15 +17,20 @@ import type {
 export async function registerUser(
   payload: RegisterRequest,
 ): Promise<AuthResponse> {
-  const result = await apiRequest<AuthTokenResponse>("/api/v1/auth/register", {
-    method: "POST",
-    body: JSON.stringify({
-      email: payload.email,
-      password: payload.password,
-      // El alta pública crea siempre un `MENTEE`; `MENTOR` es un flujo aparte.
-      role: payload.role ?? "MENTEE",
-    }),
-  });
+  const result = await apiRequest<AuthTokenResponse>(
+    "/api/v1/auth/register",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        email: payload.email,
+        password: payload.password,
+        // El alta pública crea siempre un `MENTEE`; `MENTOR` es un flujo aparte.
+        role: payload.role ?? "MENTEE",
+      }),
+    },
+    // El propio endpoint de auth no debe disparar el ciclo de refresh.
+    { skipAuthRefresh: true },
+  );
 
   return {
     token: result.accessToken,
@@ -42,10 +47,14 @@ export async function registerUser(
  * `ApiError.status` para mostrar "demasiados intentos" en el form.
  */
 export async function loginUser(payload: LoginRequest): Promise<AuthResponse> {
-  const result = await apiRequest<AuthTokenResponse>("/api/v1/auth/login", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  const result = await apiRequest<AuthTokenResponse>(
+    "/api/v1/auth/login",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+    { skipAuthRefresh: true },
+  );
 
   return {
     token: result.accessToken,
@@ -63,10 +72,15 @@ export async function loginUser(payload: LoginRequest): Promise<AuthResponse> {
 export async function refreshSession(
   refreshToken: string,
 ): Promise<AuthResponse> {
-  const result = await apiRequest<AuthTokenResponse>("/api/v1/auth/refresh", {
-    method: "POST",
-    body: JSON.stringify({ refreshToken }),
-  });
+  const result = await apiRequest<AuthTokenResponse>(
+    "/api/v1/auth/refresh",
+    {
+      method: "POST",
+      body: JSON.stringify({ refreshToken }),
+    },
+    // Evita recursión: un 401 del refresh no debe volver a intentar refrescar.
+    { skipAuthRefresh: true },
+  );
 
   return {
     token: result.accessToken,

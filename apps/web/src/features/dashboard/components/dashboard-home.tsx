@@ -1,7 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useCheckins } from "@/features/health/hooks/use-health";
 import { DASHBOARD_MODULES } from "@/features/dashboard/utils/dashboard-modules";
 import type { DashboardModule } from "@/features/dashboard/types/dashboard.types";
 import {
@@ -15,17 +16,7 @@ import {
 } from "@app/ui";
 import { useUserStore } from "@/store/user-store";
 
-// TODO(salud): datos mock del módulo Salud Mental (aún no integrado). Se
-// reemplazan por `GET /api/v1/health/checkins` cuando esa integración exista.
-const WEEKLY_MOOD = [
-  { day: "L", value: 3 },
-  { day: "M", value: 4 },
-  { day: "M", value: 2 },
-  { day: "J", value: 4 },
-  { day: "V", value: 5 },
-  { day: "S", value: 4 },
-  { day: "D", value: 3 },
-];
+type WeeklyMood = { day: string; value: number };
 
 type JobPreview = {
   jobId: string;
@@ -176,20 +167,45 @@ function JobPreviewCard({ job }: { job: JobPreview }) {
  */
 export function DashboardHome() {
   const t = useTranslations("common.dashboard");
+  const locale = useLocale();
   const profile = useUserStore((state) => state.profile);
   const orientationResult = useUserStore((state) => state.orientationResult);
 
+  // Historial emocional real (`GET /api/v1/health/checkins`): últimos 7
+  // check-ins en orden cronológico, con la inicial del día del check-in.
+  const { data: checkins } = useCheckins();
+  const weeklyMood: WeeklyMood[] = (checkins ?? [])
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+    )
+    .slice(-7)
+    .map((checkin) => ({
+      day: new Date(checkin.created_at)
+        .toLocaleDateString(locale, { weekday: "narrow" })
+        .toUpperCase(),
+      value: checkin.rating,
+    }));
+
+  // ¿Ya hay un check-in de hoy? Compara por día calendario local. Decide entre
+  // el estado "pendiente" (llama a la acción) y "hecho" del badge de la cabecera.
+  const today = new Date().toDateString();
+  const hasCheckinToday = (checkins ?? []).some(
+    (checkin) => new Date(checkin.created_at).toDateString() === today,
+  );
+
   const matchValue = orientationResult
-    ? Math.max(0, 100 - orientationResult.gapPorcentual)
+    ? Math.max(0, 100 - orientationResult.gapPercentage)
     : null;
 
   const suggestedPath =
-    orientationResult?.trayectoriaSugerida.map(
+    orientationResult?.suggestedPath.map(
       (course) => `${course.title} · ${course.provider}`,
     ) ?? [];
 
   const compatibleJobs: JobPreview[] =
-    orientationResult?.vacantesCompatibles ?? [];
+    orientationResult?.compatibleJobs ?? [];
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -208,9 +224,17 @@ export function DashboardHome() {
           </p>
         </div>
 
-        <div className="w-fit rounded-full bg-ambar-soft px-4 py-2 text-sm font-semibold text-ambar-text">
-          {t("checkin_pending")}
-        </div>
+        <Link
+          href="/health"
+          className={cn(
+            "w-fit rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            hasCheckinToday
+              ? "bg-oliva-soft text-oliva hover:bg-oliva-soft/70"
+              : "bg-ambar-soft text-ambar-text hover:bg-ambar-soft/70",
+          )}
+        >
+          {hasCheckinToday ? t("checkin_done") : t("checkin_pending")}
+        </Link>
       </section>
 
       <section
@@ -255,7 +279,7 @@ export function DashboardHome() {
                 {t("progress.confidence")}
               </p>
               <p className="font-serif text-2xl font-semibold">
-                {orientationResult ? `${orientationResult.confianza}%` : "—"}
+                {orientationResult ? `${orientationResult.confidence}%` : "—"}
               </p>
             </div>
             <div>
@@ -263,7 +287,7 @@ export function DashboardHome() {
                 {t("progress.matches_count")}
               </p>
               <p className="font-medium">
-                {orientationResult ? orientationResult.vacantesCompatibles.length : "—"}
+                {orientationResult ? orientationResult.compatibleJobs.length : "—"}
               </p>
             </div>
           </div>
@@ -321,22 +345,36 @@ export function DashboardHome() {
             <CardTitle>{t("mood_history")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex h-28 items-end gap-2">
-              {WEEKLY_MOOD.map((item, index) => (
-                <div
-                  className="flex flex-1 flex-col items-center gap-2"
-                  key={`${item.day}-${index}`}
+            {weeklyMood.length === 0 ? (
+              <div className="flex h-28 flex-col items-center justify-center gap-2 text-center">
+                <p className="text-sm text-muted-foreground">
+                  {t("mood_empty")}
+                </p>
+                <Link
+                  className="text-sm font-medium text-azul underline-offset-4 hover:underline"
+                  href="/health"
                 >
+                  {t("mood_cta")}
+                </Link>
+              </div>
+            ) : (
+              <div className="flex h-28 items-end gap-2">
+                {weeklyMood.map((item, index) => (
                   <div
-                    className="w-full rounded-t-lg bg-azul"
-                    style={{ height: `${item.value * 16}px` }}
-                  />
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {item.day}
-                  </span>
-                </div>
-              ))}
-            </div>
+                    className="flex flex-1 flex-col items-center gap-2"
+                    key={`${item.day}-${index}`}
+                  >
+                    <div
+                      className="w-full rounded-t-lg bg-azul"
+                      style={{ height: `${item.value * 16}px` }}
+                    />
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {item.day}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <p className="mt-4 text-sm leading-6 text-muted-foreground">
               {t("mood_note")}

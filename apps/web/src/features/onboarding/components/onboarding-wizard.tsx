@@ -7,9 +7,8 @@ import type { ZodIssue } from "zod";
 import { Button, Card, CardContent, Spinner } from "@app/ui";
 import { toast } from "sonner";
 import { useUpdateProfile } from "../hooks/use-update-profile";
-import { useOrientar } from "../hooks/use-orientar";
+import { useOrientation } from "../hooks/use-orientation";
 import { useUserStore } from "@/store/user-store";
-import { getUserIdFromToken } from "@/lib/jwt";
 import type { ProfileUpsertRequest } from "@/services/profile/profile.types";
 import {
   ONBOARDING_DEFAULT_VALUES,
@@ -185,18 +184,17 @@ function getErrorMessage(error: unknown) {
  *
  * Encapsula formularios, validación progresiva, navegación de pasos,
  * persistencia local y el UPSERT del perfil (`PUT /api/v1/profile`). Al
- * confirmar persiste el perfil, dispara `POST /api/orientar` con el `userId`
- * del JWT y muestra `OnboardingSuccess` con el resultado real (nunca
- * redirige directo al dashboard: la orientación puede fallar sin que el
- * perfil ya guardado se pierda, ver `triggerOrientation`).
+ * confirmar persiste el perfil, dispara la orientación (mock temporal, ver
+ * `useOrientation`) y muestra `OnboardingSuccess` con el resultado. El perfil
+ * se guarda antes que la orientación, así un fallo de esta última nunca lo
+ * pierde (ver `triggerOrientation`).
  */
 export function OnboardingWizard() {
   const hasLoadedInitialDraft = useRef(false);
   const updateProfile = useUpdateProfile();
-  const orientar = useOrientar();
+  const orientation = useOrientation();
   const [showHint, setShowHint] = useState(false);
   const [completedProfileName, setCompletedProfileName] = useState<string | null>(null);
-  const [orientationBlocked, setOrientationBlocked] = useState(false);
 
   const draftStep = useUserStore((state) => state.onboardingDraft.step);
   const setDraftStep = useUserStore((state) => state.setDraftStep);
@@ -324,33 +322,18 @@ export function OnboardingWizard() {
   }
 
   /**
-   * Dispara `POST /api/orientar` con el `userId` derivado del JWT.
+   * Dispara la orientación (mock temporal).
    *
    * Se llama tanto al terminar el submit como desde el botón de reintento de
    * `OnboardingSuccess`: el perfil ya está guardado en ambos casos, así que un
    * fallo acá nunca debe perderlo ni bloquear el acceso al dashboard.
    */
   function triggerOrientation() {
-    const token = useUserStore.getState().token;
-    const userId = getUserIdFromToken(token);
-
-    if (!userId) {
-      // Sesión sin `sub` decodificable: no hay `userId` que enviar. Se trata
-      // como el mismo estado de error recuperable que un fallo de red (ver
-      // spec jobs "userId no derivable"), con el mismo componente de retry.
-      setOrientationBlocked(true);
-      return;
-    }
-
-    setOrientationBlocked(false);
-    orientar.mutate(
-      { userId },
-      {
-        onSuccess: (data) => {
-          setOrientationResult(data);
-        },
+    orientation.mutate(undefined, {
+      onSuccess: (data) => {
+        setOrientationResult(data);
       },
-    );
+    });
   }
 
   async function submitOnboarding() {
@@ -409,10 +392,10 @@ export function OnboardingWizard() {
       <div className="w-full">
         <OnboardingSuccess
           name={completedProfileName}
-          isLoading={orientar.isPending}
-          error={orientationBlocked ? new Error("missing-user-id") : orientar.error}
+          isLoading={orientation.isPending}
+          error={orientation.error}
           onRetry={triggerOrientation}
-          result={orientar.data}
+          result={orientation.data}
         />
       </div>
     );

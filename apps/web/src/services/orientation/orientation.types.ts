@@ -3,15 +3,11 @@ import type { JobMatch } from "@/services/jobs/jobs.types";
 /**
  * Contratos de orientación inicial.
  *
- * Fuente de verdad: `POST /api/orientar` del OpenAPI. El backend resuelve la
- * orientación a partir del perfil ya persistido (`PUT /api/v1/profile`); el
- * request solo necesita `userId` (derivado del claim `sub` del JWT), no el
- * perfil completo como en el contrato anterior.
+ * El endpoint real todavía no existe: el service devuelve mock temporal (ver
+ * `orientation.service.ts`). Cuando el backend publique el endpoint definitivo
+ * —que será distinto al `/api/orientar` de prueba— se ajustan estos tipos a su
+ * contrato. Mientras tanto controlamos la forma acá, con nombres en inglés.
  */
-
-export type OrientationRequest = {
-  userId: string;
-};
 
 export type GapItem = {
   id: string;
@@ -23,16 +19,16 @@ export type SuggestedCourse = {
   courseId: string;
   title: string;
   provider: string;
-  skillsContribuidos: string[];
+  contributedSkills: string[];
 };
 
 export type OrientationResponse = {
-  /** Normalizado a escala 0-100 en `orientation.service.ts`. */
-  gapPorcentual: number;
+  /** Brecha de perfil en escala 0-100. */
+  gapPercentage: number;
   gapItems: GapItem[];
-  trayectoriaSugerida: SuggestedCourse[];
-  /** Reutiliza `JobMatch` de jobs: mismo `matchRate` ya normalizado. */
-  vacantesCompatibles: JobMatch[];
-  /** Indicador de confianza del modelo, escala 0-100 (redondeado en el service). */
-  confianza: number;
+  suggestedPath: SuggestedCourse[];
+  /** Reutiliza `JobMatch` de jobs: mismo `matchRate` en escala 0-100. */
+  compatibleJobs: JobMatch[];
+  /** Confianza del modelo, escala 0-100. */
+  confidence: number;
 };
