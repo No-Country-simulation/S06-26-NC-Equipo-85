@@ -188,17 +188,24 @@ export function DashboardHome() {
       value: checkin.rating,
     }));
 
+  // ¿Ya hay un check-in de hoy? Compara por día calendario local. Decide entre
+  // el estado "pendiente" (llama a la acción) y "hecho" del badge de la cabecera.
+  const today = new Date().toDateString();
+  const hasCheckinToday = (checkins ?? []).some(
+    (checkin) => new Date(checkin.created_at).toDateString() === today,
+  );
+
   const matchValue = orientationResult
-    ? Math.max(0, 100 - orientationResult.gapPorcentual)
+    ? Math.max(0, 100 - orientationResult.gapPercentage)
     : null;
 
   const suggestedPath =
-    orientationResult?.trayectoriaSugerida.map(
+    orientationResult?.suggestedPath.map(
       (course) => `${course.title} · ${course.provider}`,
     ) ?? [];
 
   const compatibleJobs: JobPreview[] =
-    orientationResult?.vacantesCompatibles ?? [];
+    orientationResult?.compatibleJobs ?? [];
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -217,9 +224,17 @@ export function DashboardHome() {
           </p>
         </div>
 
-        <div className="w-fit rounded-full bg-ambar-soft px-4 py-2 text-sm font-semibold text-ambar-text">
-          {t("checkin_pending")}
-        </div>
+        <Link
+          href="/health"
+          className={cn(
+            "w-fit rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            hasCheckinToday
+              ? "bg-oliva-soft text-oliva hover:bg-oliva-soft/70"
+              : "bg-ambar-soft text-ambar-text hover:bg-ambar-soft/70",
+          )}
+        >
+          {hasCheckinToday ? t("checkin_done") : t("checkin_pending")}
+        </Link>
       </section>
 
       <section
@@ -264,7 +279,7 @@ export function DashboardHome() {
                 {t("progress.confidence")}
               </p>
               <p className="font-serif text-2xl font-semibold">
-                {orientationResult ? `${orientationResult.confianza}%` : "—"}
+                {orientationResult ? `${orientationResult.confidence}%` : "—"}
               </p>
             </div>
             <div>
@@ -272,7 +287,7 @@ export function DashboardHome() {
                 {t("progress.matches_count")}
               </p>
               <p className="font-medium">
-                {orientationResult ? orientationResult.vacantesCompatibles.length : "—"}
+                {orientationResult ? orientationResult.compatibleJobs.length : "—"}
               </p>
             </div>
           </div>

@@ -10,13 +10,13 @@ import type { OrientationResponse } from "@/services/orientation/orientation.typ
 type OnboardingSuccessProps = {
   /** Nombre del usuario para el saludo. */
   name: string;
-  /** `true` mientras `POST /api/orientar` está en curso. */
+  /** `true` mientras la orientación (mock temporal) está en curso. */
   isLoading: boolean;
   /** Error de la mutation de orientación, si falló. */
   error: unknown;
-  /** Reintenta `POST /api/orientar` con el mismo `userId`. */
+  /** Reintenta la orientación. */
   onRetry: () => void;
-  /** Resultado real de `/api/orientar` (ausente mientras carga o si falló). */
+  /** Resultado de la orientación (ausente mientras carga o si falló). */
   result: OrientationResponse | undefined;
 };
 
@@ -25,7 +25,8 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 /**
  * Pantalla final del onboarding: anillo de match inicial + trayectoria +
- * vacantes compatibles, todo derivado de la respuesta real de `/api/orientar`.
+ * vacantes compatibles, derivado de la orientación (mock temporal, hasta que
+ * exista el endpoint real).
  *
  * El perfil ya quedó guardado antes de llegar acá (`PUT /api/v1/profile`), así
  * que un error de orientación nunca bloquea: se muestra con reintento y un
@@ -40,7 +41,7 @@ export function OnboardingSuccess({
 }: OnboardingSuccessProps) {
   const t = useTranslations("common.onboarding.success");
   const matchPercentage = result
-    ? Math.max(0, 100 - normalizePercentage(result.gapPorcentual))
+    ? Math.max(0, 100 - normalizePercentage(result.gapPercentage))
     : 0;
   const offset = CIRCUMFERENCE * (1 - matchPercentage / 100);
 
@@ -136,20 +137,20 @@ export function OnboardingSuccess({
                 >
                   {t("suggested_path_title")}
                 </h3>
-                {result.trayectoriaSugerida.length === 0 ? (
+                {result.suggestedPath.length === 0 ? (
                   <p className="text-sm text-muted-foreground">{t("suggested_path_empty")}</p>
                 ) : (
                   <ul className="space-y-2">
-                    {result.trayectoriaSugerida.map((course) => (
+                    {result.suggestedPath.map((course) => (
                       <li
                         key={course.courseId}
                         className="rounded-xl border border-border bg-card p-3"
                       >
                         <p className="text-sm font-semibold text-foreground">{course.title}</p>
                         <p className="text-xs text-muted-foreground">{course.provider}</p>
-                        {course.skillsContribuidos.length > 0 && (
+                        {course.contributedSkills.length > 0 && (
                           <p className="mt-1 text-xs text-muted-foreground">
-                            {course.skillsContribuidos.join(", ")}
+                            {course.contributedSkills.join(", ")}
                           </p>
                         )}
                       </li>
@@ -165,11 +166,11 @@ export function OnboardingSuccess({
                 >
                   {t("compatible_jobs_title")}
                 </h3>
-                {result.vacantesCompatibles.length === 0 ? (
+                {result.compatibleJobs.length === 0 ? (
                   <p className="text-sm text-muted-foreground">{t("compatible_jobs_empty")}</p>
                 ) : (
                   <ul className="space-y-2">
-                    {result.vacantesCompatibles.map((job) => (
+                    {result.compatibleJobs.map((job) => (
                       <li
                         key={job.jobId}
                         className="flex items-center justify-between rounded-xl border border-border bg-card p-3"

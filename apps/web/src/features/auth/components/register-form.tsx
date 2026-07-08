@@ -61,7 +61,7 @@ export function RegisterForm() {
       setSession({ token: result.token, refreshToken: result.refreshToken });
 
       // El email no se vuelve a pedir en el onboarding: se guarda en el draft
-      // para que el wizard lo inyecte al construir el request de /orientar.
+      // para que el wizard lo tenga disponible (ver getSessionEmail).
       updateDraftData({ email: values.email });
 
       // Registro → siempre onboarding: el Profile recién creado está incompleto.

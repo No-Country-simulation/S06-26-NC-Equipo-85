@@ -4,6 +4,8 @@ import type {
   CheckinRequest,
   CheckinResponse,
   EmpathicResponse,
+  TextAnalysisRequest,
+  TextAnalysisResult,
 } from "./health.types";
 
 const CHECKINS_PATH = "/api/v1/health/checkins";
@@ -66,4 +68,30 @@ export async function getEmpathicResponse(
     `${CHECKINS_PATH}/${id}/empathic-response`,
     { method: "POST" },
   );
+}
+
+/** Latencia simulada para que la UI ejercite su estado de carga. */
+const TEXT_ANALYSIS_DELAY_MS = 500;
+
+/**
+ * Analiza por IA un texto libre de estado emocional.
+ *
+ * MOCK TEMPORAL: el endpoint `/api/salud` era de prueba y se eliminó. El
+ * definitivo será distinto y aún no existe, así que devolvemos un resultado
+ * simulado (haciendo eco del texto) para mantener viva la sección. Flujo
+ * complementario al check-in estructurado, sin persistir historial. Cuando el
+ * backend publique el endpoint real, reemplazar el cuerpo por la llamada HTTP.
+ */
+export async function analyzeText(
+  payload: TextAnalysisRequest,
+): Promise<TextAnalysisResult> {
+  await new Promise((resolve) => setTimeout(resolve, TEXT_ANALYSIS_DELAY_MS));
+
+  return {
+    status: "Recibido",
+    message:
+      "Gracias por compartir cómo te sentís. Tomarte un momento para " +
+      "expresarlo ya es un paso valioso; recordá que no estás solo/a en esto.",
+    description: payload.description,
+  };
 }

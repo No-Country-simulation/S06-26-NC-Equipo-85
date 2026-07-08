@@ -152,7 +152,26 @@
       "empty_title": "Ainda não há check-ins",
       "empty_body": "Quando você registrar seu primeiro check-in, ele aparecerá aqui.",
       "rating": "Bem-estar: {value}/5",
-      "suggested_action": "Sugestão: {action}"
+      "suggested_action": "Sugestão: {action}",
+      "view_detail": "Ver detalhes do check-in"
+    },
+    "detail": {
+      "card_title": "Detalhes do check-in",
+      "subtitle": "Como você se sentia naquele dia e o acompanhamento que recebeu.",
+      "loading": "Carregando os detalhes…",
+      "not_found_title": "Não encontramos este check-in",
+      "not_found_body": "Talvez tenha sido excluído. Volte ao seu histórico.",
+      "context_label": "O que você compartilhou",
+      "suggested_action": "Ação sugerida"
+    },
+    "text_analysis": {
+      "card_title": "Conte como está sua semana",
+      "subtitle": "Escreva livremente e receba uma mensagem da IA. Não é salvo no seu histórico.",
+      "label": "Como você está se sentindo?",
+      "placeholder": "Escreva o que quiser compartilhar, sem filtros.",
+      "counter": "{used}/{max}",
+      "submit": "Analisar meu texto",
+      "submitting": "Analisando…"
     },
     "cvv": {
       "title": "Você não está sozinho(a)",
@@ -187,6 +206,7 @@
     "greeting": "Olá{name} 👋",
     "subtitle": "Seu progresso de hoje e os próximos passos rumo à sua primeira oportunidade em tecnologia.",
     "checkin_pending": "⏳ Check-in de hoje pendente",
+    "checkin_done": "✓ Check-in de hoje feito",
     "header_title": "Painel",
     "checkin_badge": "Check-in pendente",
     "language_selector": "Seletor de idioma",
@@ -207,9 +227,9 @@
       "matches_count": "Vagas compatíveis"
     },
     "no_orientation": {
-      "title": "Ainda não há orientação real salva",
-      "body": "Complete o onboarding para gerar sua lacuna, trajetória e vagas compatíveis a partir do seu perfil.",
-      "cta": "Completar onboarding"
+      "title": "Ainda não geramos sua orientação",
+      "body": "Seu perfil já está completo. A orientação por IA (sua lacuna, trajetória e vagas compatíveis) ainda não está disponível; você pode tentar gerá-la novamente.",
+      "cta": "Tentar orientação novamente"
     },
     "suggested_path": "Trajetória sugerida",
     "suggested_path_empty": "Ainda não há trajetória: complete o onboarding para gerá-la a partir do seu perfil.",
