@@ -233,6 +233,67 @@
       "update_error": "Não foi possível atualizar a experiência."
     }
   },
+  "mentorships": {
+    "title": "Mentorias",
+    "subtitle": "Agende práticas com mentores reais e ganhe confiança antes de se candidatar.",
+    "create": "Criar sessão",
+    "loading": "Carregando sessões…",
+    "practice": "Prática",
+    "tabs": {
+      "explore": "Explorar sessões",
+      "mine": "Minhas sessões"
+    },
+    "empty_explore_title": "Não há sessões disponíveis",
+    "empty_explore_body": "Quando um mentor publicar novos espaços, aparecerão aqui.",
+    "empty_mine_title": "Você ainda não tem sessões",
+    "empty_mine_body": "Reserve uma sessão disponível para vê-la aqui.",
+    "status": {
+      "AVAILABLE": "Disponível",
+      "PENDING": "Pendente",
+      "SCHEDULED": "Agendada",
+      "COMPLETED": "Concluída",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status_label": "Estado",
+      "practice_label": "Tipo",
+      "all_practice": "Práticas e reais",
+      "practice_only": "Somente práticas",
+      "real_only": "Somente reais",
+      "date_label": "Data",
+      "clear": "Limpar filtros"
+    },
+    "actions": {
+      "view": "Ver detalhe",
+      "book": "Reservar",
+      "complete": "Marcar como concluída",
+      "cancel": "Cancelar",
+      "confirm_cancel": "Cancelar esta sessão?",
+      "confirm_cancel_cta": "Sim, cancelar",
+      "keep": "Não, voltar",
+      "booked": "Sessão reservada.",
+      "completed": "Sessão marcada como concluída.",
+      "canceled": "Sessão cancelada.",
+      "book_error": "Não foi possível reservar a sessão.",
+      "complete_error": "Não foi possível concluir a sessão.",
+      "cancel_error": "Não foi possível cancelar a sessão."
+    },
+    "detail": {
+      "title": "Detalhe da sessão",
+      "not_found": "Não encontramos esta sessão."
+    },
+    "form": {
+      "create_title": "Nova sessão",
+      "title_label": "Título",
+      "datetime_label": "Data e hora",
+      "practice_label": "É um convite para prática",
+      "cancel": "Cancelar",
+      "create": "Criar",
+      "saving": "Salvando…",
+      "created": "Sessão criada.",
+      "create_error": "Não foi possível criar a sessão."
+    }
+  },
   "table": {
     "empty": "Sem resultados",
     "page_of": "Página {page} de {total}",
