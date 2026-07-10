@@ -37,7 +37,7 @@ function getModuleAccentClasses(accent: DashboardModule["accent"]) {
     amber: "border-t-ambar text-ambar-text",
     terracotta: "border-t-primary text-primary",
     coral: "border-t-coral text-coral",
-    blue: "border-t-azul text-azul",
+    blue: "border-t-azul-horizonte text-azul-horizonte",
     olive: "border-t-oliva text-oliva",
   };
 
@@ -364,7 +364,7 @@ export function DashboardHome() {
           </CardContent>
         </Card>
 
-        <Card className="bg-azul-soft/70">
+        <Card className="bg-azul-horizonte-soft/70">
           <CardHeader className="pb-2">
             <CardTitle>{t("mood_history")}</CardTitle>
           </CardHeader>
@@ -375,7 +375,7 @@ export function DashboardHome() {
                   {t("mood_empty")}
                 </p>
                 <Link
-                  className="text-sm font-medium text-azul underline-offset-4 hover:underline"
+                  className="text-sm font-medium text-azul-horizonte underline-offset-4 hover:underline"
                   href="/health"
                 >
                   {t("mood_cta")}
@@ -389,7 +389,7 @@ export function DashboardHome() {
                     key={`${item.day}-${index}`}
                   >
                     <div
-                      className="w-full rounded-t-lg bg-azul"
+                      className="w-full rounded-t-lg bg-azul-horizonte"
                       style={{ height: `${item.value * 16}px` }}
                     />
                     <span className="text-xs font-medium text-muted-foreground">

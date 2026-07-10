@@ -1,5 +1,6 @@
 import type { SkillCategory } from "@/services/skills/skills.types";
 import type { CourseLevel, CourseSkill } from "@/services/courses/courses.types";
+import type { JobModality } from "@/services/jobs/jobs.types";
 
 /**
  * DATA MOCK TEMPORAL — CENTRALIZADA.
@@ -7,11 +8,13 @@ import type { CourseLevel, CourseSkill } from "@/services/courses/courses.types"
  * El backend v1 recortó varios contratos y hoy NO devuelve algunos campos que
  * la UI todavía usa. Para no inventar datos dispersos por la app, todos esos
  * campos "faltantes" viven acá, en un único lugar, y se cruzan con la data real
- * en la capa de services (por `name`, que es estable entre entornos):
+ * en la capa de services (por `name`/`title`, que es estable entre entornos):
  *
  * - `GET /api/v1/skills`  → `{ id, name }`            (falta `category`)
  * - `GET /api/v1/courses` → `{ id, name, provider }`  (faltan `level`, `url`, `skills`, `description`, `durationHours`)
- * - `GET /api/v1/jobs/{id}` → `requiredSkills: string[]` (las skills no traen `category`)
+ * - `GET /api/v1/jobs/{id}` → `{..., requiredSkills: string[]}` (las skills no traen
+ *   `category`; faltan `modality`, `location`, `salaryRange`, `aboutCompany`,
+ *   `benefits`, `postedDaysAgo`)
  *
  * Cuando el backend vuelva a exponer estos campos, se borra este archivo y se
  * quitan las llamadas a sus helpers en los services correspondientes. No debe
@@ -139,4 +142,78 @@ export function getCourseExtras(name: string): {
       category: getSkillCategory(skillName),
     })),
   };
+}
+
+/** Campos de vacante que el backend no envía, resueltos por título de vacante. */
+type JobExtras = {
+  modality: JobModality;
+  location: string;
+  salaryRange: string;
+  aboutCompany: string;
+  benefits: string[];
+  postedDaysAgo: number;
+};
+
+const JOB_EXTRAS_BY_TITLE: Record<string, JobExtras> = {
+  "Junior Backend Developer": {
+    modality: "HYBRID",
+    location: "Buenos Aires, Argentina",
+    salaryRange: "$700.000 - $950.000 ARS",
+    aboutCompany:
+      "Tech Solutions es una consultora de desarrollo de software que arma equipos ágiles para clientes de distintas industrias.",
+    benefits: ["Obra social", "Horario flexible", "Capacitación continua"],
+    postedDaysAgo: 5,
+  },
+  "Backend Java Developer": {
+    modality: "HYBRID",
+    location: "Buenos Aires, Argentina",
+    salaryRange: "$900.000 - $1.300.000 ARS",
+    aboutCompany:
+      "Tech Solutions es una consultora de desarrollo de software que arma equipos ágiles para clientes de distintas industrias.",
+    benefits: ["Obra social", "Horario flexible", "Capacitación continua"],
+    postedDaysAgo: 12,
+  },
+  "Frontend Angular Developer": {
+    modality: "REMOTE",
+    location: "Remoto (LATAM)",
+    salaryRange: "USD 900 - 1.300 / mes",
+    aboutCompany:
+      "Innovatech desarrolla productos digitales a medida para startups en etapa de crecimiento.",
+    benefits: [
+      "100% remoto",
+      "Presupuesto para equipamiento",
+      "Días de home office ilimitados",
+    ],
+    postedDaysAgo: 3,
+  },
+  "Flutter Developer": {
+    modality: "REMOTE",
+    location: "Remoto (LATAM)",
+    salaryRange: "USD 850 - 1.200 / mes",
+    aboutCompany:
+      "Mobile Labs se especializa en apps móviles multiplataforma para clientes de e-commerce y fintech.",
+    benefits: [
+      "100% remoto",
+      "Bono por proyecto entregado",
+      "Licencia extendida por maternidad/paternidad",
+    ],
+    postedDaysAgo: 8,
+  },
+};
+
+const DEFAULT_JOB_EXTRAS: JobExtras = {
+  modality: "HYBRID",
+  location: "A definir",
+  salaryRange: "A definir",
+  aboutCompany: "",
+  benefits: [],
+  postedDaysAgo: 0,
+};
+
+/**
+ * Devuelve los campos mockeados de una vacante (modalidad, ubicación, salario,
+ * sobre la empresa, beneficios, antigüedad de la publicación) por su título.
+ */
+export function getJobExtras(title: string): JobExtras {
+  return JOB_EXTRAS_BY_TITLE[title] ?? DEFAULT_JOB_EXTRAS;
 }

@@ -8,13 +8,14 @@ import type { SkillCategory } from "@/services/skills/skills.types";
  * - `GET /api/v1/jobs/{id}` → `JobDetailResponse` = `{ id, company, title,
  *   description, requiredSkills: string[] }`.
  *
- * `requiredSkills` viene como lista de nombres (sin categoría). El service la
- * transforma a `JobSkill[]` completando `category` con data mock centralizada
- * en [`lib/mockDataTemp`](../../lib/mockDataTemp.ts). Cuando el backend exponga
- * la categoría, se quita ese enriquecido.
+ * `requiredSkills` viene como lista de nombres (sin categoría). `modality`,
+ * `location`, `salaryRange`, `aboutCompany`, `benefits` y `postedDaysAgo` NO
+ * vienen del backend: se completan con data mock centralizada en
+ * [`lib/mockDataTemp`](../../lib/mockDataTemp.ts), cruzada por `title` en
+ * `jobs.service.ts`. Cuando el backend los exponga, se quita el enriquecido.
  *
- * TODO(backend): pedir `salary`/`location`/`modalidad` en el detalle, y qué
- * skills ya cumple el usuario vs. cuáles le faltan (estado por skill).
+ * TODO(backend): pedir estos campos en el detalle real, y qué skills ya
+ * cumple el usuario vs. cuáles le faltan (estado por skill).
  */
 
 /** Skill requerida por una vacante. `name` real; `category` mock temporal. */
@@ -31,11 +32,22 @@ export type JobMatch = {
   matchRate: number;
 };
 
+/** Modalidad de trabajo. Mock temporal (ver `mockDataTemp`). */
+export type JobModality = "REMOTE" | "HYBRID" | "ONSITE";
+
 export type Job = {
+  // --- Reales (backend, `JobDetailResponse`) ---
   id: string;
   company: string;
   title: string;
   description: string;
   /** `requiredSkills: string[]` del backend, enriquecido con categoría mock. */
   requiredSkills: JobSkill[];
+  // --- Mock temporal (mockDataTemp), hasta que el backend los exponga ---
+  modality: JobModality;
+  location: string;
+  salaryRange: string;
+  aboutCompany: string;
+  benefits: string[];
+  postedDaysAgo: number;
 };

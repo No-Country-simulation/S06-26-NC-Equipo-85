@@ -68,13 +68,14 @@ export function ProfessionalProfileStep({
 
       <div className="space-y-2">
         <Label asChild>
-          <span>Área de interés *</span>
+          <span>Área de interés * <span className="font-normal text-muted-foreground">(elegí una o más)</span></span>
         </Label>
         <Controller
           control={control}
           name="techArea"
           render={({ field }) => (
             <OptionChipGroup
+              multiple
               ariaLabel="Área de interés"
               options={TECH_AREA_OPTIONS}
               value={field.value}
