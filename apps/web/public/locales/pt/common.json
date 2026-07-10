@@ -26,6 +26,7 @@
     "loading": "Carregando...",
     "not_found": "Não encontrado",
     "cold_start": "O servidor está iniciando. Pode levar alguns segundos, tente novamente.",
+    "rate_limit": "O serviço de IA está recebendo muitas solicitações no momento. Aguarde alguns minutos e tente novamente.",
     "field_errors_title": "Revise estes campos:",
     "retry": "Tentar novamente"
   },
