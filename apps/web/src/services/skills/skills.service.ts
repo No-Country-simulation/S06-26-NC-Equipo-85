@@ -1,10 +1,10 @@
 import { apiRequest } from "@/lib/api";
 import type { Skill } from "./skills.types";
 
-const SKILLS_PATH = "/api/skills";
+const SKILLS_PATH = "/api/v1/skills";
 
 /**
- * Obtiene el catálogo transversal de skills (`GET /api/skills`).
+ * Obtiene el catálogo transversal de skills (`GET /api/v1/skills`).
  *
  * Service agnóstico de React: lo consumen los hooks de features (courses para
  * filtros, jobs para categorías) sin duplicar el tipo ni hacer `fetch` directo.

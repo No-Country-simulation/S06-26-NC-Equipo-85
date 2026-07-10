@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertCircle } from "lucide-react";
 import { EmptyState } from "@app/ui";
 import { useJobMatches } from "../hooks/use-jobs";
 import { JobsTable } from "./jobs-table";
@@ -14,23 +13,11 @@ export function JobsPage() {
   const t = useTranslations("common.jobs");
   const [selectedJob, setSelectedJob] = useState<JobMatch | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
-  const { data: jobs, isLoading, error, refetch, userId } = useJobMatches();
+  const { data: jobs, isLoading, error, refetch } = useJobMatches();
 
   function handleSelect(job: JobMatch) {
     setSelectedJob(job);
     setDetailOpen(true);
-  }
-
-  // `userId` se deriva del JWT (ver `use-jobs.ts`); si no es decodificable, la
-  // query nunca se dispara y esto no es un `ApiError` sino un estado de sesión.
-  if (!userId) {
-    return (
-      <div role="alert" className="flex flex-col items-center gap-3 py-16 text-center">
-        <AlertCircle className="size-8 text-destructive" aria-hidden="true" />
-        <p className="text-sm text-muted-foreground">{t("session_error.title")}</p>
-        <p className="max-w-sm text-sm text-muted-foreground">{t("session_error.body")}</p>
-      </div>
-    );
   }
 
   if (error) {

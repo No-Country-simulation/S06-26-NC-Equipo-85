@@ -1,12 +1,15 @@
 import type { JobMatch } from "@/services/jobs/jobs.types";
 
 /**
- * Contratos de orientación inicial.
+ * Contratos de orientación inicial (`orientation-controller`).
  *
- * El endpoint real todavía no existe: el service devuelve mock temporal (ver
- * `orientation.service.ts`). Cuando el backend publique el endpoint definitivo
- * —que será distinto al `/api/orientar` de prueba— se ajustan estos tipos a su
- * contrato. Mientras tanto controlamos la forma acá, con nombres en inglés.
+ * Fuente de verdad: OpenAPI (`App BiT API v1`), endpoint `POST /api/v1/guidance`
+ * 🔒 (sin body: el usuario se infiere del Bearer token). El backend responde con
+ * claves en español (`gapPorcentual`, `confianza`, `trayectoriaSugerida`, …).
+ * `GuidanceResponseDto` refleja ese JSON tal cual; el service lo mapea al tipo de
+ * dominio `OrientationResponse` (nombres en inglés, regla del proyecto) que
+ * consumen la UI y el store. Así los componentes no dependen de la nomenclatura
+ * del backend.
  */
 
 export type GapItem = {
@@ -22,6 +25,27 @@ export type SuggestedCourse = {
   contributedSkills: string[];
 };
 
+/**
+ * Forma cruda de `POST /api/v1/guidance` (claves en español del backend).
+ *
+ * `gapItems` y `vacantesCompatibles` ya coinciden con `GapItem`/`JobMatch`; solo
+ * `trayectoriaSugerida` (con `skillsContribuidos`) requiere renombrado al mapear.
+ */
+export type GuidanceResponseDto = {
+  gapPorcentual: number;
+  gapItems: GapItem[];
+  trayectoriaSugerida: {
+    courseId: string;
+    title: string;
+    provider: string;
+    skillsContribuidos: string[];
+  }[];
+  vacantesCompatibles: JobMatch[];
+  confianza: number;
+  /** Recomendación libre generada por IA (Gemini). Puede venir ausente. */
+  aiRecommendation?: string;
+};
+
 export type OrientationResponse = {
   /** Brecha de perfil en escala 0-100. */
   gapPercentage: number;
@@ -31,4 +55,6 @@ export type OrientationResponse = {
   compatibleJobs: JobMatch[];
   /** Confianza del modelo, escala 0-100. */
   confidence: number;
+  /** Recomendación libre generada por IA (Gemini), si el backend la incluyó. */
+  aiRecommendation?: string;
 };

@@ -99,10 +99,6 @@
     "back_to_list": "Volver al listado",
     "detail": "Detalle de vacante",
     "close": "Cerrar",
-    "session_error": {
-      "title": "No pudimos identificar tu sesión",
-      "body": "Volvé a iniciar sesión para ver tus vacantes compatibles."
-    },
     "columns": {
       "job": "Vacante",
       "company": "Empresa",
@@ -306,6 +302,7 @@
       "greeting": "¡Bienvenida, {name}! 🌅",
       "loading": "Estamos generando tu orientación inicial…",
       "subtitle": "Tu perfil está listo. Empezás con un {match}% de match y te preparamos una trayectoria para cerrar la brecha.",
+      "ai_recommendation_title": "Recomendación de tu mentor IA",
       "gap_items_title": "Skills a reforzar",
       "gap_items_empty": "No detectamos brechas de skills en tu perfil.",
       "suggested_path_title": "Trayectoria sugerida",

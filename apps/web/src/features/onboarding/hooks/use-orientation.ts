@@ -3,12 +3,12 @@ import { requestOrientation } from "@/services/orientation/orientation.service";
 import type { OrientationResponse } from "@/services/orientation/orientation.types";
 
 /**
- * Mutation de orientación inicial.
+ * Mutation de orientación inicial (`POST /api/v1/guidance`).
  *
- * Centraliza la llamada para que el wizard no conozca la fuente de datos. Hoy
- * el service devuelve mock temporal (el endpoint definitivo aún no existe); se
- * dispara desde `OnboardingWizard` después de persistir el perfil
- * (`useUpdateProfile`). Sin variables: el mock no necesita `userId`.
+ * Centraliza la llamada para que el wizard no conozca la fuente de datos. El
+ * usuario se infiere del Bearer token en el backend (sin `userId` en el
+ * contrato), así que no hay precondición de sesión decodificada del JWT. Se
+ * dispara desde `OnboardingWizard` tras persistir el perfil (`useUpdateProfile`).
  */
 export function useOrientation() {
   return useMutation<OrientationResponse, Error, void>({

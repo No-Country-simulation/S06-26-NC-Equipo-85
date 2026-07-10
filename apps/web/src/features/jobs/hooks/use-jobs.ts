@@ -1,31 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { getJobById, getJobMatches } from "@/services/jobs/jobs.service";
-import { getUserIdFromToken } from "@/lib/jwt";
-import { useUserStore } from "@/store/user-store";
 
 /**
- * Vacantes compatibles con el usuario autenticado (`GET /api/jobs/matches`).
+ * Vacantes compatibles con el usuario autenticado (`GET /api/v1/jobs/matches`).
  *
- * `userId` no vive en el store ni en `ProfileResponse`: se deriva del claim
- * `sub` del access token en cada render. La query queda `enabled: false`
- * mientras no haya `userId` (token ausente o no decodificable), así el hook
- * nunca llama al endpoint con un `userId` vacío; el componente distingue ese
- * caso (`userId` es `null`) de un error de red real.
+ * El usuario se infiere del Bearer token en el backend, así que no hay
+ * precondición de `userId` (a diferencia de la integración anterior): la query
+ * se dispara siempre y una lista vacía es un empty state legítimo.
  */
 export function useJobMatches() {
-  const token = useUserStore((state) => state.token);
-  const userId = getUserIdFromToken(token);
-
-  const query = useQuery({
-    queryKey: ["jobs", "matches", userId],
-    queryFn: () => getJobMatches(userId as string),
-    enabled: !!userId,
+  return useQuery({
+    queryKey: ["jobs", "matches"],
+    queryFn: () => getJobMatches(),
   });
-
-  return { ...query, userId };
 }
 
-/** Detalle de una vacante (`GET /api/jobs/{id}`). */
+/** Detalle de una vacante (`GET /api/v1/jobs/{id}`). */
 export function useJob(id: string) {
   return useQuery({
     queryKey: ["job", id],

@@ -1,65 +1,49 @@
-import type { OrientationResponse } from "./orientation.types";
+import { apiRequest } from "@/lib/api";
+import { normalizePercentage } from "@/lib/normalize";
+import type {
+  GuidanceResponseDto,
+  OrientationResponse,
+} from "./orientation.types";
+
+const GUIDANCE_PATH = "/api/v1/guidance";
 
 /**
- * Orientación inicial del usuario.
+ * Mapea la respuesta cruda del backend (claves en español) al tipo de dominio.
  *
- * MOCK TEMPORAL: el endpoint `/api/orientar` era de prueba y se eliminó. El
- * endpoint definitivo será distinto y aún no existe, así que devolvemos datos
- * simulados para mantener viva la sección de éxito del onboarding y el dashboard.
- * Cuando el backend publique el endpoint real, reemplazar el cuerpo por la
- * llamada HTTP correspondiente (vía `apiRequest`) sin tocar los consumidores.
+ * Renombra `trayectoriaSugerida`/`skillsContribuidos` a `suggestedPath`/
+ * `contributedSkills` y normaliza los porcentajes a la escala 0-100
+ * (redondeo + clamp), igual que `jobs.service` con `matchRate`.
  */
-
-/** Latencia simulada para que la UI ejercite sus estados de carga. */
-const MOCK_DELAY_MS = 500;
-
-const MOCK_ORIENTATION: OrientationResponse = {
-  gapPercentage: 35,
-  confidence: 82,
-  gapItems: [
-    { id: "gap-1", name: "TypeScript", level: "Intermedio" },
-    { id: "gap-2", name: "Testing", level: "Básico" },
-    { id: "gap-3", name: "Git", level: "Intermedio" },
-  ],
-  suggestedPath: [
-    {
-      courseId: "course-1",
-      title: "TypeScript desde cero",
-      provider: "Platzi",
-      contributedSkills: ["TypeScript", "JavaScript"],
-    },
-    {
-      courseId: "course-2",
-      title: "Testing con Jest",
-      provider: "Coursera",
-      contributedSkills: ["Testing"],
-    },
-  ],
-  compatibleJobs: [
-    {
-      jobId: "job-1",
-      company: "Tech Solutions",
-      title: "Frontend Developer Jr.",
-      matchRate: 78,
-    },
-    {
-      jobId: "job-2",
-      company: "Innovatech",
-      title: "React Developer",
-      matchRate: 65,
-    },
-  ],
-};
+function mapGuidance(dto: GuidanceResponseDto): OrientationResponse {
+  return {
+    gapPercentage: normalizePercentage(dto.gapPorcentual),
+    confidence: normalizePercentage(dto.confianza),
+    gapItems: dto.gapItems ?? [],
+    suggestedPath: (dto.trayectoriaSugerida ?? []).map((course) => ({
+      courseId: course.courseId,
+      title: course.title,
+      provider: course.provider,
+      contributedSkills: course.skillsContribuidos ?? [],
+    })),
+    compatibleJobs: (dto.vacantesCompatibles ?? []).map((job) => ({
+      ...job,
+      matchRate: normalizePercentage(job.matchRate),
+    })),
+    aiRecommendation: dto.aiRecommendation,
+  };
+}
 
 /**
- * Devuelve la orientación inicial (mock temporal, sin red).
+ * Genera la orientación inicial del usuario (`POST /api/v1/guidance`, sin body).
  *
- * No requiere `userId` ni perfil: el bloqueante del `userId` del JWT desaparece
- * porque no hay llamada real. La firma se mantiene sin argumentos para que el
- * futuro endpoint pueda inferir el usuario del Bearer token.
+ * El usuario se infiere del Bearer token: el endpoint ya no acepta `userId`
+ * (se resolvió el bloqueante histórico, ver memoria de integración). Consume
+ * siempre el backend real, sin mock de respaldo.
  */
 export async function requestOrientation(): Promise<OrientationResponse> {
-  await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS));
+  const dto = await apiRequest<GuidanceResponseDto>(GUIDANCE_PATH, {
+    method: "POST",
+  });
 
-  return MOCK_ORIENTATION;
+  return mapGuidance(dto);
 }

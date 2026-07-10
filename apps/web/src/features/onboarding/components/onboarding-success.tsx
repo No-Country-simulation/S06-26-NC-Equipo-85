@@ -10,7 +10,7 @@ import type { OrientationResponse } from "@/services/orientation/orientation.typ
 type OnboardingSuccessProps = {
   /** Nombre del usuario para el saludo. */
   name: string;
-  /** `true` mientras la orientación (mock temporal) está en curso. */
+  /** `true` mientras la orientación (`POST /api/v1/guidance`) está en curso. */
   isLoading: boolean;
   /** Error de la mutation de orientación, si falló. */
   error: unknown;
@@ -25,8 +25,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 /**
  * Pantalla final del onboarding: anillo de match inicial + trayectoria +
- * vacantes compatibles, derivado de la orientación (mock temporal, hasta que
- * exista el endpoint real).
+ * vacantes compatibles, derivado de la orientación (`POST /api/v1/guidance`).
  *
  * El perfil ya quedó guardado antes de llegar acá (`PUT /api/v1/profile`), así
  * que un error de orientación nunca bloquea: se muestra con reintento y un
@@ -108,6 +107,23 @@ export function OnboardingSuccess({
 
           {!isLoading && result && (
             <div className="mb-8 space-y-8 text-left">
+              {result.aiRecommendation ? (
+                <section
+                  aria-labelledby="onboarding-ai-title"
+                  className="rounded-xl border border-azul-horizonte/30 bg-azul-horizonte-soft p-4"
+                >
+                  <h3
+                    id="onboarding-ai-title"
+                    className="mb-2 font-heading text-lg font-semibold text-cacao"
+                  >
+                    {t("ai_recommendation_title")}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {result.aiRecommendation}
+                  </p>
+                </section>
+              ) : null}
+
               <section aria-labelledby="onboarding-gap-title">
                 <h3
                   id="onboarding-gap-title"
