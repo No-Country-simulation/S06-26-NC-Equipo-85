@@ -176,15 +176,6 @@
       "context_label": "Lo que compartiste",
       "suggested_action": "Acción sugerida"
     },
-    "text_analysis": {
-      "card_title": "Contanos cómo va tu semana",
-      "subtitle": "Escribí libremente y recibí un mensaje de la IA. No se guarda en tu historial.",
-      "label": "¿Cómo te sentís?",
-      "placeholder": "Escribí lo que quieras compartir, sin filtros.",
-      "counter": "{used}/{max}",
-      "submit": "Analizar mi texto",
-      "submitting": "Analizando…"
-    },
     "cvv": {
       "title": "No estás solo/a",
       "body": "Si estás atravesando un momento difícil, hablar con alguien puede ayudar. La línea de ayuda es gratuita y confidencial.",
@@ -355,9 +346,7 @@
       "matches_count": "Vacantes compatibles"
     },
     "no_orientation": {
-      "title": "Aún no generamos tu orientación",
-      "body": "Tu perfil ya está completo. La orientación por IA (tu gap, trayectoria y vacantes compatibles) todavía no está disponible; podés reintentar generarla.",
-      "cta": "Reintentar orientación"
+      "loading": "Estamos generando tu orientación…"
     },
     "suggested_path": "Trayectoria sugerida",
     "suggested_path_empty": "Todavía no hay trayectoria: completá el onboarding para generarla desde tu perfil.",
