@@ -1,0 +1,17 @@
+---
+name: appbit-integration-patterns
+description: Patrones de arquitectura reutilizables introducidos en apps/web durante integrate-jobs-courses-orientation (error state compartido, normalización de porcentajes, JWT mock, filtros client-side)
+metadata:
+  type: project
+---
+
+Decisiones de arquitectura tomadas al implementar `integrate-jobs-courses-orientation` que no son obvias leyendo un solo archivo:
+
+- **Estado de error compartido**: `apps/web/src/components/api-error-state.tsx` (`ApiErrorState`). `packages/ui` (`@app/ui`) es agnóstico de Next/next-intl (ESLint lo prohíbe), así que un componente de error con `useTranslations` + distinción de `ApiError.status === 408` (cold start de Render) no puede vivir ahí. `src/components/` es el lugar correcto para componentes cross-feature que si necesitan next-intl (ya existía `store-hydration.tsx` con el mismo criterio). Lo consumen `jobs-page`, `courses-page`, `job-detail` y `onboarding-success`.
+- **Normalización de porcentajes**: `apps/web/src/lib/normalize.ts#normalizePercentage`. El OpenAPI no aclara si `matchRate`/`gapPorcentual`/`confianza` vienen como fracción (`0-1`) o porcentaje (`0-100`); la heurística asume fracción si `valor <= 1`. Se aplica en `services/jobs/jobs.service.ts` y `services/orientation/orientation.service.ts` (nunca en la UI). Marcado con `TODO(backend): confirmar escala` — si el usuario confirma la escala real contra el backend desplegado, ajustar/quitar esta función.
+- **JWT mock con forma real**: `services/auth/auth.service.ts#createMockAccessToken`. El token mock anterior (`mock-jwt-${uuid}`) no era un JWT válido (no tenía 3 partes separadas por `.`), así que `getUserIdFromToken` devolvía `null` y rompía jobs/orientación en modo sin backend. El mock ahora genera `header.payload.signature` en base64url con `{ sub: uuid, mock: true }` en el payload, para que el flujo completo (incluida derivación de `userId`) funcione tanto con backend real como sin él.
+- **Filtros de catálogo 100% client-side**: `getCourses()` (`services/courses/courses.service.ts`) trae siempre el catálogo completo; el filtrado por proveedor/nivel/categoría de skill vive en `features/courses/utils/course-filters.ts` (funciones puras) y se aplica en `courses-page.tsx` leyendo query params vía `nuqs` (`useQueryState`). El backend no soporta filtros ni paginación server-side. Antes de este change, `CoursesFilters` escribía query params con `nuqs` pero nada los leía para filtrar — bug preexistente que quedó corregido como parte de esta integración.
+- **Jobs: lista vs detalle son fetches separados**: `JobMatch` (listado, `GET /api/jobs/matches`) y `Job` (detalle, `GET /api/jobs/{id}`) son tipos distintos sin campos en común más allá de `title`/`company`. `job-detail.tsx` recibe `jobId` + `matchRate` (este último viene del `JobMatch` ya cargado en la lista, porque el detalle no lo trae) y hace su propio fetch vía `useJob(jobId)`.
+- **Onboarding**: `OnboardingWizard` ya NO redirige directo a `/dashboard` tras guardar el perfil. Guarda el perfil (`PUT /api/v1/profile`), dispara `POST /api/orientar` con el `userId` del JWT, y renderiza `OnboardingSuccess` in-place (mismo componente wizard, sin ruta nueva) con estados loading/error/success de esa mutation. Un fallo de `/api/orientar` nunca pierde el perfil ya guardado: se muestra error + retry + link directo a `/dashboard`.
+
+Ver [[appbit-backend-contracts]] para los contratos de API que motivan estas decisiones.

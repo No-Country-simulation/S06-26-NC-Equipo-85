@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.pnpm-store/
 .pnp
 .pnp.*
 .yarn/*
@@ -47,3 +48,9 @@ Thumbs.db
 
 # Misc
 *.pem
+
+# Agents
+*.kiro
+
+# Env examples
+.env.local

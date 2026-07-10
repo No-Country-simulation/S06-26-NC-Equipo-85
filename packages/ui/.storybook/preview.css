@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "../src/styles/index.css";
+
+/* Tailwind escanea las clases usadas dentro del paquete. */
+@source "../src";
+
+/* Sustituye a next/font dentro de Storybook: las fuentes se cargan vía
+   Google Fonts en preview-head.html y aquí se exponen como CSS variables. */
+:root {
+  --font-fraunces: "Fraunces", ui-serif, Georgia, serif;
+  --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter);
+}

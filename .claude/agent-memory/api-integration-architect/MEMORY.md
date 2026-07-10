@@ -1,0 +1,2 @@
+- [Contratos reales del backend App BiT](appbit_backend_contracts.md) — endpoints jobs/courses/skills/orientation, gaps documentados en backend-requests.md
+- [Patrones de integración introducidos en apps/web](appbit_integration_patterns.md) — ApiErrorState, normalizePercentage, JWT mock, filtros client-side, flujo de onboarding

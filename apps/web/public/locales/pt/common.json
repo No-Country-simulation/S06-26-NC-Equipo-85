@@ -1,0 +1,510 @@
+{
+  "nav": {
+    "dashboard": "Painel",
+    "courses": "Formações",
+    "jobs": "Empregabilidade",
+    "experiences": "Experiências",
+    "mentorship": "Mentoratos",
+    "wellness": "Saúde Mental"
+  },
+  "buttons": {
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "login": "Fazer login",
+    "logout": "Sair",
+    "next": "Próximo",
+    "back": "Voltar",
+    "delete": "Deletar",
+    "edit": "Editar"
+  },
+  "errors": {
+    "required": "Este campo é obrigatório",
+    "invalid_email": "E-mail inválido",
+    "password_mismatch": "As senhas não coincidem",
+    "something_went_wrong": "Algo deu errado. Tente novamente.",
+    "loading": "Carregando...",
+    "not_found": "Não encontrado",
+    "cold_start": "O servidor está iniciando. Pode levar alguns segundos, tente novamente.",
+    "rate_limit": "O serviço de IA está recebendo muitas solicitações no momento. Aguarde alguns minutos e tente novamente.",
+    "field_errors_title": "Revise estes campos:",
+    "retry": "Tentar novamente"
+  },
+  "skills": {
+    "categories": {
+      "BACKEND": "Backend",
+      "FRONTEND": "Frontend",
+      "MOBILE": "Mobile",
+      "DATA_SCIENCE": "Ciência de dados",
+      "DESIGN_UX_UI": "Design UX/UI",
+      "SOFT_SKILLS": "Habilidades interpessoais"
+    }
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "warning": "Aviso",
+    "info": "Informação"
+  },
+  "courses": {
+    "title": "Formações",
+    "subtitle": "Cursos recomendados para fechar sua lacuna de habilidades.",
+    "grid": "Grade",
+    "table": "Tabela",
+    "view_label": "Visualização de cursos",
+    "all": "Todos",
+    "watch_video": "Ver vídeo",
+    "see_course": "Ver curso",
+    "see_detail": "Ver detalhe",
+    "no_results": "Nenhum curso com esses filtros",
+    "clear_filters": "Limpar filtros",
+    "loading": "Carregando cursos...",
+    "filters": {
+      "all_providers": "Todos os provedores",
+      "all_levels": "Todos os níveis",
+      "all_skill_categories": "Todas as categorias",
+      "by_provider": "Filtrar por provedor",
+      "by_level": "Filtrar por nível",
+      "by_skill_category": "Filtrar por categoria"
+    },
+    "levels": {
+      "BEGINNER": "Iniciante",
+      "INTERMEDIATE": "Intermediário",
+      "ADVANCED": "Avançado"
+    },
+    "columns": {
+      "course": "Curso",
+      "provider": "Provedor",
+      "level": "Nível",
+      "skills": "Habilidades"
+    },
+    "detail": {
+      "back": "Voltar para Formações",
+      "not_found": "Curso não encontrado",
+      "about": "Sobre este curso",
+      "skills_label": "O que você vai aprender",
+      "no_skills": "Este curso não tem skills associadas.",
+      "duration": "{hours} h de conteúdo",
+      "go_to_course": "Ir para o curso",
+      "open_source": "Abrir no site do provedor"
+    }
+  },
+  "jobs": {
+    "title": "Empregabilidade",
+    "subtitle": "Vagas compatíveis com seu perfil. Veja quais requisitos faltam e encontre o curso ideal para fechar a lacuna.",
+    "match_score": "Match",
+    "match_badge": "{score}% match",
+    "match_aria": "{score}% de match",
+    "match_profile": "Match de perfil",
+    "match_hint": {
+      "high": "Você tem um bom perfil para esta vaga.",
+      "medium": "Faltam alguns requisitos-chave a cobrir.",
+      "low": "Esta vaga requer mais preparação."
+    },
+    "requirements": "Skills necessárias",
+    "no_requirements": "Esta vaga não especifica skills necessárias.",
+    "see_requirements": "Ver detalhe",
+    "description": "Descrição",
+    "no_results": "Nenhuma vaga disponível",
+    "not_found": "Vaga não encontrada",
+    "back_to_list": "Voltar para a lista",
+    "detail": "Detalhe da vaga",
+    "close": "Fechar",
+    "detail_view": {
+      "back": "Voltar para Empregabilidade",
+      "about": "Sobre a vaga",
+      "about_company": "Sobre a empresa",
+      "benefits": "Benefícios",
+      "salary": "Salário estimado",
+      "posted": "Publicada há {days} dias",
+      "cta_courses": "Ver cursos para fechar a lacuna"
+    },
+    "modality": {
+      "REMOTE": "Remoto",
+      "HYBRID": "Híbrido",
+      "ONSITE": "Presencial"
+    },
+    "columns": {
+      "job": "Vaga",
+      "company": "Empresa",
+      "match": "Match"
+    }
+  },
+  "health": {
+    "title": "Saúde mental",
+    "subtitle": "Um espaço seguro para o seu check-in diário. Registre como você se sente e receba acolhimento empático.",
+    "form": {
+      "card_title": "Como você está se sentindo hoje?",
+      "mood_label": "Escolha o emoji que melhor representa você",
+      "moods": {
+        "feliz": "Feliz",
+        "cansado": "Cansado",
+        "triste": "Triste",
+        "ansioso": "Ansioso",
+        "sobrecargado": "Sobrecarregado"
+      },
+      "rating_label": "Como você avaliaria o seu bem-estar hoje?",
+      "rating_hint": "1 = muito mal · 5 = muito bem",
+      "rating_levels": {
+        "1": "Muito mal",
+        "2": "Mal",
+        "3": "Regular",
+        "4": "Bem",
+        "5": "Muito bem"
+      },
+      "context_label": "Quer nos contar algo mais? (opcional)",
+      "context_placeholder": "Escreva o que você sente, sem filtros.",
+      "submit": "Registrar check-in",
+      "submitting": "Registrando…",
+      "error_title": "Não conseguimos registrar seu check-in",
+      "error_body": "Ocorreu um erro. Tente novamente em alguns segundos."
+    },
+    "response": {
+      "card_title": "Obrigado por compartilhar",
+      "title": "Estamos com você",
+      "suggested_action": "Ação sugerida",
+      "empathic_cta": "Quero ler algo que me acolha",
+      "empathic_loading": "Gerando…",
+      "new_checkin": "Registrar outro check-in"
+    },
+    "history": {
+      "card_title": "Seu histórico",
+      "loading": "Carregando seu histórico…",
+      "empty_title": "Ainda não há check-ins",
+      "empty_body": "Quando você registrar seu primeiro check-in, ele aparecerá aqui.",
+      "rating": "Bem-estar: {value}/5",
+      "suggested_action": "Sugestão: {action}",
+      "view_detail": "Ver detalhes do check-in"
+    },
+    "detail": {
+      "card_title": "Detalhes do check-in",
+      "subtitle": "Como você se sentia naquele dia e o acompanhamento que recebeu.",
+      "loading": "Carregando os detalhes…",
+      "not_found_title": "Não encontramos este check-in",
+      "not_found_body": "Talvez tenha sido excluído. Volte ao seu histórico.",
+      "context_label": "O que você compartilhou",
+      "suggested_action": "Ação sugerida"
+    },
+    "cvv": {
+      "title": "Você não está sozinho(a)",
+      "body": "Se você está passando por um momento difícil, conversar com alguém pode ajudar. A linha de apoio é gratuita e confidencial.",
+      "line": "CVV: 188 (ligação gratuita, 24h)"
+    }
+  },
+  "experiences": {
+    "title": "Experiências",
+    "subtitle": "Palestras, workshops e experiências de mentores que já percorreram o caminho que você está começando.",
+    "create": "Criar experiência",
+    "view": "Ver experiência",
+    "loading": "Carregando experiências…",
+    "empty_title": "Não há experiências disponíveis",
+    "empty_body": "Quando houver experiências publicadas, elas aparecerão aqui.",
+    "types": {
+      "WORKSHOP": "Workshop",
+      "BOOTCAMP": "Bootcamp",
+      "WEBINAR": "Webinar",
+      "JOB_EXPERIENCE": "Experiência profissional"
+    },
+    "filters": {
+      "type_label": "Filtrar por tipo",
+      "all_types": "Todos os tipos",
+      "skill_label": "Filtrar por skill",
+      "all_skills": "Todas as skills",
+      "clear": "Limpar filtros"
+    },
+    "detail": {
+      "title": "Detalhe da experiência",
+      "not_found": "Não encontramos esta experiência.",
+      "external": "Este conteúdo abre em um site externo.",
+      "open_link": "Abrir conteúdo",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "confirm_delete": "Excluir esta experiência?",
+      "confirm_delete_cta": "Sim, excluir",
+      "cancel": "Cancelar",
+      "deleted": "Experiência excluída.",
+      "delete_error": "Não foi possível excluir a experiência."
+    },
+    "form": {
+      "create_title": "Nova experiência",
+      "edit_title": "Editar experiência",
+      "title_label": "Título",
+      "type_label": "Tipo",
+      "datetime_label": "Data e hora",
+      "speaker_role_label": "Cargo do palestrante",
+      "content_url_label": "Link do conteúdo",
+      "description_label": "Descrição",
+      "skills_label": "Skills relacionadas",
+      "cancel": "Cancelar",
+      "save": "Salvar alterações",
+      "create": "Criar",
+      "saving": "Salvando…",
+      "created": "Experiência criada.",
+      "updated": "Experiência atualizada.",
+      "create_error": "Não foi possível criar a experiência.",
+      "update_error": "Não foi possível atualizar a experiência."
+    }
+  },
+  "mentorships": {
+    "title": "Mentorias",
+    "subtitle": "Agende práticas com mentores reais e ganhe confiança antes de se candidatar.",
+    "create": "Criar sessão",
+    "loading": "Carregando sessões…",
+    "practice": "Prática",
+    "tabs": {
+      "explore": "Explorar sessões",
+      "mine": "Minhas sessões"
+    },
+    "empty_explore_title": "Não há sessões disponíveis",
+    "empty_explore_body": "Quando um mentor publicar novos espaços, aparecerão aqui.",
+    "empty_mine_title": "Você ainda não tem sessões",
+    "empty_mine_body": "Reserve uma sessão disponível para vê-la aqui.",
+    "status": {
+      "AVAILABLE": "Disponível",
+      "PENDING": "Pendente",
+      "SCHEDULED": "Agendada",
+      "COMPLETED": "Concluída",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status_label": "Estado",
+      "practice_label": "Tipo",
+      "all_practice": "Práticas e reais",
+      "practice_only": "Somente práticas",
+      "real_only": "Somente reais",
+      "date_label": "Data",
+      "clear": "Limpar filtros"
+    },
+    "actions": {
+      "view": "Ver detalhe",
+      "book": "Reservar",
+      "complete": "Marcar como concluída",
+      "cancel": "Cancelar",
+      "confirm_cancel": "Cancelar esta sessão?",
+      "confirm_cancel_cta": "Sim, cancelar",
+      "keep": "Não, voltar",
+      "booked": "Sessão reservada.",
+      "completed": "Sessão marcada como concluída.",
+      "canceled": "Sessão cancelada.",
+      "book_error": "Não foi possível reservar a sessão.",
+      "complete_error": "Não foi possível concluir a sessão.",
+      "cancel_error": "Não foi possível cancelar a sessão."
+    },
+    "detail": {
+      "title": "Detalhe da sessão",
+      "not_found": "Não encontramos esta sessão."
+    },
+    "form": {
+      "create_title": "Nova sessão",
+      "title_label": "Título",
+      "datetime_label": "Data e hora",
+      "practice_label": "É um convite para prática",
+      "cancel": "Cancelar",
+      "create": "Criar",
+      "saving": "Salvando…",
+      "created": "Sessão criada.",
+      "create_error": "Não foi possível criar a sessão."
+    }
+  },
+  "table": {
+    "empty": "Sem resultados",
+    "page_of": "Página {page} de {total}",
+    "previous": "Anterior",
+    "next": "Próximo"
+  },
+  "onboarding": {
+    "success": {
+      "match_label": "seu match inicial",
+      "greeting": "Bem-vinda, {name}! 🌅",
+      "loading": "Estamos gerando sua orientação inicial…",
+      "subtitle": "Seu perfil está pronto. Você começa com {match}% de match e preparamos uma trajetória para fechar a lacuna.",
+      "ai_recommendation_title": "Recomendação do seu mentor IA",
+      "gap_items_title": "Skills a reforçar",
+      "gap_items_empty": "Não detectamos lacunas de skills no seu perfil.",
+      "suggested_path_title": "Trajetória sugerida",
+      "suggested_path_empty": "Ainda não há cursos sugeridos para o seu perfil.",
+      "compatible_jobs_title": "Vagas compatíveis",
+      "compatible_jobs_empty": "Ainda não há vagas compatíveis com o seu perfil.",
+      "cta": "Ir para meu Dashboard →",
+      "go_dashboard_anyway": "Ir para o dashboard mesmo assim"
+    }
+  },
+  "dashboard": {
+    "eyebrow": "Painel",
+    "greeting": "Olá{name} 👋",
+    "subtitle": "Seu progresso de hoje e os próximos passos rumo à sua primeira oportunidade em tecnologia.",
+    "checkin_pending": "⏳ Check-in de hoje pendente",
+    "checkin_done": "✓ Check-in de hoje feito",
+    "header_title": "Painel",
+    "checkin_badge": "Check-in pendente",
+    "language_selector": "Seletor de idioma",
+    "nav_primary": "Navegação principal do painel",
+    "nav_bottom": "Navegação inferior do painel",
+    "go_home": "Ir para o painel do App BiT",
+    "user_fallback": "Usuário BiT",
+    "profile_fallback": "Perfil inicial",
+    "logout": "Sair",
+    "match_label": "match",
+    "progress": {
+      "goal": "Você está a {gap}% da sua meta",
+      "goal_empty": "Complete seu onboarding para ver seu progresso real",
+      "hint": "Continue fechando sua lacuna com formações sugeridas, vagas compatíveis e acompanhamento semanal.",
+      "see_courses": "Ver formações",
+      "see_jobs": "Ver vagas",
+      "confidence": "Confiança",
+      "matches_count": "Vagas compatíveis"
+    },
+    "no_orientation": {
+      "loading": "Estamos gerando sua orientação…"
+    },
+    "suggested_path": "Trajetória sugerida",
+    "suggested_path_empty": "Ainda não há trajetória: complete o onboarding para gerá-la a partir do seu perfil.",
+    "mood_history": "Histórico emocional semanal",
+    "mood_note": "Seus últimos check-ins emocionais, de 1 a 5.",
+    "mood_empty": "Você ainda não registrou nenhum check-in.",
+    "mood_cta": "Faça seu primeiro check-in →",
+    "compatible_jobs": {
+      "title": "Vagas compatíveis",
+      "subtitle": "Principais oportunidades ordenadas por compatibilidade.",
+      "see_all": "Ver todas",
+      "empty": "Ainda não há vagas compatíveis: complete o onboarding para calculá-las."
+    },
+    "services": {
+      "title": "Cinco serviços, um mesmo caminho",
+      "subtitle": "Acesse rápido cada módulo do MVP."
+    },
+    "modules": {
+      "formaciones": {
+        "title": "Formações",
+        "description": "Cursos gratuitos e rotas sugeridas para fechar suas lacunas de skills."
+      },
+      "empleabilidad": {
+        "title": "Empregabilidade",
+        "description": "Vagas compatíveis ordenadas por match com seu perfil atual."
+      },
+      "experiencias": {
+        "title": "Experiências",
+        "description": "Histórias de pessoas que já percorreram o caminho que você está começando."
+      },
+      "mentorias": {
+        "title": "Mentorias",
+        "description": "Práticas e encontros com mentores para ganhar confiança antes de se candidatar."
+      },
+      "salud": {
+        "title": "Saúde mental",
+        "description": "Check-in diário, acompanhamento emocional e apoio empático."
+      }
+    }
+  },
+  "landing": {
+    "header": {
+      "login": "Entrar",
+      "register": "Criar conta"
+    },
+    "hero": {
+      "badge": "Seu novo começo, todos os dias",
+      "title": "Cada check-in é uma oportunidade de avançar.",
+      "subtitle": "Orientação com IA, formação gratuita e vagas de acordo com seu perfil real. Tudo em um só lugar, pensado para você.",
+      "ctaPrimary": "Criar conta gratuita →",
+      "ctaSecondary": "Entrar"
+    },
+    "services": {
+      "title": "Cinco serviços, um mesmo caminho",
+      "subtitle": "Desde o primeiro dia até seu primeiro emprego, BiT te acompanha em cada etapa.",
+      "formaciones": {
+        "title": "Formações",
+        "description": "Cursos gratuitos do Google e da Oracle para fechar suas lacunas de skills."
+      },
+      "empleabilidad": {
+        "title": "Empregabilidade",
+        "description": "Vagas ordenadas pela sua compatibilidade real, com o caminho para fechá-las."
+      },
+      "experiencias": {
+        "title": "Experiências",
+        "description": "Histórias em vídeo de quem já percorreu o caminho que você está prestes a começar."
+      },
+      "mentorias": {
+        "title": "Mentorias",
+        "description": "Agende práticas com mentores reais e ganhe confiança antes de se candidatar."
+      },
+      "salud": {
+        "title": "Saúde mental",
+        "description": "Um espaço seguro para seu check-in diário, com acompanhamento empático."
+      }
+    },
+    "stats": {
+      "users": "jovens acompanhados",
+      "courses": "cursos gratuitos",
+      "matchImprovement": "melhora seu match",
+      "services": "serviços integrados",
+      "testimonial": {
+        "quote": "Graças à BiT passei de não saber por onde começar a conseguir meu primeiro emprego como desenvolvedora.",
+        "name": "Camila R.",
+        "meta": "22 anos · Córdoba"
+      }
+    },
+    "cta": {
+      "title": "Seu próximo começo é hoje",
+      "button": "Criar minha conta gratuita →"
+    },
+    "footer": {
+      "copyright": "© 2026 · Verdadeiramente humano",
+      "privacy": "Privacidade",
+      "terms": "Termos",
+      "contact": "Contato"
+    }
+  },
+  "auth": {
+    "register": {
+      "brand": {
+        "title": "Cada check-in é um novo começo.",
+        "bullet1": "Orientação personalizada com IA",
+        "bullet2": "Formação gratuita do Google e da Oracle",
+        "bullet3": "Vagas de acordo com seu perfil real"
+      },
+      "title": "Crie sua conta",
+      "subtitle": "Comece seu caminho em menos de 2 minutos.",
+      "emailLabel": "Correio eletrônico",
+      "emailPlaceholder": "seu@email.com",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "confirmLabel": "Confirmar senha",
+      "confirmPlaceholder": "Repita a senha",
+      "strength": {
+        "weak": "Fraca",
+        "medium": "Média",
+        "strong": "Forte"
+      },
+      "terms": "Aceito os <terms>Termos e Condições</terms> e a Política de Privacidade da BiT.",
+      "submit": "Criar conta",
+      "haveAccount": "Já tem uma conta?",
+      "loginLink": "Entrar",
+      "successTitle": "Conta criada",
+      "successApi": "Sua conta foi criada. Complete seu perfil para começar.",
+      "errorTitle": "Não foi possível criar a conta"
+    },
+    "login": {
+      "brand": {
+        "title": "Seu progresso está te esperando.",
+        "subtitle": "Continue fechando sua lacuna e descubra novas vagas compatíveis com seu perfil."
+      },
+      "title": "Olá de novo",
+      "subtitle": "Entre para acompanhar seu progresso.",
+      "emailLabel": "Correio eletrônico",
+      "emailPlaceholder": "seu@email.com",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Sua senha",
+      "forgot": "Esqueceu?",
+      "submit": "Entrar",
+      "noAccount": "Não tem uma conta?",
+      "registerLink": "Criar conta",
+      "successTitle": "Login bem-sucedido",
+      "successApi": "Bem-vinda de volta!",
+      "errorTitle": "Não foi possível entrar",
+      "errorInvalid": "O e-mail ou a senha estão incorretos.",
+      "errorRateLimit": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+      "errorGeneric": "Ocorreu um erro inesperado. Tente novamente."
+    }
+  }
+}

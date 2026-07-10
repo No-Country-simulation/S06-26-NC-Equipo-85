@@ -1,14 +1,9 @@
 {
-  "extends": "@appbit/typescript-config/react-library.json",
+  "extends": "@app/config/tsconfig",
   "compilerOptions": {
     "paths": {
-      "@appbit/ui/components/*": ["./src/components/ui/*"],
-      "@appbit/ui/lib/*": ["./src/lib/*"],
-      "@appbit/ui/atoms/*": ["./src/atoms/*"],
-      "@appbit/ui/molecules/*": ["./src/molecules/*"],
-      "@appbit/ui/organisms/*": ["./src/organisms/*"]
+      "@app/ui/*": ["./src/*"]
     }
   },
-  "include": ["src", ".storybook"],
-  "exclude": ["node_modules", "storybook-static"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

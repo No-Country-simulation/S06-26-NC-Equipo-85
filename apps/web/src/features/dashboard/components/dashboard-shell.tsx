@@ -1,0 +1,242 @@
+"use client";
+
+import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
+import { LogOut } from "lucide-react";
+import { useLogout } from "@/features/auth/hooks/use-logout";
+import { DASHBOARD_MODULES } from "@/features/dashboard/utils/dashboard-modules";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useUserStore } from "@/store/user-store";
+import { Button, cn } from "@app/ui";
+
+type DashboardShellProps = {
+  children: ReactNode;
+};
+
+/**
+ * Devuelve un ícono textual estable para navegación.
+ *
+ * Se evita introducir una dependencia visual nueva en este PR. Si el equipo
+ * estandariza Lucide o SVGs compartidos, este mapeo se reemplaza en un único lugar.
+ */
+function getModuleIcon(moduleId: string) {
+  const icons: Record<string, string> = {
+    formaciones: "⌂",
+    empleabilidad: "▣",
+    experiencias: "▶",
+    mentorias: "◌",
+    salud: "♡",
+  };
+
+  return icons[moduleId] ?? "•";
+}
+
+/**
+ * Evalúa si un item de navegación debe verse activo.
+ */
+function isActiveRoute(pathname: string, href: string) {
+  if (href === "/dashboard") {
+    return pathname === "/dashboard";
+  }
+
+  return pathname.startsWith(href);
+}
+
+/**
+ * Construye iniciales seguras desde el nombre del perfil.
+ */
+function getInitials(name?: string) {
+  if (!name?.trim()) {
+    return "B";
+  }
+
+  const words = name.trim().split(/\s+/);
+  const firstInitial = words[0]?.[0] ?? "";
+  const secondInitial = words[1]?.[0] ?? "";
+
+  return `${firstInitial}${secondInitial}`.toUpperCase();
+}
+
+/**
+ * Layout cliente del área privada.
+ *
+ * Implementa el patrón AppShell del dashboard: sidebar en desktop, topbar y
+ * navegación inferior compacta en mobile.
+ */
+export function DashboardShell({ children }: DashboardShellProps) {
+  const t = useTranslations("common.dashboard");
+  const pathname = usePathname();
+  const profile = useUserStore((state) => state.profile);
+  const logout = useLogout();
+
+  const navItems = [
+    {
+      key: "home",
+      title: t("header_title"),
+      href: "/dashboard",
+      icon: "▦",
+    },
+    ...DASHBOARD_MODULES.map((module) => ({
+      key: module.id,
+      title: t(`modules.${module.id}.title`),
+      href: module.href,
+      icon: getModuleIcon(module.id),
+    })),
+  ];
+
+  const displayName = profile?.name?.trim() || t("user_fallback");
+  const displayArea = profile?.area || t("profile_fallback");
+  const initials = getInitials(displayName);
+
+  return (
+    <div className="min-h-dvh bg-background text-foreground">
+      <div className="mx-auto flex min-h-dvh w-full max-w-360">
+        <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-border bg-card px-4 py-6 lg:flex lg:flex-col">
+          <Link
+            href="/dashboard"
+            className="mb-8 flex items-center gap-3 px-2"
+            aria-label={t("go_home")}
+          >
+            <span className="flex size-9 items-center justify-center rounded-xl bg-primary font-serif text-lg font-bold text-primary-foreground">
+              B
+            </span>
+            <span className="font-serif text-xl font-semibold">BiT</span>
+          </Link>
+
+          <nav aria-label={t("nav_primary")}>
+            <ul className="space-y-1">
+              {navItems.map((item) => {
+                const isActive = isActiveRoute(pathname, item.href);
+
+                return (
+                  <li key={item.key}>
+                    <Link
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={cn(
+                        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        isActive &&
+                          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+                      )}
+                    >
+                      <span className="flex size-6 items-center justify-center text-base">
+                        {item.icon}
+                      </span>
+                      <span>{item.title}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className="mt-auto rounded-2xl bg-muted p-4">
+            <div className="flex items-center gap-3">
+              <span className="flex size-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                {initials}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold">{displayName}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {displayArea}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              className="mt-3 w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <LogOut />
+              {t("logout")}
+            </Button>
+          </div>
+        </aside>
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+            <div className="flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 lg:hidden"
+                aria-label={t("go_home")}
+              >
+                <span className="flex size-8 items-center justify-center rounded-lg bg-primary font-serif font-bold text-primary-foreground">
+                  B
+                </span>
+                <span className="font-serif text-lg font-semibold">BiT</span>
+              </Link>
+
+              <div className="hidden lg:block">
+                <p className="font-serif text-xl font-semibold">{t("header_title")}</p>
+              </div>
+
+              <div className="ml-auto flex items-center gap-3">
+                <div className="hidden rounded-full bg-ambar-soft px-3 py-1.5 text-xs font-semibold text-ambar-text sm:block">
+                  {t("checkin_badge")}
+                </div>
+
+                <div
+                  aria-label={t("language_selector")}
+                  className="flex overflow-hidden rounded-full border border-border text-xs font-semibold"
+                >
+                  <span className="bg-primary px-2.5 py-1 text-primary-foreground">
+                    ES
+                  </span>
+                  <span className="px-2.5 py-1 text-muted-foreground">PT</span>
+                </div>
+
+                <span className="flex size-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                  {initials}
+                </span>
+
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={logout}
+                  aria-label={t("logout")}
+                  className="text-muted-foreground hover:text-foreground lg:hidden"
+                >
+                  <LogOut />
+                </Button>
+              </div>
+            </div>
+          </header>
+
+          <main className="flex-1 px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
+            {children}
+          </main>
+        </div>
+      </div>
+
+      <nav
+        aria-label={t("nav_bottom")}
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/95 px-2 py-2 backdrop-blur lg:hidden"
+      >
+        <ul className="mx-auto grid max-w-xl grid-cols-6 gap-1">
+          {navItems.map((item) => {
+            const isActive = isActiveRoute(pathname, item.href);
+
+            return (
+              <li key={item.key}>
+                <Link
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "flex min-h-12 flex-col items-center justify-center rounded-xl px-1 text-[10px] font-medium text-muted-foreground transition-colors",
+                    isActive && "bg-primary text-primary-foreground",
+                  )}
+                >
+                  <span className="text-base leading-none">{item.icon}</span>
+                  <span className="mt-1 max-w-full truncate">{item.title}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </div>
+  );
+}
