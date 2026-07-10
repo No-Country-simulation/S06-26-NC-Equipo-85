@@ -7,19 +7,15 @@ import { useCourses } from "../hooks/use-courses";
 import { CoursesToolbar } from "./courses-toolbar";
 import { CoursesGrid } from "./courses-grid";
 import { CoursesTable } from "./courses-table";
-import { CourseVideoDialog } from "./course-video-dialog";
 import { filterCourses, getAvailableProviders } from "../utils/course-filters";
-import { isEmbeddableVideoUrl } from "../utils/course-media";
 import { ApiErrorState } from "@/components/api-error-state";
 import { EmptyState } from "@app/ui";
-import type { Course, CourseLevel } from "@/services/courses/courses.types";
+import type { CourseLevel } from "@/services/courses/courses.types";
 import type { SkillCategory } from "@/services/skills/skills.types";
 
 export function CoursesPage() {
   const t = useTranslations("common.courses");
   const [view, setView] = useState<"grid" | "table">("grid");
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [videoOpen, setVideoOpen] = useState(false);
   const { data: courses, isLoading, error, refetch } = useCourses();
 
   const [provider] = useQueryState("provider");
@@ -41,18 +37,6 @@ export function CoursesPage() {
     [courses, provider, level, skillCategory],
   );
 
-  function handleSelect(course: Course) {
-    if (isEmbeddableVideoUrl(course.url)) {
-      setSelectedCourse(course);
-      setVideoOpen(true);
-      return;
-    }
-
-    if (typeof window !== "undefined") {
-      window.open(course.url, "_blank", "noopener,noreferrer");
-    }
-  }
-
   if (error) {
     return <ApiErrorState error={error} onRetry={() => refetch()} />;
   }
@@ -67,20 +51,15 @@ export function CoursesPage() {
       <CoursesToolbar view={view} onViewChange={setView} providers={providers} />
 
       {view === "grid" ? (
-        <CoursesGrid courses={filteredCourses} isLoading={isLoading} onSelect={handleSelect} />
+        <CoursesGrid courses={filteredCourses} isLoading={isLoading} />
       ) : (
-        <CoursesTable courses={filteredCourses} isLoading={isLoading} onSelect={handleSelect} />
+        <CoursesTable courses={filteredCourses} isLoading={isLoading} />
       )}
 
-      {!isLoading && filteredCourses.length === 0 && (
+      {/* La tabla ya muestra su propio empty state; en grid lo mostramos acá. */}
+      {!isLoading && view === "grid" && filteredCourses.length === 0 && (
         <EmptyState title={t("no_results")} />
       )}
-
-      <CourseVideoDialog
-        course={selectedCourse}
-        open={videoOpen}
-        onOpenChange={setVideoOpen}
-      />
     </div>
   );
 }

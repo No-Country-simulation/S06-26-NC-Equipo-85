@@ -3,46 +3,41 @@ import type { SkillCategory } from "@/services/skills/skills.types";
 /**
  * Contratos del catálogo de formaciones.
  *
- * Fuente de verdad: `GET /api/courses` del OpenAPI. El tipo es un espejo 1:1
- * del contrato real, aplanando la relación circular `CourseSkill` (`{ id,
- * course, skill }`) a `{ id, name, category }`. Los campos que la UI anterior
- * asumía (`duration`, `description`, `area` propia, `videoUrl` como campo del
- * curso) no existen en el backend real y se eliminan en vez de marcarse
- * opcionales, para no invitar a la UI a seguir mostrando datos inventados.
- *
- * TODO(backend): pedir `description` y `duration` en `Course`; hoy el grid y
- * la tabla de Formaciones solo pueden mostrar nombre/proveedor/nivel/skills.
+ * Fuente de verdad del backend v1: `GET /api/v1/courses` → `{ id, name,
+ * provider }` (ver `CourseResponse` del OpenAPI). El resto de los campos
+ * (`level`, `url`, `skills`, `description`, `durationHours`) **ya no** vienen
+ * del backend: se completan con data mock centralizada en
+ * [`lib/mockDataTemp`](../../lib/mockDataTemp.ts), cruzada por nombre en
+ * `courses.service.ts`. Cuando el backend los vuelva a exponer, se quita el
+ * enriquecido del service y esta división desaparece.
  */
 
 export type CourseLevel = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
 
+/** Skill que aporta un curso. `category` es mock temporal (ver `mockDataTemp`). */
 export type CourseSkill = {
-  id: string;
   name: string;
   category: SkillCategory;
 };
 
 export type Course = {
+  // --- Reales (backend, `CourseResponse`) ---
   id: string;
   name: string;
   provider: string;
+  // --- Mock temporal (mockDataTemp), hasta que el backend los reexponga ---
   level: CourseLevel;
-  /**
-   * Contenido del curso. Puede ser una URL embebible (YouTube/Vimeo) o un
-   * enlace externo; `features/courses/utils/course-media.ts` decide cómo
-   * abrirla.
-   */
+  /** Video embebible (YouTube/Vimeo) o enlace externo del proveedor. */
   url: string;
   skills: CourseSkill[];
+  description: string;
+  durationHours: number;
 };
 
 /**
  * Filtros aplicados client-side sobre la respuesta ya cacheada de
- * `GET /api/courses` (ver `features/courses/utils/course-filters.ts`).
- *
- * TODO(backend): el endpoint no acepta query params de filtro ni paginación
- * server-side; si el catálogo crece, pedir `provider`/`level`/`skillCategory`
- * y paginación en el listado.
+ * `GET /api/v1/courses`. `provider` sale de la data real; `level` y
+ * `skillCategory` operan sobre los campos mock (ver `mockDataTemp`).
  */
 export type CourseFilters = {
   provider?: string;

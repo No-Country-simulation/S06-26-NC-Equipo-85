@@ -4,15 +4,14 @@ import { useTranslations } from "next-intl";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Course } from "@/services/courses/courses.types";
 import { Badge, DataTable } from "@app/ui";
-import { isEmbeddableVideoUrl } from "../utils/course-media";
+import { Link } from "@/i18n/navigation";
 
 type CoursesTableProps = {
   courses: Course[];
   isLoading?: boolean;
-  onSelect?: (course: Course) => void;
 };
 
-export function CoursesTable({ courses, isLoading, onSelect }: CoursesTableProps) {
+export function CoursesTable({ courses, isLoading }: CoursesTableProps) {
   const t = useTranslations("common.courses");
   const tTable = useTranslations("common.table");
   const tSkills = useTranslations("common.skills.categories");
@@ -41,7 +40,7 @@ export function CoursesTable({ courses, isLoading, onSelect }: CoursesTableProps
       cell: ({ row }) => (
         <div className="flex flex-wrap gap-1">
           {row.original.skills.map((skill) => (
-            <Badge key={skill.id} variant="outline" title={tSkills(skill.category)}>
+            <Badge key={skill.name} variant="outline" title={tSkills(skill.category)}>
               {skill.name}
             </Badge>
           ))}
@@ -51,32 +50,14 @@ export function CoursesTable({ courses, isLoading, onSelect }: CoursesTableProps
     {
       id: "actions",
       header: "",
-      cell: ({ row }) => {
-        const course = row.original;
-
-        if (isEmbeddableVideoUrl(course.url)) {
-          return (
-            <button
-              type="button"
-              onClick={() => onSelect?.(course)}
-              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-            >
-              {t("watch_video")}
-            </button>
-          );
-        }
-
-        return (
-          <a
-            href={course.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-          >
-            {t("see_course")}
-          </a>
-        );
-      },
+      cell: ({ row }) => (
+        <Link
+          href={`/courses/${row.original.id}`}
+          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+        >
+          {t("see_detail")}
+        </Link>
+      ),
     },
   ];
 

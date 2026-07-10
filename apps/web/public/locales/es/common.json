@@ -55,6 +55,7 @@
     "all": "Todos",
     "watch_video": "Ver video",
     "see_course": "Ver curso",
+    "see_detail": "Ver detalle",
     "no_results": "No hay cursos con esos filtros",
     "clear_filters": "Limpiar filtros",
     "loading": "Cargando cursos...",
@@ -76,6 +77,16 @@
       "provider": "Proveedor",
       "level": "Nivel",
       "skills": "Habilidades"
+    },
+    "detail": {
+      "back": "Volver a Formaciones",
+      "not_found": "Curso no encontrado",
+      "about": "Sobre este curso",
+      "skills_label": "Lo que vas a aprender",
+      "no_skills": "Este curso no tiene skills asociadas.",
+      "duration": "{hours} h de contenido",
+      "go_to_course": "Ir al curso",
+      "open_source": "Abrir en el sitio del proveedor"
     }
   },
   "jobs": {
@@ -99,6 +110,11 @@
     "back_to_list": "Volver al listado",
     "detail": "Detalle de vacante",
     "close": "Cerrar",
+    "detail_view": {
+      "back": "Volver a Empleabilidad",
+      "about": "Sobre la vacante",
+      "cta_courses": "Ver cursos para cerrar la brecha"
+    },
     "columns": {
       "job": "Vacante",
       "company": "Empresa",

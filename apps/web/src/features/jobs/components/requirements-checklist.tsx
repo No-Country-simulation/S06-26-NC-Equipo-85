@@ -9,11 +9,10 @@ type RequirementsChecklistProps = {
 };
 
 /**
- * Lista de skills requeridas por la vacante.
+ * Lista de skills requeridas por la vacante (`Job.requiredSkills`).
  *
- * El contrato real (`Job.skills`) no informa cumplido/pendiente por skill (a
- * diferencia del mock anterior), así que ya no es un checklist: solo lista
- * las skills requeridas.
+ * El contrato real no informa cumplido/pendiente por skill, así que no es un
+ * checklist: solo lista las skills requeridas (nombre real + categoría mock).
  *
  * TODO(backend): si se agrega el detalle de qué skills ya cumple el usuario
  * (cruzando con su perfil), este componente puede volver a distinguir
@@ -31,7 +30,7 @@ export function RequirementsChecklist({ skills }: RequirementsChecklistProps) {
       ) : (
         <ul className="flex flex-wrap gap-2">
           {skills.map((skill) => (
-            <li key={skill.id}>
+            <li key={skill.name}>
               <Badge variant="outline" title={tSkills(skill.category)}>
                 {skill.name}
               </Badge>
