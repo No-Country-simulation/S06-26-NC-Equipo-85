@@ -114,7 +114,16 @@
     "detail_view": {
       "back": "Volver a Empleabilidad",
       "about": "Sobre la vacante",
+      "about_company": "Sobre la empresa",
+      "benefits": "Beneficios",
+      "salary": "Salario estimado",
+      "posted": "Publicada hace {days} días",
       "cta_courses": "Ver cursos para cerrar la brecha"
+    },
+    "modality": {
+      "REMOTE": "Remoto",
+      "HYBRID": "Híbrido",
+      "ONSITE": "Presencial"
     },
     "columns": {
       "job": "Vacante",

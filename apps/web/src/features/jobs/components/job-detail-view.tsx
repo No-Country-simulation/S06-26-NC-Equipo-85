@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Briefcase, Check, Clock, MapPin, Wallet } from "lucide-react";
 import {
   Badge,
   Button,
@@ -83,7 +83,7 @@ export function JobDetailView({ jobId }: JobDetailViewProps) {
     <div className="flex flex-col gap-6">
       {backLink}
 
-      <header className="flex flex-col gap-2">
+      <header className="flex flex-col gap-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-3xl font-semibold text-foreground">{job.title}</h1>
@@ -92,6 +92,25 @@ export function JobDetailView({ jobId }: JobDetailViewProps) {
           {matchRate !== undefined && (
             <Badge variant="success">{t("match_badge", { score: matchRate })}</Badge>
           )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin className="size-4" aria-hidden="true" />
+            {job.location}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Briefcase className="size-4" aria-hidden="true" />
+            {t(`modality.${job.modality}`)}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Wallet className="size-4" aria-hidden="true" />
+            {job.salaryRange}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Clock className="size-4" aria-hidden="true" />
+            {t("detail_view.posted", { days: job.postedDaysAgo })}
+          </span>
         </div>
       </header>
 
@@ -125,11 +144,49 @@ export function JobDetailView({ jobId }: JobDetailViewProps) {
               </p>
             </CardContent>
           </Card>
+
+          {job.aboutCompany ? (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">
+                  {t("detail_view.about_company")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  {job.aboutCompany}
+                </p>
+              </CardContent>
+            </Card>
+          ) : null}
         </div>
 
         <Card>
-          <CardContent className="flex flex-col gap-4 pt-6">
+          <CardContent className="flex flex-col gap-5 pt-6">
             <RequirementsChecklist skills={job.requiredSkills} />
+
+            {job.benefits.length > 0 ? (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">
+                  {t("detail_view.benefits")}
+                </p>
+                <ul className="space-y-1.5">
+                  {job.benefits.map((benefit) => (
+                    <li
+                      key={benefit}
+                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                    >
+                      <Check
+                        className="mt-0.5 size-4 shrink-0 text-oliva"
+                        aria-hidden="true"
+                      />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             <Button asChild variant="secondary">
               <Link href="/courses">{t("detail_view.cta_courses")}</Link>
             </Button>

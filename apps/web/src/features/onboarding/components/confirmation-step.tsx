@@ -24,6 +24,23 @@ function getOptionLabel(
 }
 
 /**
+ * Devuelve los labels de varias opciones (área de interés, selección múltiple),
+ * unidos por coma para el resumen.
+ */
+function getOptionLabels(
+  options: readonly { value: string; label: string }[],
+  values: string[] | undefined,
+) {
+  if (!values || values.length === 0) {
+    return PLACEHOLDER;
+  }
+
+  return values
+    .map((value) => options.find((option) => option.value === value)?.label ?? value)
+    .join(", ");
+}
+
+/**
  * Paso 3 — "Revisá y confirmá": resumen accesible del perfil + aviso de privacidad.
  */
 export function ConfirmationStep({ values }: ConfirmationStepProps) {
@@ -43,7 +60,7 @@ export function ConfirmationStep({ values }: ConfirmationStepProps) {
     },
     {
       label: "Área de interés",
-      value: getOptionLabel(TECH_AREA_OPTIONS, values.techArea),
+      value: getOptionLabels(TECH_AREA_OPTIONS, values.techArea),
     },
     {
       label: "Objetivo",

@@ -85,12 +85,15 @@ export const professionalProfileSchema = z.object({
       (value) => isAllowedOption(TECH_LEVEL_OPTIONS, value),
       "Seleccioná un nivel válido.",
     ),
+  // Múltiple: el backend guarda `techArea` como un único string libre (sin
+  // enum propio), así que se unen las áreas elegidas con coma al construir el
+  // request (ver `buildProfileRequest` en `onboarding-wizard.tsx`).
   techArea: z
-    .string()
-    .min(1, "Seleccioná un área de interés.")
+    .array(z.string())
+    .min(1, "Seleccioná al menos un área de interés.")
     .refine(
-      (value) => isAllowedOption(TECH_AREA_OPTIONS, value),
-      "Seleccioná un área válida.",
+      (value) => value.every((item) => isAllowedOption(TECH_AREA_OPTIONS, item)),
+      "Seleccioná áreas válidas.",
     ),
   objective: z
     .string()
@@ -119,7 +122,7 @@ export const ONBOARDING_DEFAULT_VALUES = {
   city: "",
   whatsapp: "",
   techLevel: "",
-  techArea: "",
+  techArea: [],
   objective: "",
   experienceSummary: "",
 } satisfies z.infer<typeof onboardingFormSchema>;

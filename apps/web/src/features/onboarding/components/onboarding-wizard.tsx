@@ -93,7 +93,9 @@ function toApiWhatsapp(raw?: string): string | undefined {
  * Convierte los valores validados del formulario al contrato de
  * `PUT /api/v1/profile`. El `género` se reduce a su enum vía `apiValue`; el
  * resto de selects ya persisten el enum del backend. `experienceSummary` no
- * tiene campo en el perfil, así que no se envía.
+ * tiene campo en el perfil, así que no se envía. `techArea` es selección
+ * múltiple en la UI pero el backend lo guarda como un único string libre (sin
+ * enum propio): se unen las áreas elegidas con coma.
  */
 function buildProfileRequest(
   values: OnboardingFormValues,
@@ -110,7 +112,7 @@ function buildProfileRequest(
     education: values.educationLevel as ProfileUpsertRequest["education"],
     professionalLevel:
       values.techLevel as ProfileUpsertRequest["professionalLevel"],
-    techArea: values.techArea,
+    techArea: values.techArea.join(", "),
     objective: values.objective,
     location: {
       country: values.country,
@@ -369,7 +371,7 @@ export function OnboardingWizard() {
         id: email,
         name: result.data.fullName,
         email,
-        area: result.data.techArea,
+        area: result.data.techArea.join(", "),
       });
 
       toast.success("Perfil guardado", {
