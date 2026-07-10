@@ -1,5 +1,6 @@
 import { ApiError, apiRequest } from "@/lib/api";
 import { normalizePercentage } from "@/lib/normalize";
+import { getSkillCategory } from "@/lib/mockDataTemp";
 import type { Job, JobMatch } from "./jobs.types";
 
 /**
@@ -29,16 +30,37 @@ export async function getJobMatches(minMatch?: number): Promise<JobMatch[]> {
   }));
 }
 
+/** Forma cruda de `GET /api/v1/jobs/{id}` (`JobDetailResponse`). */
+type JobDetailResponse = {
+  id: string;
+  company: string;
+  title: string;
+  description: string;
+  requiredSkills: string[];
+};
+
 /**
  * Obtiene el detalle de una vacante (`GET /api/v1/jobs/{id}`).
  *
- * Devuelve `null` cuando el backend responde 404 (vacante inexistente), igual
- * criterio que `profile.service.getProfile`, para que la UI lo trate como un
- * estado ("vacante no encontrada") en vez de una excepción.
+ * `requiredSkills` llega como lista de nombres; se transforma a `JobSkill[]`
+ * completando la categoría desde `mockDataTemp` (temporal). Devuelve `null`
+ * cuando el backend responde 404 (vacante inexistente), igual criterio que
+ * `profile.service.getProfile`, para que la UI lo trate como estado.
  */
 export async function getJobById(id: string): Promise<Job | null> {
   try {
-    return await apiRequest<Job>(`/api/v1/jobs/${id}`);
+    const job = await apiRequest<JobDetailResponse>(`/api/v1/jobs/${id}`);
+
+    return {
+      id: job.id,
+      company: job.company,
+      title: job.title,
+      description: job.description,
+      requiredSkills: (job.requiredSkills ?? []).map((name) => ({
+        name,
+        category: getSkillCategory(name),
+      })),
+    };
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       return null;

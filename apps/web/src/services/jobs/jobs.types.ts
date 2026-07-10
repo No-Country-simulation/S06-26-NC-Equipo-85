@@ -3,21 +3,22 @@ import type { SkillCategory } from "@/services/skills/skills.types";
 /**
  * Contratos de empleabilidad.
  *
- * Fuente de verdad: OpenAPI (`App BiT API v1`). `JobMatch` es la forma de
- * `GET /api/v1/jobs/matches`; `Job` es la de `GET /api/v1/jobs/{id}`, aplanando la
- * relación circular `JobSkill` (`{ id, job, skill }`) a `{ id, name, category }`.
- * Los campos que la UI anterior asumía (`salary`, `location`, `area`,
- * `missingRequirements`, `recommendedCourses`) no existen en el contrato real
- * y se eliminan en vez de marcarse opcionales.
+ * Fuente de verdad del backend v1 (OpenAPI):
+ * - `GET /api/v1/jobs/matches` → `JobMatchResponse` = `{ jobId, company, title, matchRate }`.
+ * - `GET /api/v1/jobs/{id}` → `JobDetailResponse` = `{ id, company, title,
+ *   description, requiredSkills: string[] }`.
  *
- * TODO(backend): pedir `salary`/`location`/`modalidad` (remoto/híbrido/presencial)
- * en `Job`, y qué skills del `JobMatch` ya cumple el usuario vs. cuáles le
- * faltan (estado cumplido/pendiente por skill); hoy la UI no puede mostrar esa
- * información porque el contrato no la expone.
+ * `requiredSkills` viene como lista de nombres (sin categoría). El service la
+ * transforma a `JobSkill[]` completando `category` con data mock centralizada
+ * en [`lib/mockDataTemp`](../../lib/mockDataTemp.ts). Cuando el backend exponga
+ * la categoría, se quita ese enriquecido.
+ *
+ * TODO(backend): pedir `salary`/`location`/`modalidad` en el detalle, y qué
+ * skills ya cumple el usuario vs. cuáles le faltan (estado por skill).
  */
 
+/** Skill requerida por una vacante. `name` real; `category` mock temporal. */
 export type JobSkill = {
-  id: string;
   name: string;
   category: SkillCategory;
 };
@@ -35,6 +36,6 @@ export type Job = {
   company: string;
   title: string;
   description: string;
-  createdAt: string;
-  skills: JobSkill[];
+  /** `requiredSkills: string[]` del backend, enriquecido con categoría mock. */
+  requiredSkills: JobSkill[];
 };

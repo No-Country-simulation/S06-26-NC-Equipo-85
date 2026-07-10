@@ -1,10 +1,11 @@
 /**
  * Contratos del catálogo transversal de skills.
  *
- * Fuente de verdad: `GET /api/skills` del OpenAPI (`App BiT API v1`). El
- * schema del backend expone relaciones circulares (`profiles`, `courses`,
- * `jobs`, `experiences`) que el front omite deliberadamente: solo interesa la
- * identidad de la skill para cruzarla con jobs/courses vía `skills[].skill`.
+ * Fuente de verdad del backend v1: `GET /api/v1/skills` → `{ id, name }` (ver
+ * `SkillResponse` del OpenAPI). La `category` **ya no** viene del backend: se
+ * completa con data mock centralizada en
+ * [`lib/mockDataTemp`](../../lib/mockDataTemp.ts) (cruzada por nombre en
+ * `skills.service.ts`). Cuando el backend la reexponga, se quita ese enriquecido.
  */
 
 export type SkillCategory =
@@ -16,7 +17,9 @@ export type SkillCategory =
   | "SOFT_SKILLS";
 
 export type Skill = {
+  // --- Reales (backend, `SkillResponse`) ---
   id: string;
   name: string;
+  // --- Mock temporal (mockDataTemp) ---
   category: SkillCategory;
 };
