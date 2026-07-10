@@ -70,28 +70,20 @@ export async function getEmpathicResponse(
   );
 }
 
-/** Latencia simulada para que la UI ejercite su estado de carga. */
-const TEXT_ANALYSIS_DELAY_MS = 500;
+const HEALTH_ANALYSIS_PATH = "/api/health";
 
 /**
- * Analiza por IA un texto libre de estado emocional.
+ * Analiza por IA un texto libre de estado emocional (`POST /api/health` 🔒).
  *
- * MOCK TEMPORAL: el endpoint `/api/salud` era de prueba y se eliminó. El
- * definitivo será distinto y aún no existe, así que devolvemos un resultado
- * simulado (haciendo eco del texto) para mantener viva la sección. Flujo
- * complementario al check-in estructurado, sin persistir historial. Cuando el
- * backend publique el endpoint real, reemplazar el cuerpo por la llamada HTTP.
+ * Endpoint definitivo (reemplazó al `/api/salud` de prueba). Flujo
+ * complementario al check-in estructurado (`/api/v1/health/checkins`): no
+ * persiste historial. El usuario se infiere del Bearer token.
  */
 export async function analyzeText(
   payload: TextAnalysisRequest,
 ): Promise<TextAnalysisResult> {
-  await new Promise((resolve) => setTimeout(resolve, TEXT_ANALYSIS_DELAY_MS));
-
-  return {
-    status: "Recibido",
-    message:
-      "Gracias por compartir cómo te sentís. Tomarte un momento para " +
-      "expresarlo ya es un paso valioso; recordá que no estás solo/a en esto.",
-    description: payload.description,
-  };
+  return apiRequest<TextAnalysisResult>(HEALTH_ANALYSIS_PATH, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }

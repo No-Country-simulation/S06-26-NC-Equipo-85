@@ -99,10 +99,6 @@
     "back_to_list": "Voltar para a lista",
     "detail": "Detalhe da vaga",
     "close": "Fechar",
-    "session_error": {
-      "title": "Não conseguimos identificar sua sessão",
-      "body": "Faça login novamente para ver suas vagas compatíveis."
-    },
     "columns": {
       "job": "Vaga",
       "company": "Empresa",
@@ -306,6 +302,7 @@
       "greeting": "Bem-vinda, {name}! 🌅",
       "loading": "Estamos gerando sua orientação inicial…",
       "subtitle": "Seu perfil está pronto. Você começa com {match}% de match e preparamos uma trajetória para fechar a lacuna.",
+      "ai_recommendation_title": "Recomendação do seu mentor IA",
       "gap_items_title": "Skills a reforçar",
       "gap_items_empty": "Não detectamos lacunas de skills no seu perfil.",
       "suggested_path_title": "Trajetória sugerida",

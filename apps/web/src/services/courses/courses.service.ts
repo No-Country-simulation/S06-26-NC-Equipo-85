@@ -1,10 +1,10 @@
 import { apiRequest } from "@/lib/api";
 import type { Course } from "./courses.types";
 
-const COURSES_PATH = "/api/courses";
+const COURSES_PATH = "/api/v1/courses";
 
 /**
- * Obtiene el catálogo completo de formaciones (`GET /api/courses`).
+ * Obtiene el catálogo completo de formaciones (`GET /api/v1/courses`).
  *
  * El backend no soporta filtros ni paginación server-side; el filtrado por
  * proveedor/nivel/categoría de skill se aplica client-side sobre esta respuesta

@@ -60,7 +60,7 @@ export function useEmpathicResponse() {
 }
 
 /**
- * Analiza por IA un texto libre de estado emocional (mock temporal).
+ * Analiza por IA un texto libre de estado emocional (`POST /api/health`).
  * No toca el historial de check-ins (no persiste).
  */
 export function useTextAnalysis() {

@@ -4,7 +4,7 @@ import type { SkillCategory } from "@/services/skills/skills.types";
  * Contratos de empleabilidad.
  *
  * Fuente de verdad: OpenAPI (`App BiT API v1`). `JobMatch` es la forma de
- * `GET /api/jobs/matches`; `Job` es la de `GET /api/jobs/{id}`, aplanando la
+ * `GET /api/v1/jobs/matches`; `Job` es la de `GET /api/v1/jobs/{id}`, aplanando la
  * relación circular `JobSkill` (`{ id, job, skill }`) a `{ id, name, category }`.
  * Los campos que la UI anterior asumía (`salary`, `location`, `area`,
  * `missingRequirements`, `recommendedCourses`) no existen en el contrato real

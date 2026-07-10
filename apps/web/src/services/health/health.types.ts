@@ -61,10 +61,8 @@ export type EmpathicResponse = {
 };
 
 /**
- * Cuerpo del análisis de texto libre.
+ * Cuerpo de `POST /api/health` (`HealthRequest`).
  *
- * MOCK TEMPORAL: el endpoint `/api/salud` era de prueba y se eliminó; el
- * definitivo será distinto y aún no existe (ver `health.service.ts`).
  * Evaluación por IA de un texto libre de estado emocional. A diferencia del
  * check-in estructurado (`/api/v1/health/checkins`), no requiere emoji/rating.
  */
@@ -73,7 +71,7 @@ export type TextAnalysisRequest = {
   description: string;
 };
 
-/** Resultado del análisis de texto libre (mock temporal). */
+/** Respuesta de `POST /api/health` (`HealthResponse`). */
 export type TextAnalysisResult = {
   /** Etiqueta de estado devuelta por la IA (opaca; se muestra tal cual). */
   status: string;

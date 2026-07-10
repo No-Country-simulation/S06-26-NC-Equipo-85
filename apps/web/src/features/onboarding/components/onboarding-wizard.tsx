@@ -184,8 +184,8 @@ function getErrorMessage(error: unknown) {
  *
  * Encapsula formularios, validación progresiva, navegación de pasos,
  * persistencia local y el UPSERT del perfil (`PUT /api/v1/profile`). Al
- * confirmar persiste el perfil, dispara la orientación (mock temporal, ver
- * `useOrientation`) y muestra `OnboardingSuccess` con el resultado. El perfil
+ * confirmar persiste el perfil, dispara la orientación (`POST /api/v1/guidance`,
+ * ver `useOrientation`) y muestra `OnboardingSuccess` con el resultado. El perfil
  * se guarda antes que la orientación, así un fallo de esta última nunca lo
  * pierde (ver `triggerOrientation`).
  */
@@ -322,7 +322,7 @@ export function OnboardingWizard() {
   }
 
   /**
-   * Dispara la orientación (mock temporal).
+   * Dispara la orientación (`POST /api/v1/guidance`).
    *
    * Se llama tanto al terminar el submit como desde el botón de reintento de
    * `OnboardingSuccess`: el perfil ya está guardado en ambos casos, así que un
