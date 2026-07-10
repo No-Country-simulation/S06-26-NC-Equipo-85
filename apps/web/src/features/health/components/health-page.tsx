@@ -17,7 +17,6 @@ import { CheckinDetailDialog } from "./checkin-detail-dialog";
 import { CheckinForm } from "./checkin-form";
 import { CheckinHistory } from "./checkin-history";
 import { CheckinResponse } from "./checkin-response";
-import { TextAnalysis } from "./text-analysis";
 import type { CheckinFormValues } from "../types/health.types";
 import type { CheckinResponse as CheckinResponseData } from "@/services/health/health.types";
 
@@ -134,18 +133,6 @@ export function HealthPage() {
         checkinId={selectedCheckinId}
         onClose={() => setSelectedCheckinId(null)}
       />
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle>{t("text_analysis.card_title")}</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            {t("text_analysis.subtitle")}
-          </p>
-        </CardHeader>
-        <CardContent>
-          <TextAnalysis />
-        </CardContent>
-      </Card>
     </div>
   );
 }

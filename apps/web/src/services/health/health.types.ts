@@ -59,24 +59,3 @@ export type CheckinDetail = {
 export type EmpathicResponse = {
   response: string;
 };
-
-/**
- * Cuerpo de `POST /api/health` (`HealthRequest`).
- *
- * Evaluación por IA de un texto libre de estado emocional. A diferencia del
- * check-in estructurado (`/api/v1/health/checkins`), no requiere emoji/rating.
- */
-export type TextAnalysisRequest = {
-  /** Texto libre (máx. 1000 caracteres). */
-  description: string;
-};
-
-/** Respuesta de `POST /api/health` (`HealthResponse`). */
-export type TextAnalysisResult = {
-  /** Etiqueta de estado devuelta por la IA (opaca; se muestra tal cual). */
-  status: string;
-  /** Mensaje empático/analítico generado por la IA. */
-  message: string;
-  /** Descripción (eco/refinada del texto enviado). */
-  description: string;
-};

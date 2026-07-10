@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  analyzeText,
   getCheckinById,
   getCheckins,
   getEmpathicResponse,
@@ -56,15 +55,5 @@ export function useSubmitCheckin() {
 export function useEmpathicResponse() {
   return useMutation({
     mutationFn: (id: string) => getEmpathicResponse(id),
-  });
-}
-
-/**
- * Analiza por IA un texto libre de estado emocional (`POST /api/health`).
- * No toca el historial de check-ins (no persiste).
- */
-export function useTextAnalysis() {
-  return useMutation({
-    mutationFn: analyzeText,
   });
 }

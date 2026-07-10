@@ -4,8 +4,6 @@ import type {
   CheckinRequest,
   CheckinResponse,
   EmpathicResponse,
-  TextAnalysisRequest,
-  TextAnalysisResult,
 } from "./health.types";
 
 const CHECKINS_PATH = "/api/v1/health/checkins";
@@ -68,22 +66,4 @@ export async function getEmpathicResponse(
     `${CHECKINS_PATH}/${id}/empathic-response`,
     { method: "POST" },
   );
-}
-
-const HEALTH_ANALYSIS_PATH = "/api/health";
-
-/**
- * Analiza por IA un texto libre de estado emocional (`POST /api/health` 🔒).
- *
- * Endpoint definitivo (reemplazó al `/api/salud` de prueba). Flujo
- * complementario al check-in estructurado (`/api/v1/health/checkins`): no
- * persiste historial. El usuario se infiere del Bearer token.
- */
-export async function analyzeText(
-  payload: TextAnalysisRequest,
-): Promise<TextAnalysisResult> {
-  return apiRequest<TextAnalysisResult>(HEALTH_ANALYSIS_PATH, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
 }

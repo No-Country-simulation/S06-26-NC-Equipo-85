@@ -1,10 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCheckins } from "@/features/health/hooks/use-health";
+import { useEnsureOrientation } from "@/features/onboarding/hooks/use-orientation";
 import { DASHBOARD_MODULES } from "@/features/dashboard/utils/dashboard-modules";
 import type { DashboardModule } from "@/features/dashboard/types/dashboard.types";
+import { ApiErrorState } from "@/components/api-error-state";
 import {
   Badge,
   Button,
@@ -12,6 +15,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Spinner,
   cn,
 } from "@app/ui";
 import { useUserStore } from "@/store/user-store";
@@ -163,13 +167,31 @@ function JobPreviewCard({ job }: { job: JobPreview }) {
  * Home interna del dashboard.
  *
  * Consume el resultado persistido de orientación y ofrece una vista ejecutiva
- * del progreso, próximos pasos y accesos a los cinco servicios.
+ * del progreso, próximos pasos y accesos a los cinco servicios. Si
+ * `orientationResult` llega en null acá —sesión nueva sin caché local, logout
+ * que limpió el store, otro dispositivo— `useEnsureOrientation` la vuelve a
+ * pedir automáticamente (`enabled: !orientationResult`) en vez de exigirle al
+ * usuario que rehaga el onboarding solo para regenerarla (`OnboardingGuard` ya
+ * garantiza que el perfil está completo). Usa `useQuery`, no la mutation de
+ * `OnboardingWizard`: dispararla desde un efecto de montaje con `useMutation`
+ * se rompe bajo el double-invoke de Strict Mode (ver `use-orientation.ts`).
  */
 export function DashboardHome() {
   const t = useTranslations("common.dashboard");
   const locale = useLocale();
   const profile = useUserStore((state) => state.profile);
   const orientationResult = useUserStore((state) => state.orientationResult);
+  const setOrientationResult = useUserStore(
+    (state) => state.setOrientationResult,
+  );
+
+  const orientationQuery = useEnsureOrientation(!orientationResult);
+
+  useEffect(() => {
+    if (orientationQuery.data) {
+      setOrientationResult(orientationQuery.data);
+    }
+  }, [orientationQuery.data, setOrientationResult]);
 
   // Historial emocional real (`GET /api/v1/health/checkins`): últimos 7
   // check-ins en orden cronológico, con la inicial del día del check-in.
@@ -296,19 +318,21 @@ export function DashboardHome() {
 
       {!orientationResult ? (
         <Card className="border-dashed">
-          <CardContent className="flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between md:py-6">
-            <div>
-              <h2 className="font-serif text-xl font-semibold">
-                {t("no_orientation.title")}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("no_orientation.body")}
-              </p>
-            </div>
-
-            <Button asChild>
-              <Link href="/onboarding">{t("no_orientation.cta")}</Link>
-            </Button>
+          <CardContent className="py-5 md:py-6">
+            {orientationQuery.isError ? (
+              <ApiErrorState
+                error={orientationQuery.error}
+                onRetry={() => orientationQuery.refetch()}
+                className="py-0"
+              />
+            ) : (
+              <div className="flex items-center justify-center gap-3">
+                <Spinner size="sm" />
+                <p className="text-sm text-muted-foreground">
+                  {t("no_orientation.loading")}
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       ) : null}
